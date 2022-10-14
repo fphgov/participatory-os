@@ -169,7 +169,8 @@ final class VoteService implements VoteServiceInterface
         }
 
         $tplData = [
-            'name'             => $user->getFirstname(),
+            'firstname'        => $user->getFirstname(),
+            'lastname'         => $user->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'projects'         => $projects,
