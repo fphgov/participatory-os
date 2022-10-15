@@ -225,6 +225,23 @@ class IdeaInputFilter extends InputFilter
         ]);
 
         $this->add([
+            'name'        => 'location_district',
+            'allow_empty' => true,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'A "Helyszín megnevezése" kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Helyszín megnevezése: Hibás mező tipus',
+                    ],
+                ]),
+            ],
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+            ],
+        ]);
+
+        $this->add([
             'name'        => 'location',
             'allow_empty' => true,
             'validators'  => [],

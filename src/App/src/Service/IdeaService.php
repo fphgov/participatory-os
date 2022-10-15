@@ -147,6 +147,17 @@ final class IdeaService implements IdeaServiceInterface
             }
         }
 
+        if (isset($filteredParams['location_district']) && !empty($filteredParams['location_district'])) {
+            $location = $this->campaignLocationRepository->findOneBy([
+                'code'     => $filteredParams['location_district'],
+                'campaign' => $phase->getCampaign(),
+            ]);
+
+            if ($location instanceof CampaignLocation) {
+                $idea->setCampaignLocation($location);
+            }
+        }
+
         if (isset($filteredParams['medias']) && is_array($filteredParams['medias'])) {
             $this->addAttachments($idea, $filteredParams['medias'], $date);
         }
