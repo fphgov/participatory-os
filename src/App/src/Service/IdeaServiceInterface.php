@@ -25,7 +25,7 @@ interface IdeaServiceInterface
 
     public function importIdeaEmails(StreamInterface $stream);
 
-    public function sendIdeaConfirmationEmail(UserInterface $user, IdeaInterface $idea): void;
+    public function sendIdeaConfirmationEmail(IdeaInterface $idea): void;
 
     public function sendIdeaWorkflowPublished(IdeaInterface $idea): void;
 

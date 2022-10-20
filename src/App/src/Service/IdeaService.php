@@ -180,7 +180,7 @@ final class IdeaService implements IdeaServiceInterface
         $this->em->persist($idea);
         $this->em->flush();
 
-        $this->sendIdeaConfirmationEmail($user, $idea);
+        $this->sendIdeaConfirmationEmail($idea);
 
         return $idea;
     }
@@ -334,6 +334,8 @@ final class IdeaService implements IdeaServiceInterface
     private function sendIdeaEmail(IdeaEmailModelInterface $ideaEmailModel, IdeaInterface $idea)
     {
         $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
@@ -348,11 +350,11 @@ final class IdeaService implements IdeaServiceInterface
         $this->mailService->sendRaw($ideaEmailModel->getEmailContent(), $tplData, $idea->getSubmitter());
     }
 
-    public function sendIdeaConfirmationEmail(UserInterface $user, IdeaInterface $idea): void
+    public function sendIdeaConfirmationEmail(IdeaInterface $idea): void
     {
         $tplData = [
-            'firstname'        => $user->getFirstname(),
-            'lastname'         => $user->getLastname(),
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'idea'             => [
@@ -368,6 +370,8 @@ final class IdeaService implements IdeaServiceInterface
     public function sendIdeaWorkflowPublished(IdeaInterface $idea): void
     {
         $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
@@ -383,6 +387,8 @@ final class IdeaService implements IdeaServiceInterface
         $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
 
         $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
@@ -398,6 +404,8 @@ final class IdeaService implements IdeaServiceInterface
     public function sendIdeaWorkflowTrashed(IdeaInterface $idea): void
     {
         $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
@@ -409,6 +417,8 @@ final class IdeaService implements IdeaServiceInterface
     public function sendIdeaWorkflowProfessionalTrashed(IdeaInterface $idea): void
     {
         $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
@@ -424,6 +434,8 @@ final class IdeaService implements IdeaServiceInterface
 
         if ($project !== null) {
             $tplData = [
+                'firstname'        => $idea->getSubmitter()->getFirstname(),
+                'lastname'         => $idea->getSubmitter()->getLastname(),
                 'infoMunicipality' => $this->config['app']['municipality'],
                 'infoEmail'        => $this->config['app']['email'],
                 'ideaTitle'        => $idea->getTitle(),
@@ -442,6 +454,8 @@ final class IdeaService implements IdeaServiceInterface
 
         if ($project !== null) {
             $tplData = [
+                'firstname'        => $idea->getSubmitter()->getFirstname(),
+                'lastname'         => $idea->getSubmitter()->getLastname(),
                 'infoMunicipality' => $this->config['app']['municipality'],
                 'infoEmail'        => $this->config['app']['email'],
                 'ideaTitle'        => $idea->getTitle(),
