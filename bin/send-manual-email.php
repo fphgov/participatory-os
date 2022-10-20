@@ -27,4 +27,4 @@ $ideaRepository = $em->getRepository(Idea::class);
 
 $idea = $ideaRepository->find(0);
 
-$ideaService->sendIdeaConfirmationEmail($idea->getSubmitter(), $idea);
+$ideaService->sendIdeaConfirmationEmail($idea);
