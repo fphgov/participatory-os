@@ -364,7 +364,7 @@ final class IdeaService implements IdeaServiceInterface
             ],
         ];
 
-        $this->mailService->send('idea-confirmation', $tplData, $user);
+        $this->mailService->send('idea-confirmation', $tplData, $idea->getSubmitter());
     }
 
     public function sendIdeaWorkflowPublished(IdeaInterface $idea): void
