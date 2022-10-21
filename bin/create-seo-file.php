@@ -55,7 +55,7 @@ foreach ($articles as $article) {
 }
 
 $ogMetas['/szavazas'] = [
-    'title'       => 'Közösségi költségvetés 2021/2022',
+    'title'       => 'Közösségi költségvetés 2022/2023',
     'description' => 'Szavazz 2022 legjobb ötleteire!'
 ];
 
