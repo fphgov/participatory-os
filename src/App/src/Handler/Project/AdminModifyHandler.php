@@ -63,7 +63,7 @@ final class AdminModifyHandler implements RequestHandlerInterface
             $message = $this->inputFilter->getMessages();
 
             return new JsonResponse([
-                'errors' => $this->inputFilter->getMessages(),
+                'errors' => $message,
             ], 422);
         }
 

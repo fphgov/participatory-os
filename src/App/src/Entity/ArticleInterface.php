@@ -31,6 +31,10 @@ interface ArticleInterface extends EntityInterface
 
     public function getCategory(): ArticleCategory;
 
+    public function setSlug(string $slug): void;
+
+    public function getSlug(): string;
+
     public function setTitle(string $title): void;
 
     public function getTitle(): string;

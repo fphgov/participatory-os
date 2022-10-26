@@ -103,6 +103,7 @@ class ConfigProvider
                 Handler\Media\GetHandler::class               => Handler\Media\GetHandlerFactory::class,
                 Handler\Media\DownloadHandler::class          => Handler\Media\DownloadHandlerFactory::class,
                 Handler\Tools\GetAddressHandler::class        => Handler\Tools\GetAddressHandlerFactory::class,
+                Handler\Tools\UploadHandler::class            => Handler\Tools\UploadHandlerFactory::class,
                 Handler\Workflow\GetStatesHandler::class      => Handler\Workflow\GetStatesHandlerFactory::class,
                 Handler\Workflow\GetExtrasHandler::class      => Handler\Workflow\GetExtrasHandlerFactory::class,
                 Handler\Mail\AdminListHandler::class          => Handler\Mail\AdminListHandlerFactory::class,
@@ -143,6 +144,9 @@ class ConfigProvider
                 InputFilter\ArticleInputFilter::class          => InputFilter\ArticleInputFilterFactory::class,
                 InputFilter\VoteFilter::class                  => InputFilter\VoteFilterFactory::class,
                 InputFilter\ProfilActivationInputFilter::class => InputFilter\ProfilActivationInputFilterFactory::class,
+            ],
+            'invokables' => [
+                InputFilter\AdminUploadFileFilter::class => InputFilter\AdminUploadFileFilter::class,
             ],
         ];
     }

@@ -51,6 +51,7 @@ return [
             'admin.api.email.list',
             'admin.api.email.get',
             'admin.api.email.modify',
+            'admin.api.upload.file',
         ],
         'allow'     => [
             'guest'     => [
@@ -91,6 +92,7 @@ return [
                 'admin.api.idea.email.import',
                 'admin.api.workflow.states.list',
                 'admin.api.workflow.extras.list',
+                'admin.api.upload.file',
             ],
             'admin' => [
                 'admin.api.cache.clear',
