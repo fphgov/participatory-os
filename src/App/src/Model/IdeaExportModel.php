@@ -10,8 +10,9 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use function implode;
 use function in_array;
+use function max;
+use function count;
 
 final class IdeaExportModel implements ExportModelInterface
 {
@@ -22,8 +23,7 @@ final class IdeaExportModel implements ExportModelInterface
         'Mire megoldás?',
         'Leírás',
         'Helyszín megnevezése',
-        'Hivatkozások',
-        'Dokumentum',
+        'Kerület',
         'Kategória',
         'Becsült költség',
         'Részvétel (I/N)',
@@ -62,17 +62,19 @@ final class IdeaExportModel implements ExportModelInterface
 
         $data = [];
 
-        $data[] = self::HEADER;
+        $expandCount = $this->getExpandHeaderCounts($ideaList);
+
+        $data[] = $this->getHeader($ideaList, $expandCount);
+
         foreach ($ideaList as $idea) {
-            $data[] = [
+            $ideaData = [
                 $idea->getId(),
                 $idea->getTitle(),
                 $this->config['app']['url'] . '/otletek/' . $idea->getId(),
                 $idea->getSolution(),
                 $idea->getDescription(),
                 $idea->getLocationDescription(),
-                implode(',', $idea->getLinks()),
-                implode(',', $this->getMedias($idea)),
+                $idea->getCampaignLocation() ? $idea->getCampaignLocation()->getName() : '',
                 $idea->getCampaignTheme()->getName(),
                 $idea->getCost(),
                 $idea->getParticipate() ? 'Igen' : 'Nem',
@@ -81,13 +83,34 @@ final class IdeaExportModel implements ExportModelInterface
                 '',
                 $idea->getWorkflowState()->getTitle(),
             ];
+
+            $links = $idea->getLinks();
+            $medias = $this->getMedias($idea);
+
+            foreach ($links as $link) {
+                $ideaData[] = $link;
+            }
+
+            for ($i = 0; $i < ($expandCount[0] - count($links)); $i++) {
+                $ideaData[] = '';
+            }
+
+            foreach ($medias as $media) {
+                $ideaData[] = $media;
+            }
+
+            for ($i = 0; $i < ($expandCount[1] - count($medias)); $i++) {
+                $ideaData[] = '';
+            }
+
+            $data[] = $ideaData;
         }
 
         $sheet = $this->spreadsheet->createSheet();
         $sheet->setTitle('Ötletek');
         $sheet->fromArray($data, null, 'A1');
 
-        foreach (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] as $col) {
+        foreach (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'] as $col) {
             if (in_array($col, self::DISABLE_AUTO_RESIZE_COLS, true)) {
                 $sheet->getColumnDimension($col)->setWidth(24);
             } else {
@@ -98,6 +121,34 @@ final class IdeaExportModel implements ExportModelInterface
         $this->spreadsheet->removeSheetByIndex(0);
 
         return new Xlsx($this->spreadsheet);
+    }
+
+    private function getExpandHeaderCounts(array $ideaList): array
+    {
+        $countLinks = 0;
+        $counMedia = 0;
+
+        foreach ($ideaList as $idea) {
+            $countLinks = max($countLinks, count($idea->getLinks()));
+            $counMedia  = max($counMedia, count($idea->getMedias()));
+        }
+
+        return [$countLinks, $counMedia];
+    }
+
+    private function getHeader(array $ideaList, array $expandCount): array
+    {
+        $header = self::HEADER;
+
+        for ($i = 0; $i < $expandCount[0]; $i++) {
+            $header[] = 'Hivatkozás ' . ($i + 1);
+        }
+
+        for ($i = 0; $i < $expandCount[1]; $i++) {
+            $header[] = 'Dokumentum ' . ($i + 1);
+        }
+
+        return $header;
     }
 
     private function getMedias(Idea $idea): array
