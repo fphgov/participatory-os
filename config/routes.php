@@ -182,6 +182,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ], 'admin.api.cache.clear');
     }
 
+    $app->post('/admin/api/upload', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        \Mezzio\Authorization\AuthorizationMiddleware::class,
+        App\Handler\Tools\UploadHandler::class
+    ], 'admin.api.upload.file');
+
     $app->get('/admin/api/dashboard', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
