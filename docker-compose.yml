@@ -29,7 +29,7 @@ services:
       - ./docker/config/webapp/php/ini/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
       - ./docker/config/webapp/php/ini/postal.ini:/usr/local/etc/php/conf.d/postal.ini
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
+      test: [ "CMD", "curl", "-f", "http://localhost" ]
       interval: 1m30s
       timeout: 10s
       retries: 3
@@ -52,7 +52,6 @@ services:
       - ./docker/data/nginx/logs:/var/log/nginx
       - ./:/var/www/html
       - ./docker/config/cert:/opt/cert
-    restart: always
     depends_on:
       - db
       - webapp
