@@ -15,6 +15,7 @@ use function trim;
 class IdeaListDTO
 {
     private int $id;
+    private string $campaignActive;
     private string $campaignTitle;
     private string $campaignThemeCode;
     private string $campaignThemeName;
@@ -29,6 +30,7 @@ class IdeaListDTO
 
     public function __construct(
         int $id,
+        string $campaignActive,
         string $campaignTitle,
         string $campaignThemeCode,
         string $campaignThemeName,
@@ -52,6 +54,7 @@ class IdeaListDTO
         $this->statusCode        = $statusCode;
         $this->statusTitle       = $statusTitle;
         $this->submitter         = $submitter;
+        $this->campaignActive    = $campaignActive;
         $this->campaignLocation  = $campaignLocation;
     }
 
@@ -91,7 +94,11 @@ class IdeaListDTO
 
     public function getSubmitter(): string
     {
-        return $this->submitter;
+        if ($this->campaignActive === '1') {
+            return $this->submitter;
+        }
+
+        return 'N/A';
     }
 
     public function getDescription(): string
