@@ -6,6 +6,7 @@ namespace App\Handler\Idea;
 
 use App\Entity\Idea;
 use App\Entity\WorkflowStateInterface;
+use App\Middleware\CampaignMiddleware;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Hal\HalResponseFactory;
@@ -39,6 +40,8 @@ final class GetHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $campaign = $request->getAttribute(CampaignMiddleware::class);
+
         $entityRepository = $this->entityManager->getRepository(Idea::class);
 
         $result = $entityRepository->find($request->getAttribute('id'));
@@ -62,6 +65,14 @@ final class GetHandler implements RequestHandlerInterface
         }
 
         $idea = $result->normalizer(null, ['groups' => 'detail']);
+
+        if ($result->getCampaign()->getId() !== $campaign->getId()) {
+            $idea['submitter'] = [
+                'id'        => 1,
+                'firstname' => 'N/A',
+                'lastnmae'  => 'N/A'
+            ];
+        }
 
         $resource = $this->resourceGenerator->fromArray($idea, null);
 
