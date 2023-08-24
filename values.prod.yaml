@@ -1,0 +1,163 @@
+replicaCount: 1
+
+php:
+  image:
+    repository: registry.prod.intra.fph.hu/docker/participatory-php
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  resources:
+    limits:
+      cpu: 6000m
+      memory: 16Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+nginx:
+  image:
+    repository: registry.prod.intra.fph.hu/docker/participatory-nginx
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+env:
+  - name: SMTP_NAME
+    value: ""
+  - name: SMTP_HOST
+    value: ""
+  - name: SMTP_PORT
+    value: "25"
+  - name: SMTP_CONNECTION_CLASS
+    value: plain
+  - name: SMTP_CONNECTION_CONFIG_USERNAME
+    value: "INFORMATIKA\\hirlevel"
+  - name: SMTP_CONNECTION_CONFIG_PASSWORD
+    value: ""
+  - name: SMTP_DEFAULTS_ADD_FROM
+    value: noreply@
+  - name: SMTP_DEFAULTS_ADD_FROM_NAME
+    value: "Budapest Főpolgármesteri Hivatal"
+  - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
+    value: budapest.hu
+  - name: APP_MUNICIPALITY
+    value: "Budapest Főpolgármesteri Hivatal"
+  - name: APP_EMAIL
+    value: info.participatory@budapest.hu
+  - name: APP_FORGOT_EMAIL
+    value: kod.participatory@budapest.hu
+  - name: APP_PHONE
+    value: 06-1-000-0001
+  - name: APP_URL
+    value: https://lakogyules-szavazas.budapest.hu
+  - name: RECAPTCHA_SECRET
+    value: _from_google_
+  - name: APP_STAT_TOKEN
+    value: ""
+  - name: SMTP_CONNECTION_CONFIG_SSL
+    value: ""
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: participatory-mariadb
+        key: mariadb-password
+        optional: false
+  - name: COMPOSER_MEMORY_LIMIT
+    value: "-1"
+  - name: COMPOSER_PROCESS_TIMEOUT
+    value: "2000"
+  - name: DB_DRIVER
+    value: Mysqli
+  - name: DB_HOSTNAME
+    value: mariadb
+  - name: DB_PORT
+    value: "3309"
+  - name: DB_DATABASE
+    value: participatory
+  - name: DB_USER
+    value: participatory
+  - name: DB_CHARSET
+    value: utf8mb4
+  - name: APP_NOTIFICATION_FREQUENCY
+    value: "20"
+  - name: APP_NOTIFICATION_MAIL_TESTTO
+    value: test@onkormanyzat.hu
+  - name: APP_NOTIFICATION_MAIL_SUBJECT
+    value: "Sikeres jelentkezés"
+  - name: APP_NOTIFICATION_MAIL_REPLAYTO
+    value: ugyfelszolgalat@onkormanyzat.hu
+  - name: APP_NOTIFICATION_FORCE
+    value: "false"
+  - name: APP_EMAIL_TEMPLATE
+    value: /var/www/html/public/email
+  - name: NODE_ENV
+    value: production
+  - name: APP_UPLOAD
+    value: /var/www/html/public/files
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: participatory-api.prod.fph.hu
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: wildcard-dev-intra-fph-hu
+  #    hosts:
+  #      - participatory-api.prod.fph.hu
+
+autoscaling:
+  enabled: false
+  minReplicas: 5
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+volumes:
+  - name: app-storage-vol
+    mountPath: /var/www/html/public/files
+    claimName: app-storage
+    usePhp: true
+    useNginx: false
