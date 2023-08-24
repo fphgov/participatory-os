@@ -32,33 +32,55 @@ env:
   - name: SMTP_HOST
     value: ""
   - name: SMTP_PORT
-    value: "25"
+    value: ""
   - name: SMTP_CONNECTION_CLASS
-    value: plain
+    value: ""
   - name: SMTP_CONNECTION_CONFIG_USERNAME
     value: "INFORMATIKA\\hirlevel"
   - name: SMTP_CONNECTION_CONFIG_PASSWORD
     value: ""
   - name: SMTP_DEFAULTS_ADD_FROM
-    value: noreply@
+    value: noreply@budapest.hu
   - name: SMTP_DEFAULTS_ADD_FROM_NAME
-    value: "Budapest Főpolgármesteri Hivatal"
+    value: "Ötlet.budapest.hu"
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
     value: onkormanyzat.hu
   - name: APP_MUNICIPALITY
-    value: "Budapest Főpolgármesteri Hivatal"
+    value: "Ötlet.budapest.hu csapat"
   - name: APP_EMAIL
-    value: info.participatory@budapest.hu
+    value: ""
   - name: APP_FORGOT_EMAIL
-    value: kod.participatory@budapest.hu
+    value: ""
   - name: APP_PHONE
-    value: 06-1-000-0001
+    value: ""
   - name: APP_URL
-    value: https://lakogyules-szavazas.dev.intra.fph.hu
+    value: https://reszveteli.budapest.hu
   - name: RECAPTCHA_SECRET
     value: _from_google_
-  - name: APP_STAT_TOKEN
+  - name: ARCGIS_GATEWAY_HOST
     value: ""
+  - name: ARCGIS_GATEWAY_PORT
+    value: ""
+  - name: ARCGIS_USERNAME
+    value: ""
+  - name: ARCGIS_PASSWORD
+    value: ""
+  - name: JWT_JTI
+    value: ""
+  - name: JWT_SECRET
+    value: ""
+  - name: JWT_ISS
+    value: "https://reszveteli.budapest.hu/app"
+  - name: JWT_AUD
+    value: "https://reszveteli.budapest.hu/app"
+  - name: JWT_NBF
+    value: "0"
+  - name: JWT_EXP
+    value: "1"
+  - name: ARCGIS_URL_GEN_TOKEN
+    value: "https://kapu.budapestkozut.hu/arcgis/tokens/generateToken"
+  - name: ARCGIS_URL_FIND_ADDRESS
+    value: "https://kapu.budapestkozut.hu/arcgis/rest/services/mernokimodul_v4/01_alapadatok/MapServer/2/query"
   - name: SMTP_CONNECTION_CONFIG_SSL
     value: ""
   - name: DB_PASSWORD
