@@ -66,7 +66,7 @@ final class ListHandler implements RequestHandlerInterface
         $theme       = $queryParams['theme'] ?? '';
         $location    = $queryParams['location'] ?? '';
         $campaign    = $queryParams['campaign'] ?? '';
-        $page        = (int)$queryParams['page'] !== 0 ? (int)$queryParams['page'] : 1;
+        $page        = $queryParams['page'] ?? 1;
         $sort        = $queryParams['sort'] ?? 'ASC';
         $rand        = $queryParams['rand'] ?? '';
         $status      = $queryParams['status'] ?? '';
