@@ -50,6 +50,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Add HTTP basic auth credentials
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
+
       - name: Build image
         uses: aevea/action-kaniko@master
         with:
@@ -74,6 +77,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@master
+
+      - name: Add HTTP basic auth credentials
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
 
       - name: Build image
         uses: aevea/action-kaniko@master
