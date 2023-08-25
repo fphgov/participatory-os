@@ -123,9 +123,11 @@ env:
     value: /var/www/html/public/files
   - name: APP_PAGINATION_MAX_PAGE_SIZE
     value: "21"
+  - name: APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE
+    value: "12"
   - name: APP_ACCOUNT_CLEAR_TIME_HOUR
     value: "82"
-  
+
 
 imagePullSecrets: []
 nameOverride: ""

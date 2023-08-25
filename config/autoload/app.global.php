@@ -21,7 +21,8 @@ return [
             'force' => (string)getenv('APP_NOTIFICATION_FORCE') === "true",
         ],
         'pagination' => [
-            'maxPageSize' => (int)getenv('APP_PAGINATION_MAX_PAGE_SIZE'),
+            'maxPageSize'        => (int)getenv('APP_PAGINATION_MAX_PAGE_SIZE'),
+            'maxPageSizeForVote' => (int)getenv('APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE'),
         ],
         'paths' => [
             'files' => getenv('APP_UPLOAD'),

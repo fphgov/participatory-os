@@ -13,6 +13,7 @@ use App\Entity\Vote;
 use App\Entity\VoteInterface;
 use App\Entity\VoteType;
 use App\Entity\VoteTypeInterface;
+use App\Model\VoteableProjectFilterModel;
 use App\Exception\NoExistsAllProjectsException;
 use App\Service\MailServiceInterface;
 use App\Service\PhaseServiceInterface;
@@ -20,42 +21,34 @@ use App\Service\VoteValidationService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+use Mezzio\Hal\ResourceGenerator;
 
 use function count;
 use function strtolower;
 
 final class VoteService implements VoteServiceInterface
 {
-    /** @var array */
-    private $config;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
     /** @var EntityRepository */
     private $voteRepository;
-
-    /** @var PhaseServiceInterface */
-    private $phaseService;
-
-    /** @var MailServiceInterface */
-    private $mailService;
 
     /** @var EntityRepository */
     private $projectRepository;
 
     public function __construct(
-        array $config,
-        EntityManagerInterface $em,
-        PhaseServiceInterface $phaseService,
-        MailServiceInterface $mailService,
-        VoteValidationService $voteValidationService
+        private array $config,
+        private EntityManagerInterface $em,
+        private PhaseServiceInterface $phaseService,
+        private MailServiceInterface $mailService,
+        private VoteValidationService $voteValidationService,
+        private ResourceGenerator $resourceGenerator
     ) {
         $this->config                = $config;
         $this->em                    = $em;
         $this->phaseService          = $phaseService;
         $this->mailService           = $mailService;
         $this->voteValidationService = $voteValidationService;
+        $this->resourceGenerator     = $resourceGenerator;
         $this->projectRepository     = $this->em->getRepository(Project::class);
         $this->voteRepository        = $this->em->getRepository(Vote::class);
     }
@@ -179,18 +172,14 @@ final class VoteService implements VoteServiceInterface
         $this->mailService->send('vote-success', $tplData, $user);
     }
 
-    public function getVoteablesProjects(?string $rand = null): array
+    public function getVoteablesProjects(VoteableProjectFilterModel $voteableProjectFilter): QueryBuilder
     {
         $phase = $this->phaseService->phaseCheck(PhaseInterface::PHASE_VOTE);
 
-        $projects = $this->projectRepository->getVoteables($phase->getCampaign(), $rand);
-
-        $normalizedProjects = [];
-        foreach ($projects as $project) {
-            $normalizedProjects[] = $project->normalizer(null, ['groups' => 'vote_list']);
-        }
-
-        return $normalizedProjects;
+        return $this->projectRepository->getVoteables(
+            $phase->getCampaign(),
+            $voteableProjectFilter
+        );
     }
 
     public function getRepository(): EntityRepository

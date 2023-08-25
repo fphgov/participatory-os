@@ -6,29 +6,61 @@ namespace App\Handler\Vote;
 
 use App\Service\VoteServiceInterface;
 use App\Exception\DifferentPhaseException;
+use App\Entity\ProjectCollection;
+use App\Model\VoteableProjectFilterModel;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
+use Mezzio\Hal\HalResource;
+use Mezzio\Hal\HalResponseFactory;
+use Mezzio\Hal\ResourceGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 final class ListHandler implements RequestHandlerInterface
 {
-    /** @var VoteServiceInterface */
-    private $voteService;
-
-    public function __construct(VoteServiceInterface $voteService)
+    public function __construct(
+        private VoteServiceInterface $voteService,
+        private int $pageCount,
+        private HalResponseFactory $responseFactory,
+        private ResourceGenerator $resourceGenerator
+    )
     {
-        $this->voteService = $voteService;
+        $this->voteService       = $voteService;
+        $this->pageCount         = $pageCount;
+        $this->responseFactory   = $responseFactory;
+        $this->resourceGenerator = $resourceGenerator;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $queryParams = $request->getQueryParams();
-        $rand        = $queryParams['rand'] ?? '';
+
+        $voteableProjectFilter = new VoteableProjectFilterModel();
+        $voteableProjectFilter->setLocation($queryParams['location'] ?? '');
+        $voteableProjectFilter->setPage($queryParams['page'] ?? 1);
+        $voteableProjectFilter->setQuery($queryParams['query'] ?? '');
+        $voteableProjectFilter->setRand($queryParams['rand'] ?? null);
+        $voteableProjectFilter->setTag($queryParams['tag'] ?? '');
+        $voteableProjectFilter->setTheme($queryParams['theme'] ?? '');
 
         try {
-            $projects = $this->voteService->getVoteablesProjects($rand);
+            $qb = $this->voteService->getVoteablesProjects(
+                $voteableProjectFilter
+            );
+
+            $resource = $this->createCollection(
+                $qb,
+                $voteableProjectFilter,
+                $request
+            );
+
+            return $this->responseFactory->createResponse($request, $resource);
+        } catch (ResourceGenerator\Exception\OutOfBoundsException $e) {
+            return new JsonResponse([
+                'errors' => 'Bad Request',
+            ], 400);
         } catch (DifferentPhaseException $e) {
             return new JsonResponse([
                 'message' => 'A szavazás zárva',
@@ -40,9 +72,22 @@ final class ListHandler implements RequestHandlerInterface
                 'code'    => 'SERVER_ERROR'
             ], 500);
         }
+    }
 
-        return new JsonResponse([
-            'data' => $projects,
-        ]);
+    private function createCollection(
+        QueryBuilder $qb,
+        VoteableProjectFilterModel $voteableProjectFilter,
+        ServerRequestInterface $request
+    ): HalResource
+    {
+        $paginator = new ProjectCollection($qb);
+        $paginator->setUseOutputWalkers(false);
+
+        $paginator
+            ->getQuery()
+            ->setFirstResult($this->pageCount * $voteableProjectFilter->getPage())
+            ->setMaxResults($this->pageCount);
+
+        return $this->resourceGenerator->fromObject($paginator, $request);
     }
 }

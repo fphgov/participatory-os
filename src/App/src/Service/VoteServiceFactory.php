@@ -9,6 +9,7 @@ use App\Service\PhaseServiceInterface;
 use App\Service\VoteValidationServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use Mezzio\Hal\ResourceGenerator;
 
 final class VoteServiceFactory
 {
@@ -24,7 +25,8 @@ final class VoteServiceFactory
             $container->get(EntityManagerInterface::class),
             $container->get(PhaseServiceInterface::class),
             $container->get(MailServiceInterface::class),
-            $container->get(VoteValidationServiceInterface::class)
+            $container->get(VoteValidationServiceInterface::class),
+            $container->get(ResourceGenerator::class),
         );
     }
 }

@@ -174,6 +174,12 @@ class ConfigProvider
             ],
             [
                 '__class__'      => RouteBasedResourceMetadata::class,
+                'resource_class' => Entity\VoteableProjectListDTO::class,
+                'route'          => 'app.api.vote.list',
+                'extractor'      => Hydrator\ClassMethodsHydrator::class,
+            ],
+            [
+                '__class__'      => RouteBasedResourceMetadata::class,
                 'resource_class' => Entity\IdeaListDTO::class,
                 'route'          => 'app.api.idea.list',
                 'extractor'      => Hydrator\ClassMethodsHydrator::class,

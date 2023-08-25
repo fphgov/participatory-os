@@ -55,7 +55,7 @@ final class AdminListHandler implements RequestHandlerInterface
         $body        = $request->getParsedBody();
         $queryParams = $request->getQueryParams();
 
-        $page = (int)$queryParams['page'] !== 0 ? (int)$queryParams['page'] : 1;
+        $page = $queryParams['page'] ?? 1;
 
         $sort     = $body['sort'] ?? 'DESC';
         $theme    = $body['theme'] ?? '';
