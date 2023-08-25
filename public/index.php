@@ -13,9 +13,6 @@ chdir(dirname(__DIR__));
 
 require 'vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createUnsafeMutable(BASIC_PATH);
-$dotenv->load();
-
 (function () {
     $container = require 'config/container.php';
 

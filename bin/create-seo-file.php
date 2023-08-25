@@ -11,9 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 require 'vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createUnsafeMutable(dirname(__DIR__));
-$dotenv->load();
-
 $container = require 'config/container.php';
 
 $ogMetas = [];

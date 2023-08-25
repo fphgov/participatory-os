@@ -83,8 +83,7 @@
         "symfony/serializer": "^6.2.10",
         "tijsverkoyen/css-to-inline-styles": "^2.2.6",
         "tuupola/cors-middleware": "^1.4.3",
-        "tuupola/slim-jwt-auth": "^3.7.0",
-        "vlucas/phpdotenv": "^5.5.0"
+        "tuupola/slim-jwt-auth": "^3.7.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4.3",
