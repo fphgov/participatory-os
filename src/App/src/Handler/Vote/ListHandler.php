@@ -44,6 +44,7 @@ final class ListHandler implements RequestHandlerInterface
         $voteableProjectFilter->setRand($queryParams['rand'] ?? null);
         $voteableProjectFilter->setTag($queryParams['tag'] ?? '');
         $voteableProjectFilter->setTheme($queryParams['theme'] ?? '');
+        $voteableProjectFilter->setOrderBy($queryParams['orderBy'] ?? null);
 
         try {
             $qb = $this->voteService->getVoteablesProjects(

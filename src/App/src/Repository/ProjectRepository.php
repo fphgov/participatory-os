@@ -15,6 +15,8 @@ use Doctrine\ORM\Query\Expr\Join;
 use App\Model\VoteableProjectFilterModel;
 use Doctrine\ORM\QueryBuilder;
 
+use function in_array;
+
 final class ProjectRepository extends EntityRepository
 {
     public function getForSelection(?int $campaignTheme = null): array
@@ -92,19 +94,26 @@ final class ProjectRepository extends EntityRepository
                 'campaign'      => $campaign,
             ]);
 
-        if ($voteableProjectFilterModel->getRand() !== null) {
+        if (
+            $voteableProjectFilterModel->getRand() !== null &&
+            in_array($voteableProjectFilterModel->getOrderBy(), [null, 'random'])
+        ) {
             $qb->orderBy('RAND(:rand)');
             $qb->setParameter('rand', $voteableProjectFilterModel->getRand());
+        }
+
+        if ($voteableProjectFilterModel->getOrderBy() === "vote") {
+            $qb->orderBy('COUNT(distinct v.id)', 'DESC');
         }
 
         $query    = $voteableProjectFilterModel->getQuery();
         $location = $voteableProjectFilterModel->getLocation();
 
         if (intval($query) !== 0) {
-            $qb->where('p.id = :id')->setParameter('id', $query);
+            $qb->andWhere('p.id = :id')->setParameter('id', $query);
         } elseif ($query) {
             $qb
-                ->where('p.title LIKE :title')->setParameter('title', "%" . $query . "%")
+                ->andWhere('p.title LIKE :title')->setParameter('title', "%" . $query . "%")
                 ->orWhere('p.description LIKE :description')->setParameter('description', "%" . $query . "%")
                 ->orWhere('p.solution LIKE :solution')->setParameter('solution', "%" . $query . "%");
         }

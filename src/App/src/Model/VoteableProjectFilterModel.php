@@ -12,6 +12,7 @@ class VoteableProjectFilterModel
     private string|int $location = '';
     private int $page = 1;
     private ?string $rand = null;
+    private ?string $orderBy = null;
 
     public function getQuery(): string
     {
@@ -71,5 +72,15 @@ class VoteableProjectFilterModel
     public function setRand(?string $rand = null)
     {
         $this->rand = $rand;
+    }
+
+    public function getOrderBy(): ?string
+    {
+        return $this->orderBy;
+    }
+
+    public function setOrderBy(?string $orderBy = null)
+    {
+        $this->orderBy = $orderBy;
     }
 }
