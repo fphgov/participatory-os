@@ -50,7 +50,7 @@ final class CheckHandler implements RequestHandlerInterface
                 ], 409);
             } catch (VoteUserProjectExistsException $e) {
                 return new JsonResponse([
-                    'message' => 'Erre az ötletdre már leadtad a szavazatod.',
+                    'message' => 'Erre az ötletre már leadtad a szavazatod.',
                     'code'    => 'ALREADY_EXISTS_PROJECT'
                 ], 409);
             } catch (VoteUserCategoryExistsException $e) {
