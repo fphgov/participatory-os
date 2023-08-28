@@ -122,7 +122,7 @@ final class AdminListHandler implements RequestHandlerInterface
         $paginator = new IdeaCollection($qb);
         $paginator->setUseOutputWalkers(false);
 
-        $paginator->getQuery()->setFirstResult($this->pageCount * $page)->setMaxResults($this->pageCount || 1);
+        $paginator->getQuery()->setFirstResult($this->pageCount * $page)->setMaxResults($this->pageCount);
 
         try {
             $resource = $this->resourceGenerator->fromObject($paginator, $request);

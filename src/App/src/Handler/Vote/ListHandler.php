@@ -87,7 +87,7 @@ final class ListHandler implements RequestHandlerInterface
         $paginator
             ->getQuery()
             ->setFirstResult($this->pageCount * $voteableProjectFilter->getPage())
-            ->setMaxResults($this->pageCount || 1);
+            ->setMaxResults($this->pageCount);
 
         return $this->resourceGenerator->fromObject($paginator, $request);
     }
