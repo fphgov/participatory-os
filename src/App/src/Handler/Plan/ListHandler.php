@@ -135,7 +135,7 @@ final class ListHandler implements RequestHandlerInterface
         $paginator = new ProjectCollection($qb);
         $paginator->setUseOutputWalkers(false);
 
-        $paginator->getQuery()->setFirstResult($this->pageCount * $page)->setMaxResults($this->pageCount);
+        $paginator->getQuery()->setFirstResult($this->pageCount * $page)->setMaxResults($this->pageCount || 1);
 
         try {
             $resource = $this->resourceGenerator->fromObject($paginator, $request);

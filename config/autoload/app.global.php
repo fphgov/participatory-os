@@ -9,10 +9,10 @@ return [
         'url'                 => str_replace('"', '', getenv('APP_URL')),
         'email'               => str_replace('"', '', getenv('APP_EMAIL')),
         'account'             => [
-            'clearTimeHour' => (int)getenv('APP_ACCOUNT_CLEAR_TIME_HOUR'),
+            'clearTimeHour' => (int)str_replace(['"', "'"], "", getenv('APP_ACCOUNT_CLEAR_TIME_HOUR')),
         ],
         'notification'        => [
-            'frequency' => (int)getenv('APP_NOTIFICATION_FREQUENCY'),
+            'frequency' => (int)str_replace(['"', "'"], "", getenv('APP_NOTIFICATION_FREQUENCY')),
             'mail'      => [
                 'testTo'   => getenv('APP_NOTIFICATION_MAIL_TESTTO'),
                 'subject'  => getenv('APP_NOTIFICATION_MAIL_SUBJECT'),
@@ -21,8 +21,8 @@ return [
             'force' => (string)getenv('APP_NOTIFICATION_FORCE') === "true",
         ],
         'pagination' => [
-            'maxPageSize'        => (int)getenv('APP_PAGINATION_MAX_PAGE_SIZE'),
-            'maxPageSizeForVote' => (int)getenv('APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE'),
+            'maxPageSize'        => (int)str_replace(['"', "'"], "", getenv('APP_PAGINATION_MAX_PAGE_SIZE')),
+            'maxPageSizeForVote' => (int)str_replace(['"', "'"], "", getenv('APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE')),
         ],
         'paths' => [
             'files' => getenv('APP_UPLOAD'),
