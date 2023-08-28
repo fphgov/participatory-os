@@ -49,7 +49,7 @@ RUN apk add --no-cache cmake freetype libpng libjpeg-turbo freetype-dev libpng-d
   docker-php-ext-install -j${NPROC} gd
 
 # Install Xdebug
-RUN apk add --no-cache $PHPIZE_DEPS && pecl install xdebug; \
+RUN apk add --no-cache $PHPIZE_DEPS && pecl install xdebug-3.1.5; \
     docker-php-ext-enable xdebug;
 
 # Config Xdebug
