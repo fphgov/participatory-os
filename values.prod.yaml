@@ -132,7 +132,7 @@ env:
   - name: APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE
     value: "12"
   - name: APP_ACCOUNT_CLEAR_TIME_HOUR
-    value: "82"
+    value: "120"
 
 
 imagePullSecrets: []

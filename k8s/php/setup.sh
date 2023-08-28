@@ -26,5 +26,4 @@ if [ $MODE = "production" ]; then
 fi
 
 mkdir -p data/cache/DoctrineEntityProxy
-chmod 777 -R data/cache/DoctrineEntityProxy
-chown 1000:1000 -R data/cache
+chmod 777 -R data/cache/DoctrineEntityProxy && chown 1000:1000 -R data/cache
