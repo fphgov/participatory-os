@@ -30,8 +30,7 @@ if [ $MODE = "production" ]; then
 fi
 
 mkdir -p data/cache/DoctrineEntityProxy
-chmod 777 -R data/cache/DoctrineEntityProxy
-chown 1000:1000 -R data/cache
+chown 1000:1000 -R /var/www/html/data/cache && chmod 777 -R data/cache/DoctrineEntityProxy
 
 mkdir -p data/minio
 chown 1001:1001 -R data/minio
