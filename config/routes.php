@@ -138,6 +138,14 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Media\DownloadHandler::class
     ], 'app.api.media.download');
 
+    $app->get('/app/api/files', [
+        App\Handler\File\GetHandler::class
+    ], 'app.api.file.show');
+
+    $app->post('/app/api/files', [
+        App\Handler\File\PutHandler::class
+    ], 'app.api.file.put');
+
     $app->get('/app/api/page/{slug}', [
         App\Handler\Page\GetHandler::class
     ], 'app.api.page.show');

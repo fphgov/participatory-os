@@ -77,6 +77,12 @@ env:
     value: "0"
   - name: JWT_EXP
     value: "1"
+  - name: MINIO_ROOT_USER
+    value: "participatory"
+  - name: MINIO_ROOT_PASSWORD
+    value: ""
+  - name: MINIO_ENDPOINT
+    value: "http://participatory-minio:9000"
   - name: ARCGIS_URL_GEN_TOKEN
     value: "https://kapu.budapestkozut.hu/arcgis/tokens/generateToken"
   - name: ARCGIS_URL_FIND_ADDRESS

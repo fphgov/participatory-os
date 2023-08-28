@@ -11,6 +11,8 @@ if (PHP_SAPI === 'cli-server' && $_SERVER['SCRIPT_FILENAME'] !== __FILE__) {
 
 chdir(dirname(__DIR__));
 
+date_default_timezone_set('Europe/Budapest');
+
 require 'vendor/autoload.php';
 
 (function () {

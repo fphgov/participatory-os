@@ -66,7 +66,7 @@ services:
     image: bitnami/minio:2022-debian-11
     ports:
       - 9000:9000
-      - 9001:9001
+      - 9002:9001
     volumes:
       - ./data/minio:/data
     env_file:
