@@ -47,9 +47,6 @@ class UserPreference implements UserPreferenceInterface
     /** @ORM\Column(name="campaignEmail", type="boolean") */
     private bool $campaignEmail = false;
 
-    /** @ORM\Column(name="newsletterEmail", type="boolean") */
-    private bool $newsletterEmail = false;
-
     /** @ORM\Column(name="reminderEmail", type="boolean") */
     private bool $reminderEmail = false;
 
@@ -141,16 +138,6 @@ class UserPreference implements UserPreferenceInterface
     public function getCampaignEmail(): bool
     {
         return $this->campaignEmail;
-    }
-
-    public function setNewsletterEmail(bool $newsletterEmail): void
-    {
-        $this->newsletterEmail = $newsletterEmail;
-    }
-
-    public function getNewsletterEmail(): bool
-    {
-        return $this->newsletterEmail;
     }
 
     public function setReminderEmail(bool $reminderEmail): void

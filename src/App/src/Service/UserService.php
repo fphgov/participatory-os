@@ -216,7 +216,6 @@ final class UserService implements UserServiceInterface
         $userPreference->setLiveInCity((bool) $filteredParams['live_in_city']);
         $userPreference->setHearAbout($filteredParams['hear_about']);
         $userPreference->setPrivacy((bool) $filteredParams['privacy']);
-        $userPreference->setNewsletterEmail((bool) $filteredParams['newsletter_email']);
         $userPreference->setReminderEmail((bool) $filteredParams['reminder_email']);
         $userPreference->setCreatedAt($date);
         $userPreference->setUpdatedAt($date);

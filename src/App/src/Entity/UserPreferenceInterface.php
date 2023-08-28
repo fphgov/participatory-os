@@ -51,10 +51,6 @@ interface UserPreferenceInterface extends EntityInterface
 
     public function getCampaignEmail(): bool;
 
-    public function setNewsletterEmail(bool $newsletterEmail): void;
-
-    public function getNewsletterEmail(): bool;
-
     public function setReminderEmail(bool $reminderEmail): void;
 
     public function getReminderEmail(): bool;
