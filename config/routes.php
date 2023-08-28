@@ -77,6 +77,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Vote\CheckHandler::class
     ], 'app.api.vote.check');
 
+    $app->get('/app/api/vote/check/{id:\d+}', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\Vote\CheckHandler::class
+    ], 'app.api.vote.project.check');
+
     $app->post('/app/api/user/password', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
