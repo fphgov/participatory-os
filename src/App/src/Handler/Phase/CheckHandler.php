@@ -40,7 +40,8 @@ final class CheckHandler implements RequestHandlerInterface
 
         return new JsonResponse([
             'data' => [
-                'code' => $phase->getCode(),
+                'campaign' => $phase->getCampaign()->getId(),
+                'code'     => $phase->getCode(),
             ],
         ]);
     }
