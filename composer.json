@@ -34,6 +34,9 @@
         "patches": {
             "laminas/laminas-validator": {
                 "Supported URI and Hostname multiple validator": "./patches/validator_uri.patch"
+            },
+            "firebase/php-jwt": {
+                "Accept float claims but round down to ignore them": "./patches/firebase.patch"
             }
         },
         "composer-exit-on-patch-failure": true,

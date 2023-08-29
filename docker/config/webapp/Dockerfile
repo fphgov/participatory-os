@@ -21,7 +21,8 @@ RUN apk add --no-cache --update \
         zlib-dev \
         icu-dev \
         g++ \
-        libxml2-dev
+        libxml2-dev \
+        patch
 
 RUN docker-php-ext-configure intl && docker-php-ext-install intl
 
