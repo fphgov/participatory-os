@@ -113,9 +113,10 @@ final class ProjectRepository extends EntityRepository
             $qb->andWhere('p.id = :id')->setParameter('id', $query);
         } elseif ($query) {
             $qb
-                ->andWhere('p.title LIKE :title')->setParameter('title', "%" . $query . "%")
-                ->orWhere('p.description LIKE :description')->setParameter('description', "%" . $query . "%")
-                ->orWhere('p.solution LIKE :solution')->setParameter('solution', "%" . $query . "%");
+                ->andWhere('p.title LIKE :title OR p.description LIKE :description OR p.solution LIKE :solution')
+                ->setParameter('title', "%" . $query . "%")
+                ->setParameter('description', "%" . $query . "%")
+                ->setParameter('solution', "%" . $query . "%");
         }
 
         if ($voteableProjectFilterModel->getTag()) {
