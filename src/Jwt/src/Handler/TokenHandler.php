@@ -101,7 +101,7 @@ class TokenHandler implements RequestHandlerInterface
 
         $time = new DateTimeImmutable();
 
-        $usedAfter = $time->modify('+' . $this->config['nbf'] . ' minute');
+        // $usedAfter = $time->modify('+' . $this->config['nbf'] . ' minute');
         $expiresAt = $time->modify('+' . $this->config['exp'] . ' hour');
 
         return $configuration->builder()
@@ -109,7 +109,7 @@ class TokenHandler implements RequestHandlerInterface
                     ->permittedFor($this->config['aud']) // Configures the issuer (iss claim)
                     ->identifiedBy($this->config['jti']) // Configures the audience (aud claim)
                     ->issuedAt($time) // Configures the time that the token was issued (iat claim)
-                    ->canOnlyBeUsedAfter($usedAfter) // Configures the time that the token can be used (nbf claim)
+                    // ->canOnlyBeUsedAfter($usedAfter) // Configures the time that the token can be used (nbf claim)
                     ->expiresAt($expiresAt) // Configures the expiration time of the token (exp claim)
                     ->withClaim('user', $claim)
                     ->getToken($configuration->signer(), $configuration->signingKey());
