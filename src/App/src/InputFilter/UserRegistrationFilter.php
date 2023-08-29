@@ -327,6 +327,11 @@ class UserRegistrationFilter extends InputFilter
             'name'            => 'prize',
             'allow_empty'     => true,
         ]);
+
+        $this->add([
+            'name'            => 'reminder_email',
+            'allow_empty'     => true,
+        ]);
     }
 }
 /** phpcs:enable */
