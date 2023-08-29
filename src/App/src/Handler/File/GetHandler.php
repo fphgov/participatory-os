@@ -41,7 +41,14 @@ final class GetHandler implements RequestHandlerInterface
         }
 
         try {
-            $mediaStream = $this->mediaService->getFile($filename);
+            $mediaResult = $this->mediaService->getFile($filename);
+
+            $mediaStream = $mediaResult->get('Body');
+            $mediaStream->rewind();
+
+            return new Response($mediaStream, 200, [
+                'Content-Type' => $mediaResult->get('ContentType'),
+            ]);
         } catch (Exception $e) {
             $this->audit->err('No exists file in object storage', [
                 'extra' => $filename,
@@ -51,7 +58,5 @@ final class GetHandler implements RequestHandlerInterface
                 'errors' => 'Nem található',
             ], 404);
         }
-
-        return new Response($mediaStream);
     }
 }

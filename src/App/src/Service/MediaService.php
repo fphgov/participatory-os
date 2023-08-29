@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Media;
 use App\Entity\MediaInterface;
+use Aws\ResultInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
@@ -49,16 +50,13 @@ final class MediaService implements MediaServiceInterface
         ]);
     }
 
-    public function getFile(string $key): StreamInterface
+    public function getFile(string $key): ResultInterface
     {
         $retrive = $this->objectStorage->getClient()->getObject([
             'Bucket' => self::BUCKET_NAME,
             'Key'    => $key,
         ]);
 
-        $body = $retrive->get('Body');
-        $body->rewind();
-
-        return $body;
+        return $retrive;
     }
 }
