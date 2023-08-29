@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Tuupola\Middleware\JwtAuthentication;
 
-use function getenv;
+// use function getenv;
 
 class JwtAuthMiddlewareFactory
 {
@@ -21,8 +21,9 @@ class JwtAuthMiddlewareFactory
         }
 
         $auth = new JwtAuthentication([
-            "secure"    => getenv('NODE_ENV') !== 'development',
-            "relaxed"   => ["localhost"],
+            // "secure"    => getenv('NODE_ENV') !== 'development',
+            "secure"    => false,
+            "relaxed"   => ["localhost", "*.budapest.hu"],
             "secret"    => $config['jwt']['auth']['secret'],
             "attribute" => JwtAuthMiddleware::class,
         ]);
