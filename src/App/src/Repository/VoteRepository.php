@@ -99,4 +99,28 @@ class VoteRepository extends EntityRepository
 
         return false;
     }
+
+    public function getVotedProjects(User $user, Campaign $campaign): array
+    {
+        $qb = $this->createQueryBuilder('v');
+        $qb
+            ->innerJoin(Project::class, 'p', Join::WITH, 'p.id = v.project')
+            ->innerJoin(User::class, 'u', Join::WITH, 'u.id = v.project')
+            ->innerJoin(Campaign::class, 'c', Join::WITH, 'c.id = p.campaign')
+            ->where('v.user = :user')
+            ->andWhere('c.id = :campaign')
+            ->setParameter('user', $user)
+            ->setParameter('campaign', $campaign)
+            ->orderBy('v.createdAt', 'DESC');
+
+        $result = $qb->getQuery()->getResult();
+
+        $projects = [];
+
+        foreach ($result as $result) {
+            $projects[] = $result->getProject();
+        }
+
+        return $projects;
+    }
 }

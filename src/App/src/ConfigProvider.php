@@ -99,6 +99,7 @@ class ConfigProvider
                 Handler\Vote\AddHandler::class                => Handler\Vote\AddHandlerFactory::class,
                 Handler\Vote\ListHandler::class               => Handler\Vote\ListHandlerFactory::class,
                 Handler\Vote\CheckHandler::class              => Handler\Vote\CheckHandlerFactory::class,
+                Handler\Vote\StatusHandler::class             => Handler\Vote\StatusHandlerFactory::class,
                 Handler\Setting\GetHandler::class             => Handler\Setting\GetHandlerFactory::class,
                 Handler\Media\GetHandler::class               => Handler\Media\GetHandlerFactory::class,
                 Handler\Media\DownloadHandler::class          => Handler\Media\DownloadHandlerFactory::class,
