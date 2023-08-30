@@ -227,7 +227,7 @@ class UserRegistrationFilter extends InputFilter
                     ]
                 ]),
                 new Validator\GreaterThan([
-                    'min'       => 1880,
+                    'min'       => 1900,
                     'inclusive' => true,
                     'messages' => [
                         Validator\GreaterThan::NOT_GREATER           => "The input is not greater than '%min%'",
