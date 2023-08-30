@@ -105,7 +105,7 @@ class VoteRepository extends EntityRepository
         $qb = $this->createQueryBuilder('v');
         $qb
             ->innerJoin(Project::class, 'p', Join::WITH, 'p.id = v.project')
-            ->innerJoin(User::class, 'u', Join::WITH, 'u.id = v.project')
+            ->innerJoin(User::class, 'u', Join::WITH, 'u.id = v.user')
             ->innerJoin(Campaign::class, 'c', Join::WITH, 'c.id = p.campaign')
             ->where('v.user = :user')
             ->andWhere('c.id = :campaign')
