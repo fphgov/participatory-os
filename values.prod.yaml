@@ -1,0 +1,193 @@
+replicaCount: 1
+
+php:
+  image:
+    repository: registry.prod.intra.fph.hu/docker/participatory-php
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  resources:
+    limits:
+      cpu: 6000m
+      memory: 16Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+nginx:
+  image:
+    repository: registry.prod.intra.fph.hu/docker/participatory-nginx
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+env:
+  - name: SMTP_NAME
+    value: ""
+  - name: SMTP_HOST
+    value: ""
+  - name: SMTP_PORT
+    value: ""
+  - name: SMTP_CONNECTION_CLASS
+    value: ""
+  - name: SMTP_CONNECTION_CONFIG_USERNAME
+    value: "INFORMATIKA\\hirlevel"
+  - name: SMTP_CONNECTION_CONFIG_PASSWORD
+    value: ""
+  - name: SMTP_DEFAULTS_ADD_FROM
+    value: noreply@budapest.hu
+  - name: SMTP_DEFAULTS_ADD_FROM_NAME
+    value: "Ötlet.budapest.hu"
+  - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
+    value: onkormanyzat.hu
+  - name: APP_MUNICIPALITY
+    value: "Ötlet.budapest.hu csapat"
+  - name: APP_EMAIL
+    value: ""
+  - name: APP_FORGOT_EMAIL
+    value: ""
+  - name: APP_PHONE
+    value: ""
+  - name: APP_URL
+    value: https://otlet.budapest.hu
+  - name: RECAPTCHA_SECRET
+    value: _from_google_
+  - name: ARCGIS_GATEWAY_HOST
+    value: ""
+  - name: ARCGIS_GATEWAY_PORT
+    value: ""
+  - name: ARCGIS_USERNAME
+    value: ""
+  - name: ARCGIS_PASSWORD
+    value: ""
+  - name: JWT_JTI
+    value: ""
+  - name: JWT_SECRET
+    value: ""
+  - name: JWT_ISS
+    value: "https://otlet.budapest.hu/app"
+  - name: JWT_AUD
+    value: "https://otlet.budapest.hu/app"
+  - name: JWT_NBF
+    value: "0"
+  - name: JWT_EXP
+    value: "1"
+  - name: MINIO_ROOT_USER
+    value: "participatory"
+  - name: MINIO_ROOT_PASSWORD
+    value: ""
+  - name: MINIO_ENDPOINT
+    value: "http://participatory-minio:9000"
+  - name: ARCGIS_URL_GEN_TOKEN
+    value: "https://kapu.budapestkozut.hu/arcgis/tokens/generateToken"
+  - name: ARCGIS_URL_FIND_ADDRESS
+    value: "https://kapu.budapestkozut.hu/arcgis/rest/services/mernokimodul_v4/01_alapadatok/MapServer/2/query"
+  - name: SMTP_CONNECTION_CONFIG_SSL
+    value: ""
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: participatory-mariadb
+        key: mariadb-password
+        optional: false
+  - name: COMPOSER_MEMORY_LIMIT
+    value: "-1"
+  - name: COMPOSER_PROCESS_TIMEOUT
+    value: "2000"
+  - name: DB_DRIVER
+    value: Mysqli
+  - name: DB_HOSTNAME
+    value: mariadb
+  - name: DB_PORT
+    value: "3309"
+  - name: DB_DATABASE
+    value: participatory
+  - name: DB_USER
+    value: participatory
+  - name: DB_CHARSET
+    value: utf8mb4
+  - name: APP_NOTIFICATION_FREQUENCY
+    value: "20"
+  - name: APP_NOTIFICATION_MAIL_TESTTO
+    value: test@onkormanyzat.hu
+  - name: APP_NOTIFICATION_MAIL_SUBJECT
+    value: "Sikeres jelentkezés"
+  - name: APP_NOTIFICATION_MAIL_REPLAYTO
+    value: ugyfelszolgalat@onkormanyzat.hu
+  - name: APP_NOTIFICATION_FORCE
+    value: "false"
+  - name: APP_EMAIL_TEMPLATE
+    value: /var/www/html/public/email
+  - name: NODE_ENV
+    value: production
+  - name: APP_UPLOAD
+    value: /var/www/html/public/files
+  - name: APP_PAGINATION_MAX_PAGE_SIZE
+    value: "21"
+  - name: APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE
+    value: "12"
+  - name: APP_ACCOUNT_CLEAR_TIME_HOUR
+    value: "120"
+
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: participatory-api.prod.fph.hu
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: wildcard-dev-intra-fph-hu
+  #    hosts:
+  #      - participatory-api.prod.fph.hu
+
+autoscaling:
+  enabled: false
+  minReplicas: 5
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+volumes: []

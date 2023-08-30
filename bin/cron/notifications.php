@@ -15,9 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 require 'vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createUnsafeMutable(dirname(__DIR__, 2));
-$dotenv->load();
-
 $container = require 'config/container.php';
 
 $em               = $container->get(EntityManagerInterface::class);

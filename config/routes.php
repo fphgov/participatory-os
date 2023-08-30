@@ -77,6 +77,19 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Vote\CheckHandler::class
     ], 'app.api.vote.check');
 
+    $app->get('/app/api/vote/check/{id:\d+}', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\Vote\CheckHandler::class
+    ], 'app.api.vote.project.check');
+
+    $app->get('/app/api/vote/status', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Middleware\CampaignMiddleware::class,
+        App\Handler\Vote\StatusHandler::class
+    ], 'app.api.user.vote.status');
+
     $app->post('/app/api/user/password', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
@@ -137,6 +150,14 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/app/api/media/download/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}', [
         App\Handler\Media\DownloadHandler::class
     ], 'app.api.media.download');
+
+    $app->get('/app/api/files', [
+        App\Handler\File\GetHandler::class
+    ], 'app.api.file.show');
+
+    $app->post('/app/api/files', [
+        App\Handler\File\PutHandler::class
+    ], 'app.api.file.put');
 
     $app->get('/app/api/page/{slug}', [
         App\Handler\Page\GetHandler::class

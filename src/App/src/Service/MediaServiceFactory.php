@@ -7,6 +7,7 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 
+
 final class MediaServiceFactory
 {
     public function __invoke(ContainerInterface $container): MediaService
@@ -15,7 +16,8 @@ final class MediaServiceFactory
 
         return new MediaService(
             $config,
-            $container->get(EntityManagerInterface::class)
+            $container->get(EntityManagerInterface::class),
+            $container->get(MinIOServiceInterface::class)
         );
     }
 }

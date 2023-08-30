@@ -227,7 +227,7 @@ class UserRegistrationFilter extends InputFilter
                     ]
                 ]),
                 new Validator\GreaterThan([
-                    'min'       => 1880,
+                    'min'       => 1900,
                     'inclusive' => true,
                     'messages' => [
                         Validator\GreaterThan::NOT_GREATER           => "The input is not greater than '%min%'",
@@ -325,6 +325,11 @@ class UserRegistrationFilter extends InputFilter
 
         $this->add([
             'name'            => 'prize',
+            'allow_empty'     => true,
+        ]);
+
+        $this->add([
+            'name'            => 'reminder_email',
             'allow_empty'     => true,
         ]);
     }

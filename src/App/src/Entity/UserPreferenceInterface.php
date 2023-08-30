@@ -50,4 +50,8 @@ interface UserPreferenceInterface extends EntityInterface
     public function setCampaignEmail(bool $campaignEmail): void;
 
     public function getCampaignEmail(): bool;
+
+    public function setReminderEmail(bool $reminderEmail): void;
+
+    public function getReminderEmail(): bool;
 }

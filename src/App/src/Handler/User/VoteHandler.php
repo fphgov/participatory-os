@@ -9,6 +9,10 @@ use App\Exception\DifferentPhaseException;
 use App\Exception\MissingVoteTypeAndCampaignCategoriesException;
 use App\Exception\NoExistsAllProjectsException;
 use App\Exception\VoteUserExistsException;
+use App\Exception\VoteUserProjectExistsException;
+use App\Exception\NoHasProjectInCurrentCampaignException;
+use App\Exception\DuplicateCampaignCategoriesException;
+use App\Exception\VoteUserCategoryExistsException;
 use App\Middleware\CampaignMiddleware;
 use App\Middleware\UserMiddleware;
 use App\Service\VoteServiceInterface;
@@ -55,7 +59,7 @@ final class VoteHandler implements RequestHandlerInterface
             ], 422);
         }
 
-        $type = $this->em->getReference(VoteType::class, 2);
+        $type = $this->em->getReference(VoteType::class, 3);
 
         try {
             $this->voteService->voting($user, $type, $body['projects']);
@@ -71,6 +75,26 @@ final class VoteHandler implements RequestHandlerInterface
             return new JsonResponse([
                 'message' => 'Idén már leadtad a szavazatodat',
             ], 422);
+        } catch (NoHasProjectInCurrentCampaignException $e) {
+            return new JsonResponse([
+                'message' => 'A kiválasztott ötlet, vagy ötletek nem tartoznak a jelenlegi kampányba',
+                'code'    => 'NO_HAS_PROJECT_IN_CURRENT_CAMPAIGN'
+            ], 409);
+        } catch (DuplicateCampaignCategoriesException $e) {
+            return new JsonResponse([
+                'message' => 'A kiválasztott ötletek közül van azonos kampány kategóriába tartozó',
+                'code'    => 'DUPLICATE_CAMPAIGN_THEME'
+            ], 409);
+        } catch (VoteUserProjectExistsException $e) {
+            return new JsonResponse([
+                'message' => 'Erre az ötletre már leadtad a szavazatod.',
+                'code'    => 'ALREADY_EXISTS_PROJECT'
+            ], 409);
+        } catch (VoteUserCategoryExistsException $e) {
+            return new JsonResponse([
+                'message' => 'Ebben a kategóriában már szavaztál!',
+                'code'    => 'ALREADY_EXISTS_CATEGORY'
+            ], 409);
         } catch (MissingVoteTypeAndCampaignCategoriesException $e) {
             return new JsonResponse([
                 'message' => 'Nincs minden kategóriában kiválasztott ötlet',

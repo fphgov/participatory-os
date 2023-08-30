@@ -21,7 +21,8 @@ RUN apk add --no-cache --update \
         zlib-dev \
         icu-dev \
         g++ \
-        libxml2-dev
+        libxml2-dev \
+        patch
 
 RUN docker-php-ext-configure intl && docker-php-ext-install intl
 
@@ -49,7 +50,7 @@ RUN apk add --no-cache cmake freetype libpng libjpeg-turbo freetype-dev libpng-d
   docker-php-ext-install -j${NPROC} gd
 
 # Install Xdebug
-RUN apk add --no-cache $PHPIZE_DEPS && pecl install xdebug; \
+RUN apk add --no-cache $PHPIZE_DEPS && pecl install xdebug-3.1.5; \
     docker-php-ext-enable xdebug;
 
 # Config Xdebug
@@ -86,5 +87,6 @@ RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 25/' /usr/local/et
 EXPOSE 9004
 
 COPY supervisord.conf /etc/supervisord.conf
+RUN chmod +x /var/www/html/docker/config/webapp/setup.sh
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

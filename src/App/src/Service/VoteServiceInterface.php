@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\ProjectInterface;
 use App\Entity\UserInterface;
 use App\Entity\VoteTypeInterface;
+use App\Model\VoteableProjectFilterModel;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 interface VoteServiceInterface
 {
@@ -26,5 +27,5 @@ interface VoteServiceInterface
 
     public function getRepository(): EntityRepository;
 
-    public function getVoteablesProjects(?string $rand = null): array;
+    public function getVoteablesProjects(VoteableProjectFilterModel $voteableProjectFilter): QueryBuilder;
 }
