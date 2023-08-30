@@ -44,7 +44,7 @@ env:
   - name: SMTP_DEFAULTS_ADD_FROM_NAME
     value: "Ötlet.budapest.hu"
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
-    value: onkormanyzat.hu
+    value: budapest.hu
   - name: APP_MUNICIPALITY
     value: "Ötlet.budapest.hu csapat"
   - name: APP_EMAIL
@@ -102,7 +102,7 @@ env:
   - name: DB_DRIVER
     value: Mysqli
   - name: DB_HOSTNAME
-    value: mariadb
+    value: participatory-mariadb
   - name: DB_PORT
     value: "3309"
   - name: DB_DATABASE
@@ -114,11 +114,11 @@ env:
   - name: APP_NOTIFICATION_FREQUENCY
     value: "20"
   - name: APP_NOTIFICATION_MAIL_TESTTO
-    value: test@onkormanyzat.hu
+    value: dev@budapest.hu
   - name: APP_NOTIFICATION_MAIL_SUBJECT
     value: "Sikeres jelentkezés"
   - name: APP_NOTIFICATION_MAIL_REPLAYTO
-    value: ugyfelszolgalat@onkormanyzat.hu
+    value: ugyfelszolgalat@budapest.hu
   - name: APP_NOTIFICATION_FORCE
     value: "false"
   - name: APP_EMAIL_TEMPLATE
