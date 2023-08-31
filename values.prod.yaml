@@ -133,6 +133,8 @@ env:
     value: "12"
   - name: APP_ACCOUNT_CLEAR_TIME_HOUR
     value: "120"
+  - name: APP_SERVICE_FILE
+    value: "s3"
 
 
 imagePullSecrets: []

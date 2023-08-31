@@ -35,6 +35,12 @@ final class MediaService implements MediaServiceInterface
 
     public function getMediaStream(MediaInterface $media): StreamInterface
     {
+        if ($this->config['app']['service']['file'] === "s3") {
+            $s3Object = $this->getFile($media->getFilename());
+
+            return $s3Object->get('Body');
+        }
+
         $filePath = $this->config['app']['paths']['files'] . '/' . $media->getFilename();
 
         return new Stream($filePath);
