@@ -26,6 +26,9 @@ return [
         ],
         'paths' => [
             'files' => getenv('APP_UPLOAD'),
+        ],
+        'service' => [
+            'file' => getenv('APP_SERVICE_FILE'),
         ]
     ],
 ];
