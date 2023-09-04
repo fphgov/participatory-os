@@ -39,6 +39,7 @@ final class StatisticsHandler implements RequestHandlerInterface
 
         $queryParams = $request->getQueryParams();
         $phaseParam  = $queryParams['phase'] ?? '';
+        $detailParam = $queryParams['detail'] ?? false;
 
         if ($phaseParam) {
             $phaseRepository = $this->em->getRepository(Phase::class);
@@ -46,8 +47,8 @@ final class StatisticsHandler implements RequestHandlerInterface
             $phase = $phaseRepository->find($phaseParam);
         }
 
-        $onlineResult  = $this->getOnlineVoteList($phase);
-        $offlineResult = $this->getOfflineVoteList($phase);
+        $onlineResult  = $this->getOnlineVoteList($phase, (bool)$detailParam);
+        $offlineResult = $this->getOfflineVoteList($phase, (bool)$detailParam);
 
         return new JsonResponse([
             'data' => [
@@ -57,7 +58,7 @@ final class StatisticsHandler implements RequestHandlerInterface
         ]);
     }
 
-    private function getOnlineVoteList(Phase $phase): array
+    private function getOnlineVoteList(Phase $phase, ?bool $detail = null): array
     {
         $voteRepository = $this->em->getRepository(Vote::class);
 
@@ -72,10 +73,10 @@ final class StatisticsHandler implements RequestHandlerInterface
 
         $votes = $qb->getQuery()->getResult();
 
-        return $this->normalizeVote($votes);
+        return $this->normalizeVote($votes, $detail);
     }
 
-    private function getOfflineVoteList(Phase $phase): array
+    private function getOfflineVoteList(Phase $phase, ?bool $detail = null): array
     {
         $offlineVoteRepository = $this->em->getRepository(OfflineVote::class);
 
@@ -90,20 +91,29 @@ final class StatisticsHandler implements RequestHandlerInterface
 
         $votes = $qb->getQuery()->getResult();
 
-        return $this->normalizeVote($votes);
+        return $this->normalizeVote($votes, $detail);
     }
 
-    private function normalizeVote(array $votes): array
+    private function normalizeVote(array $votes, ?bool $detail = null): array
     {
         $normalizedVotes = [];
         foreach ($votes as $vote) {
-            $normalizedVotes[] = [
+            $normVote = [
                 'id'      => $vote->getId(),
                 'user'    => $vote->getUser()->getId(),
                 'project' => $vote->getProject()->getId(),
                 'type'    => $vote->getVoteType()->getId(),
                 'created' => $vote->getCreatedAt()->format('Y-m-d H:i:s'),
             ];
+
+            if ($detail) {
+                $normVote['project'] = [
+                    'id'    => $vote->getProject()->getId(),
+                    'title' => $vote->getProject()->getTitle()
+                ];
+            }
+
+            $normalizedVotes[] = $normVote;
         }
 
         return $normalizedVotes;
