@@ -109,7 +109,8 @@ final class StatisticsHandler implements RequestHandlerInterface
             if ($detail) {
                 $normVote['project'] = [
                     'id'    => $vote->getProject()->getId(),
-                    'title' => $vote->getProject()->getTitle()
+                    'title' => $vote->getProject()->getTitle(),
+                    'price' => $vote->getProject()->getCost(),
                 ];
             }
 
