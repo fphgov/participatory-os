@@ -37,18 +37,20 @@ final class StatisticsHandler implements RequestHandlerInterface
     {
         $phase = $this->phaseService->getCurrentPhase();
 
-        $queryParams = $request->getQueryParams();
-        $phaseParam  = $queryParams['phase'] ?? '';
-        $detailParam = $queryParams['detail'] ?? false;
+        $queryParams   = $request->getQueryParams();
+        $campaignParam = $queryParams['campaign'] ?? '';
+        $detailParam   = $queryParams['detail'] ?? false;
 
-        if ($phaseParam) {
-            $phaseRepository = $this->em->getRepository(Phase::class);
+        $campaign = $phase->getCampaign();
 
-            $phase = $phaseRepository->find($phaseParam);
+        if ($campaignParam) {
+            $campaignRepository = $this->em->getRepository(Campaign::class);
+
+            $campaign = $campaignRepository->find($campaignParam);
         }
 
-        $onlineResult  = $this->getOnlineVoteList($phase, (bool)$detailParam);
-        $offlineResult = $this->getOfflineVoteList($phase, (bool)$detailParam);
+        $onlineResult  = $this->getOnlineVoteList($campaign, (bool)$detailParam);
+        $offlineResult = $this->getOfflineVoteList($campaign, (bool)$detailParam);
 
         return new JsonResponse([
             'data' => [
@@ -58,7 +60,7 @@ final class StatisticsHandler implements RequestHandlerInterface
         ]);
     }
 
-    private function getOnlineVoteList(Phase $phase, ?bool $detail = null): array
+    private function getOnlineVoteList(Campaign $campaign, ?bool $detail = null): array
     {
         $voteRepository = $this->em->getRepository(Vote::class);
 
@@ -68,7 +70,7 @@ final class StatisticsHandler implements RequestHandlerInterface
             ->where('p.campaign = :campaign')
             ->orderBy('p.id', 'DESC')
             ->setParameters([
-                'campaign' => $phase->getCampaign(),
+                'campaign' => $campaign,
             ]);
 
         $votes = $qb->getQuery()->getResult();
@@ -76,7 +78,7 @@ final class StatisticsHandler implements RequestHandlerInterface
         return $this->normalizeVote($votes, $detail);
     }
 
-    private function getOfflineVoteList(Phase $phase, ?bool $detail = null): array
+    private function getOfflineVoteList(Campaign $campaign, ?bool $detail = null): array
     {
         $offlineVoteRepository = $this->em->getRepository(OfflineVote::class);
 
@@ -86,7 +88,7 @@ final class StatisticsHandler implements RequestHandlerInterface
             ->where('p.campaign = :campaign')
             ->orderBy('p.id', 'DESC')
             ->setParameters([
-                'campaign' => $phase->getCampaign(),
+                'campaign' => $campaign,
             ]);
 
         $votes = $qb->getQuery()->getResult();
