@@ -135,7 +135,8 @@ env:
     value: "120"
   - name: APP_SERVICE_FILE
     value: "s3"
-
+  - name: APP_STAT_TOKEN
+    value: ""
 
 imagePullSecrets: []
 nameOverride: ""
