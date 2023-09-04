@@ -143,6 +143,11 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Project\StatisticsHandler::class
     ], 'app.api.project.statistics');
 
+    $app->get('/app/api/vote/statistics', [
+        App\Middleware\StatisticsAccountMiddleware::class,
+        App\Handler\Vote\StatisticsHandler::class
+    ], 'app.api.project.vote.statistics');
+
     $app->get('/app/api/media/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}', [
         App\Handler\Media\GetHandler::class
     ], 'app.api.media.show');

@@ -22,10 +22,11 @@ return [
             Laminas\Db\Adapter\AdapterInterface::class  => Laminas\Db\Adapter\AdapterServiceFactory::class,
             \Doctrine\ORM\EntityManagerInterface::class => \Roave\PsrContainerDoctrine\EntityManagerFactory::class,
 
-            App\Middleware\AuditMiddleware::class    => App\Middleware\AuditMiddlewareFactory::class,
-            App\Middleware\UserMiddleware::class     => App\Middleware\UserMiddlewareFactory::class,
-            App\Middleware\PhaseMiddleware::class    => App\Middleware\PhaseMiddlewareFactory::class,
-            App\Middleware\CampaignMiddleware::class => App\Middleware\CampaignMiddlewareFactory::class,
+            App\Middleware\AuditMiddleware::class             => App\Middleware\AuditMiddlewareFactory::class,
+            App\Middleware\UserMiddleware::class              => App\Middleware\UserMiddlewareFactory::class,
+            App\Middleware\PhaseMiddleware::class             => App\Middleware\PhaseMiddlewareFactory::class,
+            App\Middleware\CampaignMiddleware::class          => App\Middleware\CampaignMiddlewareFactory::class,
+            App\Middleware\StatisticsAccountMiddleware::class => App\Middleware\StatisticsAccountMiddlewareFactory::class,
 
             \Middlewares\Recaptcha::class => App\Middleware\RecaptchaMiddlewareFactory::class,
 

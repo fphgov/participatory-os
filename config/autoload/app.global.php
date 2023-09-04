@@ -20,15 +20,18 @@ return [
             ],
             'force' => (string)getenv('APP_NOTIFICATION_FORCE') === "true",
         ],
-        'pagination' => [
+        'pagination'          => [
             'maxPageSize'        => (int)str_replace(['"', "'"], "", getenv('APP_PAGINATION_MAX_PAGE_SIZE')),
             'maxPageSizeForVote' => (int)str_replace(['"', "'"], "", getenv('APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE')),
         ],
-        'paths' => [
+        'paths'               => [
             'files' => getenv('APP_UPLOAD'),
         ],
-        'service' => [
+        'service'             => [
             'file' => getenv('APP_SERVICE_FILE'),
-        ]
+        ],
+        'stat'                => [
+            'token' => getenv('APP_STAT_TOKEN')
+        ],
     ],
 ];
