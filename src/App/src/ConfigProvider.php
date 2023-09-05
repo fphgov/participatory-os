@@ -129,6 +129,7 @@ class ConfigProvider
                 Service\MailServiceInterface::class           => Service\MailServiceFactory::class,
                 Service\ImplementationServiceInterface::class => Service\ImplementationServiceFactory::class,
                 Model\IdeaExportModel::class                  => Model\IdeaExportModelFactory::class,
+                Model\VoteExportModel::class                  => Model\VoteExportModelFactory::class,
                 Helper\MailContentHelper::class               => Helper\MailContentHelperFactory::class,
                 Helper\MailContentRawHelper::class            => Helper\MailContentRawHelperFactory::class,
             ],
