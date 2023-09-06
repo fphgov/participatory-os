@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Handler\Idea;
 
+use App\Exception\IdeaNotFoundException;
+use App\Exception\WorkflowStateExtraNotFoundException;
+use App\Exception\WorkflowStateNotFoundException;
 use App\Middleware\UserMiddleware;
 use App\Service\IdeaServiceInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Log\Logger;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

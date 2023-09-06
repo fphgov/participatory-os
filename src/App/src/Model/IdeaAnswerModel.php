@@ -13,7 +13,7 @@ final class IdeaAnswerModel
 
     public function __construct(array $ideaAnswer)
     {
-        $this->id                   = $ideaAnswer['A'];
+        $this->id                   = (int) $ideaAnswer['A'];
         $this->answer               = (string) $ideaAnswer['B'];
         $this->workflowStateId      = (int) $ideaAnswer['C'];
         $this->workflowStateExtraId = $ideaAnswer['D'];
