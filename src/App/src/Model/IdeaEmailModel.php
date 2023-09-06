@@ -16,7 +16,7 @@ final class IdeaEmailModel implements IdeaEmailModelInterface
 
     public function __construct(array $ideaEmail)
     {
-        $this->id              = $ideaEmail['A'];
+        $this->id              = (int) $ideaEmail['A'];
         $this->emailContent    = new EmailContentModel((string) $ideaEmail['B'], (string) $ideaEmail['C'], (string) $ideaEmail['D']);
         $this->workflowStateId = (int) $ideaEmail['E'];
 
