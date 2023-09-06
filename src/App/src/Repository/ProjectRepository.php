@@ -120,7 +120,7 @@ final class ProjectRepository extends EntityRepository
         }
 
         if ($voteableProjectFilterModel->getTag()) {
-            $qb->andWhere('t.id = :tags');
+            $qb->andWhere('t.id IN (:tags)');
             $qb->setParameter('tags', $voteableProjectFilterModel->getTag());
         }
 

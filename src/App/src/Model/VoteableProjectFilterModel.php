@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use function explode;
+
 class VoteableProjectFilterModel
 {
     private string $query = '';
-    private string $tag = '';
+    private array $tag = [];
     private string $theme = '';
     private string|int $location = '';
     private int $page = 1;
@@ -24,14 +26,20 @@ class VoteableProjectFilterModel
         $this->query = $query;
     }
 
-    public function getTag(): string
+    public function getTag(): array
     {
         return $this->tag;
     }
 
     public function setTag(string $tag)
     {
-        $this->tag = $tag;
+        $tags = explode(',', $tag);
+
+        if (isset($tags[0]) && $tags[0] === "") {
+            return [];
+        }
+
+        $this->tag = $tags;
     }
 
     public function getTheme(): string
