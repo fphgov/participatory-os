@@ -87,7 +87,7 @@ class TokenHandler implements RequestHandlerInterface
     private function badAuthentication(): JsonResponse
     {
         return new JsonResponse([
-            'message' => 'Hibás bejelentkezési adatok vagy inaktív fiók',
+            'message' => 'Hibás bejelentkezési adatok vagy inaktív fiók. Próbálj jelszó emlékeztetőt kérni, ha nem tudsz belépni.',
         ], 400);
     }
 
