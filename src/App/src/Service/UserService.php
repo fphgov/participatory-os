@@ -202,6 +202,13 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
+    public function sendReminderNotification(UserInterface $user): void
+    {
+        $this->sendReminderEmail($user);
+
+        $this->em->flush();
+    }
+
     public function registration(array $filteredParams): UserInterface
     {
         $date = new DateTime();
@@ -322,6 +329,17 @@ final class UserService implements UserServiceInterface
         ];
 
         $this->mailService->send('user-prize', $tplData, $user);
+    }
+
+    private function sendReminderEmail(UserInterface $user): void
+    {
+        $tplData = [
+            'firstname'        => $user->getFirstname(),
+            'lastname'         => $user->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+        ];
+
+        $this->mailService->send('vote-reminder', $tplData, $user);
     }
 
     private function forgotPasswordMail(UserInterface $user): void
