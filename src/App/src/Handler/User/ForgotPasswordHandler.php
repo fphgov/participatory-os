@@ -16,7 +16,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class ForgotPasswordHandler implements RequestHandlerInterface
 {
-    private const RES_MESSAGE       = 'Amennyiben a rendszerünkben szerepel a fiók és ez aktív, úgy a megadott e-mailre kiküldtük a jelszó emlékeztetőt.';
+    private const RES_MESSAGE       = 'Amennyiben a rendszerünkben szerepel a fiók és ez aktív, úgy a megadott e-mailre kiküldtük a jelszó emlékeztetőt. Ha regisztrált fiókod van, mégsem kapsz jelszóemlékeztetőt, lehetséges, hogy másik e-mail címmel regisztráltál vagy régi fiókod törlődött. Kérjük, regisztrálj újra!';
     private const RES_ERROR_MESSAGE = 'Váratlan hiba történt. A problémát rögzítettük és próbáljuk a lehető legrövidebb időn belül javítani.';
 
     /** @var UserServiceInterface **/
