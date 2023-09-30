@@ -53,6 +53,7 @@ class ConfigProvider
                 Handler\Dashboard\ChangeHandler::class        => Handler\Dashboard\ChangeHandlerFactory::class,
                 Handler\User\ListHandler::class               => Handler\User\ListHandlerFactory::class,
                 Handler\User\GetHandler::class                => Handler\User\GetHandlerFactory::class,
+                Handler\User\GetVoteHandler::class            => Handler\User\GetVoteHandlerFactory::class,
                 Handler\User\ActivateHandler::class           => Handler\User\ActivateHandlerFactory::class,
                 Handler\User\ConfirmationHandler::class       => Handler\User\ConfirmationHandlerFactory::class,
                 Handler\User\ForgotPasswordHandler::class     => Handler\User\ForgotPasswordHandlerFactory::class,
