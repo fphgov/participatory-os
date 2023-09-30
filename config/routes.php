@@ -60,6 +60,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\User\IdeaHandler::class
     ], 'app.api.user.idea');
 
+    $app->get('/app/api/user/vote', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Middleware\CampaignMiddleware::class,
+        App\Handler\User\GetVoteHandler::class
+    ], 'app.api.user.vote.get');
+
     $app->post('/app/api/user/vote', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
