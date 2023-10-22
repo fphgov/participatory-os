@@ -25,6 +25,7 @@ use App\Model\IdeaEmailModel;
 use App\Model\IdeaEmailModelInterface;
 use App\Service\MailServiceInterface;
 use App\Service\PhaseServiceInterface;
+use App\Service\MediaServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -42,43 +43,24 @@ use function wordwrap;
 
 final class IdeaService implements IdeaServiceInterface
 {
-    /** @var array */
-    private $config;
-
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var EntityRepository */
-    private $ideaRepository;
-
-    /** @var EntityRepository */
-    private $campaignThemeRepository;
-
-    /** @var EntityRepository */
-    private $campaignLocationRepository;
-
-    /** @var EntityRepository */
-    private $workflowStateRepository;
-
-    /** @var EntityRepository */
-    private $workflowStateExtraRepository;
-
-    /** @var PhaseServiceInterface */
-    private $phaseService;
-
-    /** @var MailServiceInterface */
-    private $mailService;
+    private EntityRepository $ideaRepository;
+    private EntityRepository $campaignThemeRepository;
+    private EntityRepository $campaignLocationRepository;
+    private EntityRepository $workflowStateRepository;
+    private EntityRepository $workflowStateExtraRepository;
 
     public function __construct(
-        array $config,
-        EntityManagerInterface $em,
-        PhaseServiceInterface $phaseService,
-        MailServiceInterface $mailService
+        private array $config,
+        private EntityManagerInterface $em,
+        private PhaseServiceInterface $phaseService,
+        private MailServiceInterface $mailService,
+        private MediaServiceInterface $mediaService
     ) {
         $this->config                       = $config;
         $this->em                           = $em;
         $this->phaseService                 = $phaseService;
         $this->mailService                  = $mailService;
+        $this->mediaService                 = $mediaService;
         $this->ideaRepository               = $this->em->getRepository(Idea::class);
         $this->campaignThemeRepository      = $this->em->getRepository(CampaignTheme::class);
         $this->campaignLocationRepository   = $this->em->getRepository(CampaignLocation::class);
@@ -251,14 +233,19 @@ final class IdeaService implements IdeaServiceInterface
         return $this->ideaRepository;
     }
 
-    private function addAttachments(IdeaInterface $idea, array $files, DateTime $date): void
-    {
+    private function addAttachments(
+        Idea $idea,
+        array $files,
+        DateTime $date
+    ): void {
         foreach ($files as $file) {
             if (! $file instanceof UploadedFileInterface) {
                 continue;
             }
 
             $filename = basename($file->getStream()->getMetaData('uri'));
+
+            $this->mediaService->putFile($file);
 
             $media = new Media();
             $media->setFilename($filename);

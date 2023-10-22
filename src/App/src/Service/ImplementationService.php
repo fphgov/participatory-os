@@ -9,6 +9,7 @@ use App\Entity\ImplementationInterface;
 use App\Entity\Media;
 use App\Entity\Project;
 use App\Entity\UserInterface;
+use App\Service\MediaServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -20,21 +21,13 @@ use function basename;
 
 final class ImplementationService implements ImplementationServiceInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var EntityRepository */
-    private $implementationRepository;
-
-    /** @var EntityRepository */
-    private $projectRepository;
-
-    /** @var Logger */
-    private $audit;
+    private EntityRepository $implementationRepository;
+    private EntityRepository $projectRepository;
 
     public function __construct(
-        EntityManagerInterface $em,
-        Logger $audit
+        private EntityManagerInterface $em,
+        private Logger $audit,
+        private MediaServiceInterface $mediaService
     ) {
         $this->em                       = $em;
         $this->implementationRepository = $this->em->getRepository(Implementation::class);
@@ -127,6 +120,8 @@ final class ImplementationService implements ImplementationServiceInterface
     private function addAttachment(ImplementationInterface $implementation, UploadedFile $file, DateTime $date): void
     {
         $filename = basename($file->getStream()->getMetaData('uri'));
+
+        $this->mediaService->putFile($file);
 
         $media = new Media();
         $media->setFilename($filename);

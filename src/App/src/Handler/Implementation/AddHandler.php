@@ -17,12 +17,9 @@ use function array_merge_recursive;
 
 final class AddHandler implements RequestHandlerInterface
 {
-    /** @var ImplementationService */
-    private $implementationService;
-
     public function __construct(
-        ImplementationService $implementationService,
-        ImplementationFilter $inputfilter
+        private ImplementationService $implementationService,
+        private ImplementationFilter $inputfilter
     ) {
         $this->implementationService = $implementationService;
         $this->inputfilter           = $inputfilter;

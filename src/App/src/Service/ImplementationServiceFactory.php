@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Service\MediaServiceInterface;
 use App\Middleware\AuditMiddleware;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
@@ -18,6 +19,7 @@ final class ImplementationServiceFactory
         return new ImplementationService(
             $container->get(EntityManagerInterface::class),
             $container->get(AuditMiddleware::class)->getLogger(),
+            $container->get(MediaServiceInterface::class)
         );
     }
 }

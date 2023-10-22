@@ -10,6 +10,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 final class DownloadHandler implements RequestHandlerInterface
 {
@@ -32,9 +33,13 @@ final class DownloadHandler implements RequestHandlerInterface
             ], 404);
         }
 
-        $stream = $this->mediaService->getMediaStream($media);
+        try {
+            $mediaStream = $this->mediaService->getMediaStream($media);
+        } catch (Exception $e) {
+            return new Response('php://memory', 404);
+        }
 
-        return new Response($stream, 200, [
+        return new Response($mediaStream, 200, [
             'Content-Type'              => $media->getType(),
             'Content-Disposition'       => 'attachment; filename="' . $media->getFilename() . '"',
             'Content-Transfer-Encoding' => 'Binary',
@@ -42,7 +47,7 @@ final class DownloadHandler implements RequestHandlerInterface
             'Pragma'                    => 'public',
             'Expires'                   => '0',
             'Cache-Control'             => 'must-revalidate',
-            'Content-Length'            => $stream->getSize(),
+            'Content-Length'            => $mediaStream->getSize(),
         ]);
     }
 }
