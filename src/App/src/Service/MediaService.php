@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Media;
 use App\Entity\MediaInterface;
 use Aws\ResultInterface;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
@@ -49,13 +50,31 @@ final class MediaService implements MediaServiceInterface
         return new Stream($filePath);
     }
 
+    public function putFileWithStore(
+        UploadedFile $file,
+        bool $useClientFilename = false
+    ): Media {
+        $filename = $this->getFilename($file, $useClientFilename);
+        $date = new DateTime();
+
+        $this->putFile($file, $useClientFilename);
+
+        $media = new Media();
+        $media->setFilename($filename);
+        $media->setType($file->getClientMediaType());
+        $media->setCreatedAt($date);
+        $media->setUpdatedAt($date);
+
+        $this->em->persist($media);
+
+        return $media;
+    }
+
     public function putFile(
         UploadedFile $file,
         bool $useClientFilename = false
     ): void {
-        $filename = $useClientFilename ?
-            $file->getClientFilename() :
-            basename($file->getStream()->getMetadata()['uri']);
+        $filename = $this->getFilename($file, $useClientFilename);
 
         $this->objectStorage->getClient()->putObject([
             'Bucket'      => self::BUCKET_NAME,
@@ -65,6 +84,17 @@ final class MediaService implements MediaServiceInterface
         ]);
 
         unlink($file->getStream()->getMetadata()['uri']);
+    }
+
+    private function getFilename(
+        UploadedFile $file,
+        bool $useClientFilename = false
+    ): string {
+        $filename = $useClientFilename ?
+            $file->getClientFilename() :
+            basename($file->getStream()->getMetadata()['uri']);
+
+        return $filename;
     }
 
     public function getFile(string $key): ResultInterface

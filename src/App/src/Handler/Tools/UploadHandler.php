@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 use function array_merge_recursive;
-use function basename;
 
 final class UploadHandler implements RequestHandlerInterface
 {
@@ -39,14 +38,13 @@ final class UploadHandler implements RequestHandlerInterface
             ], 422);
         }
 
-        $file     = $this->inputFilter->getValues()['file'];
-        $filename = basename($file->getStream()->getMetadata()['uri']);
+        $file = $this->inputFilter->getValues()['file'];
 
-        $this->mediaService->putFile($file);
+        $media = $this->mediaService->putFileWithStore($file);
 
         return new JsonResponse([
             'data' => [
-                'filename' => $filename,
+                'filename' => $media->getId(),
             ],
         ]);
     }

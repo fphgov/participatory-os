@@ -15,7 +15,9 @@ interface MediaServiceInterface
 
     public function getMediaStream(MediaInterface $media): StreamInterface;
 
-    public function putFile(UploadedFile $file): void;
+    public function putFile(UploadedFile $file, bool $useClientFilename = false): void;
+
+    public function putFileWithStore(UploadedFile $file, bool $useClientFilename = false): MediaInterface;
 
     public function getFile(string $key): ResultInterface;
 }
