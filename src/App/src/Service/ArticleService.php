@@ -10,6 +10,7 @@ use App\Entity\ArticleCategory;
 use App\Entity\ArticleInterface;
 use App\Entity\ArticleStatus;
 use App\Entity\UserInterface;
+use App\Service\MediaServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -21,24 +22,14 @@ use function basename;
 
 final class ArticleService implements ArticleServiceInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var EntityRepository */
-    private $postRepository;
-
-    /** @var EntityRepository */
-    private $postCategoryRepository;
-
-    /** @var EntityRepository */
-    private $postStatusRepository;
-
-    /** @var Logger */
-    private $audit;
+    private EntityRepository $postRepository;
+    private EntityRepository $postCategoryRepository;
+    private EntityRepository $postStatusRepository;
 
     public function __construct(
-        EntityManagerInterface $em,
-        Logger $audit
+        private EntityManagerInterface $em,
+        private Logger $audit,
+        private MediaServiceInterface $mediaService
     ) {
         $this->em                     = $em;
         $this->postRepository         = $this->em->getRepository(Article::class);
@@ -148,6 +139,8 @@ final class ArticleService implements ArticleServiceInterface
     private function addAttachment(ArticleInterface $post, UploadedFile $file, DateTime $date): void
     {
         $filename = basename($file->getStream()->getMetaData('uri'));
+
+        $this->mediaService->putFile($file);
 
         $media = new Media();
         $media->setFilename($filename);

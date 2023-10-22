@@ -63,6 +63,10 @@ interface IdeaInterface extends EntityInterface
 
     public function getWorkflowState(): WorkflowState;
 
+    public function setWorkflowStateExtra(?WorkflowStateExtra $workflowStateExtra = null): void;
+
+    public function getWorkflowStateExtra(): ?WorkflowStateExtra;
+
     public function setTitle(string $title): void;
 
     public function getTitle(): string;

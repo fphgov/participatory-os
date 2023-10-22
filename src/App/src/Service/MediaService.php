@@ -12,6 +12,9 @@ use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\StreamInterface;
 
+use function basename;
+use function unlink;
+
 final class MediaService implements MediaServiceInterface
 {
     const BUCKET_NAME = 'shared';
@@ -46,14 +49,22 @@ final class MediaService implements MediaServiceInterface
         return new Stream($filePath);
     }
 
-    public function putFile(UploadedFile $file): void
-    {
-       $this->objectStorage->getClient()->putObject([
+    public function putFile(
+        UploadedFile $file,
+        bool $useClientFilename = false
+    ): void {
+        $filename = $useClientFilename ?
+            $file->getClientFilename() :
+            basename($file->getStream()->getMetadata()['uri']);
+
+        $this->objectStorage->getClient()->putObject([
             'Bucket'      => self::BUCKET_NAME,
-            'Key'         => $file->getClientFilename(),
+            'Key'         => $filename,
             'Body'        => $file->getStream(),
             'ContentType' => $file->getClientMediaType()
         ]);
+
+        unlink($file->getStream()->getMetadata()['uri']);
     }
 
     public function getFile(string $key): ResultInterface

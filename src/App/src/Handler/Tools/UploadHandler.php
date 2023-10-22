@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Tools;
 
 use App\InputFilter\AdminUploadFileFilter;
+use App\Service\MediaServiceInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,13 +16,12 @@ use function basename;
 
 final class UploadHandler implements RequestHandlerInterface
 {
-    /** @var AdminUploadFileFilter */
-    private $inputFilter;
-
     public function __construct(
-        AdminUploadFileFilter $inputFilter
+        private AdminUploadFileFilter $inputFilter,
+        private MediaServiceInterface $mediaService
     ) {
-        $this->inputFilter = $inputFilter;
+        $this->inputFilter  = $inputFilter;
+        $this->mediaService = $mediaService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -39,11 +39,14 @@ final class UploadHandler implements RequestHandlerInterface
             ], 422);
         }
 
-        $file = $this->inputFilter->getValues()['file'];
+        $file     = $this->inputFilter->getValues()['file'];
+        $filename = basename($file->getStream()->getMetadata()['uri']);
+
+        $this->mediaService->putFile($file);
 
         return new JsonResponse([
             'data' => [
-                'filename' => basename($file->getStream()->getMetadata()['uri']),
+                'filename' => $filename,
             ],
         ]);
     }

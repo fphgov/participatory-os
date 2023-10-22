@@ -14,7 +14,7 @@ use App\Entity\UserInterface;
 use App\Entity\WorkflowState;
 use App\Entity\WorkflowStateInterface;
 use App\Exception\NoHasPhaseCategoryException;
-use App\Interfaces\EntityInterface;
+use App\Service\MediaServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -28,25 +28,21 @@ use function str_replace;
 
 final class ProjectService implements ProjectServiceInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var EntityRepository */
-    private $projectRepository;
-
-    /** @var EntityRepository */
-    private $campaignThemeRepository;
-
-    /** @var EntityRepository */
-    private $workflowStateRepository;
+    private EntityRepository $projectRepository;
+    private EntityRepository $campaignThemeRepository;
+    private EntityRepository $workflowStateRepository;
+    private EntityRepository $campaignLocationRepository;
 
     public function __construct(
-        EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private MediaServiceInterface $mediaService
     ) {
-        $this->em                      = $em;
-        $this->campaignThemeRepository = $this->em->getRepository(CampaignTheme::class);
-        $this->projectRepository       = $this->em->getRepository(Project::class);
-        $this->workflowStateRepository = $this->em->getRepository(WorkflowState::class);
+        $this->em                         = $em;
+        $this->mediaService               = $mediaService;
+        $this->campaignThemeRepository    = $this->em->getRepository(CampaignTheme::class);
+        $this->projectRepository          = $this->em->getRepository(Project::class);
+        $this->workflowStateRepository    = $this->em->getRepository(WorkflowState::class);
+        $this->campaignLocationRepository = $this->em->getRepository(CampaignLocation::class);
     }
 
     public function addProject(
@@ -65,7 +61,6 @@ final class ProjectService implements ProjectServiceInterface
             throw new NoHasPhaseCategoryException($filteredParams['theme']);
         }
 
-        $project->setSubmitter($submitter);
         $project->setTitle($filteredParams['title']);
         $project->setDescription($filteredParams['description']);
         $project->setSolution($filteredParams['solution']);
@@ -187,12 +182,17 @@ final class ProjectService implements ProjectServiceInterface
         $this->em->flush();
     }
 
-    private function addAttachments(EntityInterface $entity, array $files, DateTime $date): void
-    {
+    private function addAttachments(
+        Implementation|Project $entity,
+        array $files,
+        DateTime $date
+    ): void {
         foreach ($files as $file) {
             if (! $file instanceof UploadedFileInterface) {
                 continue;
             }
+
+            $this->mediaService->putFile($file);
 
             $filename = basename($file->getStream()->getMetaData('uri'));
 
