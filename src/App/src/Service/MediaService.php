@@ -66,6 +66,7 @@ final class MediaService implements MediaServiceInterface
         $media->setUpdatedAt($date);
 
         $this->em->persist($media);
+        $this->em->flush();
 
         return $media;
     }
