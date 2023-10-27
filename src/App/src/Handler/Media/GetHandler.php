@@ -52,6 +52,13 @@ final class GetHandler implements RequestHandlerInterface
             return new Response('php://memory', 404);
         }
 
-        return new Response($mediaStream);
+        return new Response($mediaStream, 200, [
+            'Content-Type'              => $media->getType(),
+            'Content-Transfer-Encoding' => 'Binary',
+            'Pragma'                    => 'public',
+            'Expires'                   => '0',
+            'Cache-Control'             => 'must-revalidate',
+            'Content-Length'            => $mediaStream->getSize(),
+        ]);
     }
 }
