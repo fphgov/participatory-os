@@ -44,7 +44,7 @@ final class UploadHandler implements RequestHandlerInterface
 
         return new JsonResponse([
             'data' => [
-                'filename' => $media->getId(),
+                'filename' => (string)$media->getId(),
             ],
         ]);
     }
