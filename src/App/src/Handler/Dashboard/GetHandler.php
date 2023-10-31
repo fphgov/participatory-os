@@ -14,6 +14,7 @@ use App\Repository\OfflineVoteRepository;
 use App\Repository\UserRepository;
 use App\Repository\VoteRepository;
 use App\Service\SettingServiceInterface;
+use App\Service\PhaseServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -22,30 +23,19 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class GetHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var SettingServiceInterface **/
-    private $settingService;
-
-    /** @var IdeaRepository **/
-    private $ideaRepository;
-
-    /** @var UserRepository **/
-    private $userRepository;
-
-    /** @var VoteRepository **/
-    private $voteRepository;
-
-    /** @var OfflineVoteRepository **/
-    private $offlineVoteRepository;
+    private IdeaRepository $ideaRepository;
+    private UserRepository $userRepository;
+    private VoteRepository $voteRepository;
+    private OfflineVoteRepository $offlineVoteRepository;
 
     public function __construct(
-        EntityManagerInterface $em,
-        SettingServiceInterface $settingService
+        private EntityManagerInterface $em,
+        private SettingServiceInterface $settingService,
+        private PhaseServiceInterface $phaseService
     ) {
         $this->em                    = $em;
         $this->settingService        = $settingService;
+        $this->phaseService          = $phaseService;
         $this->ideaRepository        = $this->em->getRepository(Idea::class);
         $this->userRepository        = $this->em->getRepository(User::class);
         $this->voteRepository        = $this->em->getRepository(Vote::class);
@@ -54,6 +44,7 @@ final class GetHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $phase   = $this->phaseService->getCurrentPhase();
         $setting = $this->settingService->getRepository()->find(1);
 
         $countIdeas          = $this->ideaRepository->count([]);
@@ -61,18 +52,24 @@ final class GetHandler implements RequestHandlerInterface
         $countIdeasRejected  = $this->countRejected();
 
         $countUsers        = $this->userRepository->count([]);
-        $countVotes        = $this->voteRepository->count([]);
-        $countOfflineVotes = $this->offlineVoteRepository->count([]);
+        $countVotes        = $this->voteRepository->numberOfVotes($phase->getCampaign()->getId());
+        $countOfflineVotes = $this->offlineVoteRepository->numberOfVotes($phase->getCampaign()->getId());
 
         return new JsonResponse([
             'settings' => $setting,
+            'phase'    => [
+                'title' => $phase->getTitle(),
+            ],
+            'campaign' => [
+                'title' => $phase->getCampaign()->getShortTitle(),
+            ],
             'infos'    => [
                 'countIdeas'          => $countIdeas,
                 'countIdeasPublished' => $countIdeasPublished,
                 'countIdeasRejected'  => $countIdeasRejected,
                 'countUsers'          => $countUsers,
-                'countVotes'          => $countVotes / 3,
-                'countOfflineVotes'   => $countOfflineVotes / 3,
+                'countVotes'          => $countVotes,
+                'countOfflineVotes'   => $countOfflineVotes,
             ],
         ]);
     }
