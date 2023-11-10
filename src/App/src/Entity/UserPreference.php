@@ -36,7 +36,7 @@ class UserPreference implements UserPreferenceInterface
     private string $hearAbout;
 
     /** @ORM\Column(name="phone", type="string") */
-    private bool $phone;
+    private string $phone;
 
     /** @ORM\Column(name="privacy", type="boolean") */
     private bool $privacy;
