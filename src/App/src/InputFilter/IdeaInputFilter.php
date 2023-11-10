@@ -253,7 +253,7 @@ class IdeaInputFilter extends InputFilter
 
         $this->add([
             'name'        => 'theme',
-            'allow_empty' => false,
+            'allow_empty' => true,
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
@@ -295,6 +295,18 @@ class IdeaInputFilter extends InputFilter
             ],
             'filters'     => [
                 new Filter\ToInt(),
+            ],
+        ]);
+
+        $this->add([
+            'name'        => 'cost_condition',
+            'allow_empty' => true,
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+                new Filter\Boolean([
+                    'type' => Filter\Boolean::TYPE_ALL,
+                ]),
             ],
         ]);
 

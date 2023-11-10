@@ -82,10 +82,18 @@ final class IdeaService implements IdeaServiceInterface
 
         $idea = new Idea();
 
-        $theme = $this->campaignThemeRepository->findOneBy([
-            'campaign' => $phase->getCampaign(),
-            'id'       => $filteredParams['theme'],
-        ]);
+        $theme = null;
+
+        if (isset($filteredParams['theme'])) {
+            $theme = $this->campaignThemeRepository->findOneBy([
+                'campaign' => $phase->getCampaign(),
+                'id'       => $filteredParams['theme'],
+            ]);
+        } else {
+            $theme = $this->campaignThemeRepository->findOneBy([
+                'campaign' => $phase->getCampaign(),
+            ]);
+        }
 
         if (! $theme instanceof CampaignTheme) {
             throw new NoHasPhaseCategoryException($filteredParams['theme']);
@@ -104,6 +112,14 @@ final class IdeaService implements IdeaServiceInterface
         $idea->setWorkflowState(
             $this->em->getReference(WorkflowState::class, WorkflowStateInterface::STATUS_RECEIVED)
         );
+
+        if (isset($filteredParams['cost_condition'])) {
+            $idea->setCostCondition((bool)$filteredParams['cost_condition']);
+        }
+
+        if (isset($filteredParams['phone'])) {
+            $idea->getSubmitter()->getUserPreference()->setPhone($filteredParams['phone']);
+        }
 
         if (isset($filteredParams['location']) && ! empty($filteredParams['location'])) {
             parse_str($filteredParams['location'], $suggestion);
@@ -187,6 +203,10 @@ final class IdeaService implements IdeaServiceInterface
 
         if (isset($filteredParams['cost'])) {
             $idea->setCost(is_numeric($filteredParams['cost']) ? $filteredParams['cost'] : null);
+        }
+
+        if (isset($filteredParams['cost_condition'])) {
+            $idea->setDescription($filteredParams['cost_condition']);
         }
 
         if (isset($filteredParams['location_description'])) {

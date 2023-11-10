@@ -35,6 +35,9 @@ class UserPreference implements UserPreferenceInterface
     /** @ORM\Column(name="hear_about", type="string") */
     private string $hearAbout;
 
+    /** @ORM\Column(name="phone", type="string") */
+    private bool $phone;
+
     /** @ORM\Column(name="privacy", type="boolean") */
     private bool $privacy;
 
@@ -98,6 +101,16 @@ class UserPreference implements UserPreferenceInterface
     public function getHearAbout(): string
     {
         return $this->hearAbout;
+    }
+
+    public function setPhone(string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    public function getPhone(): string
+    {
+        return $this->phone;
     }
 
     public function setPrivacy(bool $privacy): void
