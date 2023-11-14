@@ -39,9 +39,9 @@ interface UserPreferenceInterface extends EntityInterface
 
     public function getHearAbout(): string;
 
-    public function setPhone(string $phone): void;
+    public function setPhone(?string $phone = null): void;
 
-    public function getPhone(): string;
+    public function getPhone(): ?string;
 
     public function setPrize(bool $prize): void;
 
