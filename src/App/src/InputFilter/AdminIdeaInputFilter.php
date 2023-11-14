@@ -102,7 +102,7 @@ class AdminIdeaInputFilter extends IdeaInputFilter
                         Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Leírás" mezőnek mint: %max%',
                         Validator\StringLength::INVALID   => 'Leírás: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
-                    'min'      => 200,
+                    'min'      => 100,
                     'max'      => 4000,
                 ]),
             ],
