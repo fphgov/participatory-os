@@ -165,6 +165,14 @@ class Idea implements IdeaInterface
     private $cost;
 
     /**
+     * @ORM\Column(name="cost_condition", type="boolean", nullable=true)
+     *
+     * @Groups({"list", "detail", "full_detail"})
+     * @var bool|null
+     */
+    private $costCondition;
+
+    /**
      * @ORM\Column(name="latitude", type="float", nullable=true)
      *
      * @Groups({"full_detail"})
@@ -417,6 +425,17 @@ class Idea implements IdeaInterface
     public function getCost(): ?int
     {
         return $this->cost !== null ? (int) $this->cost : null;
+    }
+
+    /** @param bool|null $costCondition **/
+    public function setCostCondition($costCondition = null): void
+    {
+        $this->costCondition = $costCondition;
+    }
+
+    public function getCostCondition(): ?bool
+    {
+        return $this->costCondition;
     }
 
     public function getShortDescription(): string

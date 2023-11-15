@@ -34,15 +34,15 @@ class IdeaInputFilter extends InputFilter
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'Az "Ötlet megnevezése" mező kitöltése kötelező',
-                        Validator\NotEmpty::INVALID  => 'Ötlet megnevezése: Hibás mező tipus',
+                        Validator\NotEmpty::IS_EMPTY => 'A "Nevezd el az ötleted!" mező kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Nevezd el az ötleted!: Hibás mező tipus',
                     ],
                 ]),
                 new Validator\StringLength([
                     'messages' => [
-                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia az "Ötlet megnevezése" mezőnek',
-                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia az "Ötlet megnevezése" mezőnek mint: %max%',
-                        Validator\StringLength::INVALID   => 'Ötlet megnevezése: Hibás mező tipus. Csak szöveg fogadható el.',
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia az "Nevezd el az ötleted!" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia az "Nevezd el az ötleted!" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Nevezd el az ötleted!: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
                     'min'      => 4,
                     'max'      => 100,
@@ -60,18 +60,18 @@ class IdeaInputFilter extends InputFilter
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'A "Min szeretnél változtatni?" kitöltése kötelező',
-                        Validator\NotEmpty::INVALID  => 'Min szeretnél változtatni?: Hibás mező tipus',
+                        Validator\NotEmpty::IS_EMPTY => 'A "Miért jó, ha megvalósul ötleted?" kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Miért jó, ha megvalósul ötleted?: Hibás mező tipus',
                     ],
                 ]),
                 new Validator\StringLength([
                     'messages' => [
-                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Min szeretnél változtatni?" mezőnek',
-                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Min szeretnél változtatni?" mezőnek mint: %max%',
-                        Validator\StringLength::INVALID   => 'Min szeretnél változtatni?: Hibás mező tipus. Csak szöveg fogadható el.',
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Miért jó, ha megvalósul ötleted?" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Miért jó, ha megvalósul ötleted?" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Miért jó, ha megvalósul ötleted?: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
                     'min'      => 20,
-                    'max'      => 250,
+                    'max'      => 1000,
                 ]),
             ],
             'filters'     => [
@@ -86,17 +86,17 @@ class IdeaInputFilter extends InputFilter
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'A "Leírás" kitöltése kötelező',
-                        Validator\NotEmpty::INVALID  => 'Leírás: Hibás mező tipus',
+                        Validator\NotEmpty::IS_EMPTY => 'A "Mit valósítson meg a főváros?" kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Mit valósítson meg a főváros?: Hibás mező tipus',
                     ],
                 ]),
                 new Validator\StringLength([
                     'messages' => [
-                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Leírás" mezőnek',
-                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Leírás" mezőnek mint: %max%',
-                        Validator\StringLength::INVALID   => 'Leírás: Hibás mező tipus. Csak szöveg fogadható el.',
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Mit valósítson meg a főváros?" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Mit valósítson meg a főváros?" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Mit valósítson meg a főváros?: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
-                    'min'      => 200,
+                    'min'      => 100,
                     'max'      => 1000,
                 ]),
             ],
@@ -253,7 +253,7 @@ class IdeaInputFilter extends InputFilter
 
         $this->add([
             'name'        => 'theme',
-            'allow_empty' => false,
+            'allow_empty' => true,
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
@@ -295,6 +295,18 @@ class IdeaInputFilter extends InputFilter
             ],
             'filters'     => [
                 new Filter\ToInt(),
+            ],
+        ]);
+
+        $this->add([
+            'name'        => 'cost_condition',
+            'allow_empty' => true,
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+                new Filter\Boolean([
+                    'type' => Filter\Boolean::TYPE_ALL,
+                ]),
             ],
         ]);
 
