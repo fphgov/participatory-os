@@ -267,6 +267,14 @@ class UserRegistrationFilter extends InputFilter
                         IsInt::NOT_INT_STRICT => 'Csak egész számérték adható meg',
                     ]
                 ]),
+                new Validator\Regex([
+                    'pattern' => '/^1/',
+                    'messages' => [
+                        Validator\Regex::INVALID   => 'A megadott típus érvénytelen, nem várt paraméter',
+                        Validator\Regex::NOT_MATCH => "Csak budapesti irányítószám adható meg",
+                        Validator\Regex::ERROROUS  => "Szerver hiba az ellenőrzés során",
+                    ]
+                ]),
             ],
             'filters'     => [
                 new Filter\StringTrim(),
