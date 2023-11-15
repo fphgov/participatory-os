@@ -220,6 +220,7 @@ final class UserService implements UserServiceInterface
         $userPreference->setUser($user);
         $userPreference->setBirthyear((int) $filteredParams['birthyear']);
         $userPreference->setPostalCode((string) $filteredParams['postal_code']);
+        $userPreference->setPostalCodeType((string) $filteredParams['postal_code_type']);
         $userPreference->setLiveInCity((bool) $filteredParams['live_in_city']);
         $userPreference->setHearAbout($filteredParams['hear_about']);
         $userPreference->setPrivacy((bool) $filteredParams['privacy']);

@@ -275,6 +275,32 @@ class UserRegistrationFilter extends InputFilter
         ]);
 
         $this->add([
+            'name'        => 'postal_code_type',
+            'allow_empty' => false,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'Kötelező a mező kitöltése',
+                        Validator\NotEmpty::INVALID  => 'Hibás mező tipus',
+                    ],
+                ]),
+                new Validator\StringLength([
+                    'messages' => [
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Hibás mező tipus. Csak szöveg fogadható el',
+                    ],
+                    'min'      => 1,
+                    'max'      => 255,
+                ]),
+            ],
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+            ],
+        ]);
+
+        $this->add([
             'name'        => 'live_in_city',
             'allow_empty' => false,
             'validators'  => [

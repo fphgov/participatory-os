@@ -29,8 +29,11 @@ class UserPreference implements UserPreferenceInterface
     /** @ORM\Column(name="live_in_city", type="boolean") */
     private bool $liveInCity = false;
 
-    /** @ORM\Column(name="postal_code", type="text", length=4, nullable=true) */
+    /** @ORM\Column(name="postal_code", type="string", length=4, nullable=true) */
     private ?string $postalCode;
+
+    /** @ORM\Column(name="postal_code_type", type="string", nullable=true) */
+    private ?string $postalCodeType;
 
     /** @ORM\Column(name="hear_about", type="string") */
     private string $hearAbout;
@@ -91,6 +94,16 @@ class UserPreference implements UserPreferenceInterface
     public function getPostalCode(): ?string
     {
         return $this->postalCode;
+    }
+
+    public function setPostalCodeType(?string $postalCodeType = null): void
+    {
+        $this->postalCodeType = $postalCodeType;
+    }
+
+    public function getPostalCodeType(): ?string
+    {
+        return $this->postalCodeType;
     }
 
     public function setHearAbout(string $hearAbout): void
