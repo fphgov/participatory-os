@@ -32,8 +32,8 @@ class UserPreference implements UserPreferenceInterface
     /** @ORM\Column(name="postal_code", type="string", length=4, nullable=true) */
     private ?string $postalCode;
 
-    /** @ORM\Column(name="postal_code_type", type="string", nullable=true) */
-    private ?string $postalCodeType;
+    /** @ORM\Column(name="postal_code_type", type="smallint", nullable=true) */
+    private ?int $postalCodeType;
 
     /** @ORM\Column(name="hear_about", type="string") */
     private string $hearAbout;
@@ -96,12 +96,12 @@ class UserPreference implements UserPreferenceInterface
         return $this->postalCode;
     }
 
-    public function setPostalCodeType(?string $postalCodeType = null): void
+    public function setPostalCodeType(?int $postalCodeType = null): void
     {
         $this->postalCodeType = $postalCodeType;
     }
 
-    public function getPostalCodeType(): ?string
+    public function getPostalCodeType(): ?int
     {
         return $this->postalCodeType;
     }

@@ -293,6 +293,13 @@ class UserRegistrationFilter extends InputFilter
                     'min'      => 1,
                     'max'      => 255,
                 ]),
+                new IsInt([
+                    'messages' => [
+                        IsInt::INVALID        => 'Csak számérték adható meg',
+                        IsInt::NOT_INT        => 'Csak egész számérték adható meg',
+                        IsInt::NOT_INT_STRICT => 'Csak egész számérték adható meg',
+                    ]
+                ]),
             ],
             'filters'     => [
                 new Filter\StringTrim(),
