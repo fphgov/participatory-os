@@ -206,7 +206,7 @@ final class IdeaService implements IdeaServiceInterface
         }
 
         if (isset($filteredParams['cost_condition'])) {
-            $idea->setDescription($filteredParams['cost_condition']);
+            $idea->setCostCondition((bool)$filteredParams['cost_condition']);
         }
 
         if (isset($filteredParams['location_description'])) {

@@ -106,6 +106,10 @@ interface IdeaInterface extends EntityInterface
 
     public function getCost(): ?int;
 
+    public function setCostCondition(bool $costCondition = null): void;
+
+    public function getCostCondition(): ?bool;
+
     public function setAnswer(string $answer): void;
 
     public function getAnswer(): string;
