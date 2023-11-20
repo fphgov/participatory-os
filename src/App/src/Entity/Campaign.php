@@ -90,6 +90,19 @@ class Campaign implements CampaignInterface
         return $campaignThemes;
     }
 
+    public function getCampaignThemesOptions(): array
+    {
+        $campaignThemes = [];
+        foreach ($this->campaignThemes->getValues() as $campaignTheme) {
+            $campaignThemes[] = [
+                'id'   => $campaignTheme->getId(),
+                'name' => $campaignTheme->getName()
+            ];
+        }
+
+        return $campaignThemes;
+    }
+
     public function getCampaignThemeCollection(): Collection
     {
         return $this->campaignThemes;

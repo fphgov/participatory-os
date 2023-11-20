@@ -36,6 +36,28 @@ class AdminIdeaInputFilter extends IdeaInputFilter
         ]);
 
         $this->add([
+            'name'        => 'theme',
+            'allow_empty' => true,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'Kötelező a "Kategória" mező kitöltése',
+                        Validator\NotEmpty::INVALID  => 'Hibás "Kategória" mező tipusa',
+                    ],
+                ]),
+                new Validator\Db\RecordExists([
+                    'table'    => 'campaign_themes',
+                    'field'    => 'id',
+                    'adapter'  => $this->dbAdapter,
+                    'messages' => [
+                        Validator\Db\RecordExists::ERROR_NO_RECORD_FOUND => 'Nem választható kategória',
+                        Validator\Db\RecordExists::ERROR_RECORD_FOUND    => '',
+                    ],
+                ]),
+            ],
+        ]);
+
+        $this->add([
             'name'        => 'solution',
             'allow_empty' => false,
             'validators'  => [

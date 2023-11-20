@@ -189,6 +189,8 @@ final class IdeaService implements IdeaServiceInterface
     ): void {
         $date = new DateTime();
 
+        $phase = $this->phaseService->phaseCheck(PhaseInterface::PHASE_IDEATION);
+
         if (isset($filteredParams['title'])) {
             $idea->setTitle($filteredParams['title']);
         }
@@ -215,6 +217,19 @@ final class IdeaService implements IdeaServiceInterface
 
         if (isset($filteredParams['answer'])) {
             $idea->setAnswer($filteredParams['answer']);
+        }
+
+        if (isset($filteredParams['theme'])) {
+            $theme = $this->campaignThemeRepository->findOneBy([
+                'id'       => $filteredParams['theme'],
+                'campaign' => $phase->getCampaign(),
+            ]);
+
+            if (!$theme instanceof CampaignTheme) {
+                throw new NoHasPhaseCategoryException($filteredParams['theme']);
+            }
+
+            $idea->setCampaignTheme($theme);
         }
 
         if (isset($filteredParams['workflowState'])) {

@@ -57,8 +57,6 @@ final class AdminModifyHandler implements RequestHandlerInterface
         $this->inputFilter->setData($body);
 
         if (! $this->inputFilter->isValid()) {
-            $message = $this->inputFilter->getMessages();
-
             return new JsonResponse([
                 'errors' => $this->inputFilter->getMessages(),
             ], 422);

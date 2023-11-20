@@ -363,6 +363,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Idea\AdminSendEmailHandler::class
     ], 'admin.api.idea.email.import');
 
+    $app->get('/admin/api/ideas/campaignthemes/{id:\d+}', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        \Mezzio\Authorization\AuthorizationMiddleware::class,
+        App\Handler\Idea\AdminCampaignThemeHandler::class
+    ], 'admin.api.idea.campaigntheme.get');
+
     $app->post('/admin/api/projects', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
