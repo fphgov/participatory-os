@@ -9,6 +9,8 @@ use App\Interfaces\EntityInterface;
 
 interface CampaignThemeInterface extends EntityInterface, EntityActiveInterface
 {
+    public const THEME_TEMP = 'TEMP';
+
     public const DISABLE_SHOW_DEFAULT = [
         'id',
         'updatedAt',
