@@ -92,6 +92,7 @@ final class IdeaService implements IdeaServiceInterface
         } else {
             $theme = $this->campaignThemeRepository->findOneBy([
                 'campaign' => $phase->getCampaign(),
+                'code'     => CampaignTheme::THEME_TEMP,
             ]);
         }
 
