@@ -216,6 +216,17 @@ final class IdeaService implements IdeaServiceInterface
             $idea->setLocationDescription($filteredParams['location_description'] ? $filteredParams['location_description'] : '');
         }
 
+        if (isset($filteredParams['campaignLocation']) && !empty($filteredParams['campaignLocation'])) {
+            $location = $this->campaignLocationRepository->findOneBy([
+                'code'     => $filteredParams['campaignLocation'],
+                'campaign' => $phase->getCampaign(),
+            ]);
+
+            if ($location instanceof CampaignLocation) {
+                $idea->setCampaignLocation($location);
+            }
+        }
+
         if (isset($filteredParams['answer'])) {
             $idea->setAnswer($filteredParams['answer']);
         }
