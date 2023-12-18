@@ -370,6 +370,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Idea\AdminCampaignThemeHandler::class
     ], 'admin.api.idea.campaigntheme.get');
 
+    $app->get('/admin/api/ideas/campaignlocations/{id:\d+}', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        \Mezzio\Authorization\AuthorizationMiddleware::class,
+        App\Handler\Idea\AdminCampaignLocationHandler::class
+    ], 'admin.api.idea.campaignlocation.get');
+
     $app->post('/admin/api/projects', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
