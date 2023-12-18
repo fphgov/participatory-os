@@ -219,7 +219,7 @@ final class IdeaService implements IdeaServiceInterface
         if (isset($filteredParams['campaignLocation']) && !empty($filteredParams['campaignLocation'])) {
             $location = $this->campaignLocationRepository->findOneBy([
                 'code'     => $filteredParams['campaignLocation'],
-                'campaign' => $phase->getCampaign(),
+                'campaign' => $idea->getCampaign(),
             ]);
 
             if ($location instanceof CampaignLocation) {
