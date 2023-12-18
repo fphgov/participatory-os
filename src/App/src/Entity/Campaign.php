@@ -134,6 +134,7 @@ class Campaign implements CampaignInterface
         foreach ($this->campaignLocations->getValues() as $campaignLocation) {
             $campaignLocations[] = [
                 'id'   => $campaignLocation->getId(),
+                'code' => $campaignLocation->getCode(),
                 'name' => $campaignLocation->getName()
             ];
         }
