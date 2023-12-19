@@ -41,6 +41,11 @@ class AdminIdeaInputFilter extends IdeaInputFilter
         ]);
 
         $this->add([
+            'name'        => 'campaignLocation',
+            'allow_empty' => true,
+        ]);
+
+        $this->add([
             'name'        => 'theme',
             'allow_empty' => true,
             'validators'  => [
