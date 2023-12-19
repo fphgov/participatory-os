@@ -25,6 +25,10 @@ interface CampaignInterface extends EntityInterface, EntityActiveInterface
 
     public function getCampaignThemeCollection(): Collection;
 
+    public function getCampaignLocations(): array;
+
+    public function getCampaignLocationCollection(): Collection;
+
     public function setTitle(string $title): void;
 
     public function getTitle(): string;
