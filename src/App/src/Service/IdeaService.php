@@ -190,7 +190,7 @@ final class IdeaService implements IdeaServiceInterface
     ): void {
         $date = new DateTime();
 
-        $phase = $this->phaseService->phaseCheck(PhaseInterface::PHASE_IDEATION);
+        $phase = $this->phaseService->getCurrentPhase();
 
         if (isset($filteredParams['title'])) {
             $idea->setTitle($filteredParams['title']);
