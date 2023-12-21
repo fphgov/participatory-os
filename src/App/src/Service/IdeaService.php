@@ -234,7 +234,7 @@ final class IdeaService implements IdeaServiceInterface
         if (isset($filteredParams['theme'])) {
             $theme = $this->campaignThemeRepository->findOneBy([
                 'id'       => $filteredParams['theme'],
-                'campaign' => $phase->getCampaign(),
+                'campaign' => $idea->getCampaign(),
             ]);
 
             if (!$theme instanceof CampaignTheme) {
