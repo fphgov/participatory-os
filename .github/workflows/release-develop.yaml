@@ -57,7 +57,7 @@ jobs:
         run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
 
       - name: Build image
-        uses: aevea/action-kaniko@master
+        uses: fphgov/action-kaniko@master
         with:
           image: ${{ env.DOCKER_PHP_IMAGE }}
           build_file: ${{ env.DOCKER_PHP_BUILD_FILE }}
@@ -85,7 +85,7 @@ jobs:
         run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
 
       - name: Build image
-        uses: aevea/action-kaniko@master
+        uses: fphgov/action-kaniko@master
         with:
           image: ${{ env.DOCKER_NGINX_IMAGE }}
           build_file: ${{ env.DOCKER_NGINX_BUILD_FILE }}
