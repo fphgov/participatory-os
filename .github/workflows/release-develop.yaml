@@ -126,7 +126,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Deploy
-        uses: 'fphgov/actions-helm-deploy@master'
+        uses: 'fphgov/actions-helm-deploy@harbor'
         with:
           helm_repository_url: ${{ env.HELM_REPOSITORY_URL }}
           helm_repository_name: ${{ env.HELM_REPOSITORY_NAME }}
