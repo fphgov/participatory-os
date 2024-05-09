@@ -168,7 +168,14 @@ class UserRegistrationFilter extends InputFilter
                         Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a mezőnek mint: %max%',
                         Validator\StringLength::INVALID   => 'Hibás mező tipus. Csak szöveg fogadható el',
                     ],
-                    'min'      => 1,
+                    'min'      => 8,
+                    'max'      => 128,
+                ]),
+                new Validator\Regex([
+                    'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$/',
+                    'messages' => [
+                        Validator\Regex::NOT_MATCH   => 'A jelszónak tartalmaznia kell legalább egy kisbetűt, egy nagybetűt és egy számot.',
+                    ],
                 ]),
             ],
         ]);
