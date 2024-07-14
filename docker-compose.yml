@@ -1,7 +1,6 @@
 services:
   db:
     image: mysql:5.7
-    container_name: participatory-db
     command: --explicit_defaults_for_timestamp --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     env_file: .env
     ports:
@@ -16,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: docker/config/webapp/Dockerfile
-    container_name: participatory-webapp
     expose:
       - 9004
     volumes:
@@ -27,7 +25,7 @@ services:
       - ./docker/config/webapp/php/ini/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
       - ./docker/config/webapp/php/ini/postal.ini:/usr/local/etc/php/conf.d/postal.ini
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost" ]
+      test: curl --fail http://localhost/app/api/ping || exit 1
       interval: 1m30s
       timeout: 10s
       retries: 3
@@ -39,7 +37,6 @@ services:
 
   nginx:
     image: fphgov/nginx
-    container_name: participatory-nginx
     networks:
       - default
     ports:
@@ -75,7 +72,6 @@ services:
       MINIO_DEFAULT_BUCKETS: 'private,shared:public'
 
   dozzle:
-    container_name: participatory-dozzle
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
