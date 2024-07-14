@@ -87,6 +87,9 @@ RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 25/' /usr/local/et
 EXPOSE 9004
 
 COPY supervisord.conf /etc/supervisord.conf
+
+COPY docker/config/webapp/setup.sh /var/www/html/docker/config/webapp/setup.sh
+
 RUN chmod +x /var/www/html/docker/config/webapp/setup.sh
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
