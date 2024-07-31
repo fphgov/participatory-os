@@ -154,6 +154,18 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
+    public function changeAboutData(
+        User $user,
+        array $filteredParams
+    ): void {
+        $userPreference = $user->getUserPreference();
+
+        $userPreference->setHearAbout((string) $filteredParams['hear_about']);
+        $userPreference->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+    }
+
     public function forgotPassword(string $email): void
     {
         $user = $this->userRepository->findOneBy([

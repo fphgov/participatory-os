@@ -44,7 +44,11 @@ class UserPreference implements UserPreferenceInterface
     /** @ORM\Column(name="postal_code_type", type="smallint", nullable=true) */
     private ?int $postalCodeType;
 
-    /** @ORM\Column(name="hear_about", type="string") */
+    /**
+     * @ORM\Column(name="hear_about", type="string")
+     *
+     * @Groups({"profile"})
+     */
     private string $hearAbout;
 
     /** @ORM\Column(name="phone", type="string", nullable=true) */

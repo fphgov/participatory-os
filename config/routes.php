@@ -115,6 +115,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Account\PersonalChangeHandler::class,
     ], 'app.api.account.personal.change');
 
+    $app->post('/app/api/user/about', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\Account\AboutChangeHandler::class,
+    ], 'app.api.account.about.change');
+
     $app->delete('/app/api/user/delete', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
