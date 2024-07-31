@@ -103,6 +103,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Account\PasswordChangeHandler::class,
     ], 'app.api.account.password.change');
 
+    $app->post('/app/api/user/personal', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\Account\PersonalChangeHandler::class,
+    ], 'app.api.account.personal.change');
+
     $app->delete('/app/api/user/delete', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,

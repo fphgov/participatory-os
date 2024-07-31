@@ -141,6 +141,19 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
+    public function changePersonalData(
+        User $user,
+        array $filteredParams
+    ): void {
+        $userPreference = $user->getUserPreference();
+
+        $userPreference->setBirthyear((int) $filteredParams['birthyear']);
+        $userPreference->setPostalCode((string) $filteredParams['postal_code']);
+        $userPreference->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+    }
+
     public function forgotPassword(string $email): void
     {
         $user = $this->userRepository->findOneBy([

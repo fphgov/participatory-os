@@ -48,6 +48,7 @@ class ConfigProvider
             ],
             'factories'  => [
                 Handler\Account\PasswordChangeHandler::class  => Handler\Account\PasswordChangeHandlerFactory::class,
+                Handler\Account\PersonalChangeHandler::class  => Handler\Account\PersonalChangeHandlerFactory::class,
                 Handler\Account\DeleteHandler::class          => Handler\Account\DeleteHandlerFactory::class,
                 Handler\Dashboard\GetHandler::class           => Handler\Dashboard\GetHandlerFactory::class,
                 Handler\Dashboard\ChangeHandler::class        => Handler\Dashboard\ChangeHandlerFactory::class,
@@ -153,6 +154,7 @@ class ConfigProvider
                 InputFilter\ArticleInputFilter::class          => InputFilter\ArticleInputFilterFactory::class,
                 InputFilter\VoteFilter::class                  => InputFilter\VoteFilterFactory::class,
                 InputFilter\ProfilActivationInputFilter::class => InputFilter\ProfilActivationInputFilterFactory::class,
+                InputFilter\PersonalDataInputFilter::class     => InputFilter\PersonalDataInputFilterFactory::class,
             ],
             'invokables' => [
                 InputFilter\AdminUploadFileFilter::class => InputFilter\AdminUploadFileFilter::class,
