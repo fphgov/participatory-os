@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Traits\EntityMetaTrait;
 use App\Traits\EntityTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserPreferenceRepository")
@@ -23,13 +24,21 @@ class UserPreference implements UserPreferenceInterface
      */
     private User $user;
 
-    /** @ORM\Column(name="birthyear", type="smallint", nullable=true) */
+    /**
+     * @ORM\Column(name="birthyear", type="smallint", nullable=true)
+     *
+     * @Groups({"profile"})
+     */
     private ?int $birthyear;
 
     /** @ORM\Column(name="live_in_city", type="boolean") */
     private bool $liveInCity = false;
 
-    /** @ORM\Column(name="postal_code", type="string", length=4, nullable=true) */
+    /**
+     * @ORM\Column(name="postal_code", type="string", length=4, nullable=true)
+     *
+     * @Groups({"profile"})
+     */
     private ?string $postalCode;
 
     /** @ORM\Column(name="postal_code_type", type="smallint", nullable=true) */
@@ -44,7 +53,11 @@ class UserPreference implements UserPreferenceInterface
     /** @ORM\Column(name="privacy", type="boolean") */
     private bool $privacy;
 
-    /** @ORM\Column(name="prize", type="boolean") */
+    /**
+     * @ORM\Column(name="prize", type="boolean")
+     *
+     * @Groups({"profile"})
+     */
     private bool $prize = false;
 
     /** @ORM\Column(name="prizeHash", type="string", unique=true, nullable=true) */

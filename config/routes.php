@@ -54,6 +54,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\User\GetHandler::class
     ], 'app.api.user');
 
+    $app->get('/app/api/user-preference', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\User\GetPreferenceHandler::class
+    ], 'app.api.user.preference');
+
     $app->post('/app/api/user/idea', [
         Jwt\Handler\JwtAuthMiddleware::class,
         App\Middleware\UserMiddleware::class,
