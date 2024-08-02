@@ -23,7 +23,7 @@ interface VoteServiceInterface
         UserInterface $user,
         VoteTypeInterface $voteType,
         array $projects
-    ): void;
+    ): array;
 
     public function getRepository(): EntityRepository;
 

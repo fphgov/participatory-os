@@ -18,6 +18,7 @@ use App\Exception\NoHasProjectInCurrentCampaignException;
 use App\Exception\VoteUserExistsException;
 use App\Exception\VoteUserProjectExistsException;
 use App\Exception\VoteUserCategoryExistsException;
+use App\Exception\VoteUserCategoryAlreadyTotalVotesException;
 use App\Exception\VoteTypeNoExistsInDatabaseException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -29,6 +30,9 @@ use function array_unique;
 
 final class VoteValidationService implements VoteValidationServiceInterface
 {
+    const VOTE_TYPE_DEFAULT_COUNT = 1;
+    const VOTE_TYPE_4_COUNT = 3;
+
     /** @var EntityRepository */
     private $voteRepository;
 
@@ -46,9 +50,12 @@ final class VoteValidationService implements VoteValidationServiceInterface
     public function checkExistsVote(
         UserInterface $user,
         PhaseInterface $phase,
-        ?ProjectInterface $project = null
+        VoteTypeInterface $voteType,
+        ?ProjectInterface $project = null,
     ): void {
-        if ($project instanceof ProjectInterface) {
+        if ($voteType->getId() === 4) {
+            $this->checkCountedExistsVoteInProject($user, $phase->getCampaign(), $project, self::VOTE_TYPE_4_COUNT);
+        } else if ($project instanceof ProjectInterface) {
             $this->checkExistsVoteInProject($user, $phase->getCampaign(), $project);
         } else {
             $this->checkExistsVoteWithoutProject($user, $phase->getCampaign());
@@ -61,27 +68,39 @@ final class VoteValidationService implements VoteValidationServiceInterface
         VoteTypeInterface $voteType,
         array $projects
     ): void {
-        $voteType = $this->settingRepository->findOneBy([
-            'key' => 'vote-type',
-        ]);
-
-        if (! $voteType) {
-            throw new VoteTypeNoExistsInDatabaseException('Vote type no exists in database');
-        }
-
-        if ($voteType->getValue() === '1') {
-            $this->checkExistsVote($user, $phase);
+        if ($voteType->getId() === 1) {
+            $this->checkExistsVote($user, $phase, $voteType);
             $this->validationNormal($phase->getCampaign(), $projects);
-        } elseif ($voteType->getValue() === '2') {
-            $this->checkExistsVote($user, $phase);
+        } elseif ($voteType->getId() === 2) {
+            $this->checkExistsVote($user, $phase, $voteType);
             $this->validationBigCategory($phase->getCampaign(), $projects);
-        } elseif ($voteType->getValue() === '3') {
+        } elseif ($voteType->getId() === 3) {
             foreach ($projects as $project) {
-                $this->checkExistsVote($user, $phase, $project);
+                $this->checkExistsVote($user, $phase, $voteType, $project);
+            }
+
+            $this->validationLocationCategory($phase->getCampaign(), $projects);
+        } elseif ($voteType->getId() === 4) {
+            foreach ($projects as $project) {
+                $this->checkCountedExistsVoteInProject($user, $phase->getCampaign(), $project, self::VOTE_TYPE_4_COUNT);
             }
 
             $this->validationLocationCategory($phase->getCampaign(), $projects);
         }
+    }
+
+    public function getAvailableVoteCount(
+        UserInterface $user,
+        CampaignInterface $campaign,
+        VoteTypeInterface $voteType,
+        ProjectInterface $project
+    ): int {
+
+        $count = $voteType->getId() === 4 ? self::VOTE_TYPE_4_COUNT : self::VOTE_TYPE_DEFAULT_COUNT;
+
+        $existsCategoryVoteCount = $this->voteRepository->getExistsVotesInCampaignInCategory($user, $campaign, $project);
+
+        return ($count - $existsCategoryVoteCount);
     }
 
     private function checkExistsVoteWithoutProject(
@@ -110,6 +129,25 @@ final class VoteValidationService implements VoteValidationServiceInterface
 
         if ($existsCategoryVote) {
             throw new VoteUserCategoryExistsException('User already voted in category');
+        }
+    }
+
+    private function checkCountedExistsVoteInProject(
+        UserInterface $user,
+        CampaignInterface $campaign,
+        ProjectInterface $project,
+        int $count
+    ): void {
+        $existsProjectVote = $this->voteRepository->checkExistsVoteInCampaignAndProject($user, $campaign, $project);
+
+        if ($existsProjectVote) {
+            throw new VoteUserProjectExistsException('User already voted this project');
+        }
+
+        $existsCategoryVoteCount = $this->voteRepository->getExistsVotesInCampaignInCategory($user, $campaign, $project);
+
+        if ($existsCategoryVoteCount >= $count) {
+            throw new VoteUserCategoryAlreadyTotalVotesException('User already total voted in category');
         }
     }
 

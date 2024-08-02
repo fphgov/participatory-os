@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\User;
 
 use App\Entity\VoteType;
+use App\Entity\Setting;
 use App\Exception\DifferentPhaseException;
 use App\Exception\MissingVoteTypeAndCampaignCategoriesException;
 use App\Exception\NoExistsAllProjectsException;
@@ -13,6 +14,7 @@ use App\Exception\VoteUserProjectExistsException;
 use App\Exception\NoHasProjectInCurrentCampaignException;
 use App\Exception\DuplicateCampaignCategoriesException;
 use App\Exception\VoteUserCategoryExistsException;
+use App\Exception\VoteUserCategoryAlreadyTotalVotesException;
 use App\Middleware\CampaignMiddleware;
 use App\Middleware\UserMiddleware;
 use App\Service\VoteServiceInterface;
@@ -26,23 +28,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class VoteHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var VoteServiceInterface **/
-    private $voteService;
-
-    /** @var InputFilterInterface **/
-    private $voteFilter;
-
     public function __construct(
-        EntityManagerInterface $em,
-        VoteServiceInterface $voteService,
-        InputFilterInterface $voteFilter
+        private EntityManagerInterface $em,
+        private VoteServiceInterface $voteService,
+        private InputFilterInterface $voteFilter
     ) {
-        $this->em          = $em;
-        $this->voteService = $voteService;
-        $this->voteFilter  = $voteFilter;
+        $this->em                    = $em;
+        $this->voteService           = $voteService;
+        $this->voteFilter            = $voteFilter;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -59,10 +52,18 @@ final class VoteHandler implements RequestHandlerInterface
             ], 422);
         }
 
-        $type = $this->em->getReference(VoteType::class, 3);
+        $type = $this->em->getRepository(Setting::class)->findOneBy([
+            'key' => 'vote-type',
+        ]);
+
+        if (! $type) {
+            throw new VoteTypeNoExistsInDatabaseException('Vote type no exists in database');
+        }
+
+        $voteType = $this->em->getReference(VoteType::class, $type->getValue());
 
         try {
-            $this->voteService->voting($user, $type, $body['projects']);
+            $data = $this->voteService->voting($user, $voteType, $body['projects']);
         } catch (NoExistsAllProjectsException $e) {
             return new JsonResponse([
                 'message' => 'Kiválasztott ötletek közül egy vagy több projekt nem található',
@@ -87,13 +88,18 @@ final class VoteHandler implements RequestHandlerInterface
             ], 409);
         } catch (VoteUserProjectExistsException $e) {
             return new JsonResponse([
-                'message' => 'Erre az ötletre már leadtad a szavazatod.',
+                'message' => 'Már szavaztál erre az ötletre',
                 'code'    => 'ALREADY_EXISTS_PROJECT'
             ], 409);
         } catch (VoteUserCategoryExistsException $e) {
             return new JsonResponse([
                 'message' => 'Ebben a kategóriában már szavaztál!',
                 'code'    => 'ALREADY_EXISTS_CATEGORY'
+            ], 409);
+        } catch (VoteUserCategoryAlreadyTotalVotesException $e) {
+            return new JsonResponse([
+                'message' => 'Ebben a kategóriában már nem maradt szavazatod!',
+                'code'    => 'ALREADY_TOTAL_VOTES_CATEGORY'
             ], 409);
         } catch (MissingVoteTypeAndCampaignCategoriesException $e) {
             return new JsonResponse([
@@ -106,7 +112,8 @@ final class VoteHandler implements RequestHandlerInterface
         }
 
         return new JsonResponse([
-            'message' => 'Sikeres szavazás',
+            'message' => 'Sikeres szavazat leadás!',
+            'data'    => $data
         ]);
     }
 }

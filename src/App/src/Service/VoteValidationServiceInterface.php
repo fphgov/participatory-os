@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\CampaignInterface;
 use App\Entity\PhaseInterface;
 use App\Entity\ProjectInterface;
 use App\Entity\UserInterface;
@@ -14,6 +15,7 @@ interface VoteValidationServiceInterface
     public function checkExistsVote(
         UserInterface $user,
         PhaseInterface $phase,
+        VoteTypeInterface $voteType,
         ?ProjectInterface $projectId = null
     ): void;
 
@@ -23,4 +25,11 @@ interface VoteValidationServiceInterface
         VoteTypeInterface $voteType,
         array $projects
     ): void;
+
+    public function getAvailableVoteCount(
+        UserInterface $user,
+        CampaignInterface $campaign,
+        VoteTypeInterface $voteType,
+        ProjectInterface $project
+    ): int;
 }

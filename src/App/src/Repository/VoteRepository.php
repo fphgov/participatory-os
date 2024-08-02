@@ -100,6 +100,25 @@ class VoteRepository extends EntityRepository
         return false;
     }
 
+    public function getExistsVotesInCampaignInCategory(User $user, Campaign $campaign, Project $project): int
+    {
+        $qb = $this->createQueryBuilder('v')
+            ->select('COUNT(1)')
+            ->innerJoin(Project::class, 'p', Join::WITH, 'p.id = v.project')
+            ->innerJoin(Campaign::class, 'c', Join::WITH, 'c.id = p.campaign')
+            ->innerJoin(CampaignTheme::class, 'ct', Join::WITH, 'ct.id = p.campaignTheme')
+            ->where('v.user = :user')
+            ->andWhere('c.id = :campaign')
+            ->andWhere('ct.id = :campaignTheme')
+            ->setParameter('user', $user)
+            ->setParameter('campaign', $campaign)
+            ->setParameter('campaignTheme', $project->getCampaignTheme());
+
+        $result = $qb->getQuery()->getSingleScalarResult();
+
+        return (int) $result;
+    }
+
     public function getVotedProjects(User $user, Campaign $campaign): array
     {
         $qb = $this->createQueryBuilder('v');
