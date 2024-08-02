@@ -29,6 +29,8 @@ services:
       interval: 1m30s
       timeout: 10s
       retries: 3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file: .env
     depends_on:
       - db
