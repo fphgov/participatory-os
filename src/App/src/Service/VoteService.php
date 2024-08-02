@@ -192,13 +192,16 @@ final class VoteService implements VoteServiceInterface
         $this->mailService->send('vote-success', $tplData, $user);
     }
 
-    public function getVoteablesProjects(VoteableProjectFilterModel $voteableProjectFilter): QueryBuilder
-    {
+    public function getVoteablesProjects(
+        VoteableProjectFilterModel $voteableProjectFilter,
+        ?UserInterface $user = null
+    ): QueryBuilder {
         $phase = $this->phaseService->phaseCheck(PhaseInterface::PHASE_VOTE);
 
         return $this->projectRepository->getVoteables(
             $phase->getCampaign(),
-            $voteableProjectFilter
+            $voteableProjectFilter,
+            $user
         );
     }
 

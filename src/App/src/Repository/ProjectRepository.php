@@ -8,8 +8,10 @@ use App\Entity\CampaignInterface;
 use App\Entity\WorkflowStateInterface;
 use App\Entity\Campaign;
 use App\Entity\CampaignTheme;
+use App\Entity\User;
 use App\Entity\Vote;
 use App\Entity\WorkflowState;
+use App\Entity\UserInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use App\Model\VoteableProjectFilterModel;
@@ -74,12 +76,13 @@ final class ProjectRepository extends EntityRepository
 
     public function getVoteables(
         CampaignInterface $campaign,
-        VoteableProjectFilterModel $voteableProjectFilterModel
+        VoteableProjectFilterModel $voteableProjectFilterModel,
+        ?UserInterface $user = null
     ): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
         $qb
-            ->select('NEW VoteableProjectListDTO(p.id, c.shortTitle, ct.name, p.title, p.description, p.location, w.code, w.title, COUNT(distinct v.id), GROUP_CONCAT(t.id), GROUP_CONCAT(t.name)) as project')
+            ->select('NEW VoteableProjectListDTO(p.id, c.shortTitle, ct.name, p.title, p.description, p.location, w.code, w.title, COUNT(distinct v.id), 0, GROUP_CONCAT(t.id), GROUP_CONCAT(t.name)) as project')
             ->join(CampaignTheme::class, 'ct', Join::WITH, 'ct.id = p.campaignTheme')
             ->join(Campaign::class, 'c', Join::WITH, 'c.id = ct.campaign')
             ->join(WorkflowState::class, 'w', Join::WITH, 'w.id = p.workflowState')
@@ -93,6 +96,12 @@ final class ProjectRepository extends EntityRepository
                 'workflowState' => WorkflowStateInterface::STATUS_VOTING_LIST,
                 'campaign'      => $campaign,
             ]);
+
+        if ($user instanceof UserInterface) {
+            $qb
+                ->select('NEW VoteableProjectListDTO(p.id, c.shortTitle, ct.name, p.title, p.description, p.location, w.code, w.title, COUNT(distinct v.id), SUM(IF(u.id = :uid, 1, 0)), GROUP_CONCAT(t.id), GROUP_CONCAT(t.name)) as project')
+                ->leftJoin(User::class, 'u', Join::WITH, 'u.id = v.user')->setParameter('uid', $user->getId());
+        }
 
         if (
             $voteableProjectFilterModel->getRand() !== null &&

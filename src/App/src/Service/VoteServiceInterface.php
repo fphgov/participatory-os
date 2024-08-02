@@ -27,5 +27,8 @@ interface VoteServiceInterface
 
     public function getRepository(): EntityRepository;
 
-    public function getVoteablesProjects(VoteableProjectFilterModel $voteableProjectFilter): QueryBuilder;
+    public function getVoteablesProjects(
+        VoteableProjectFilterModel $voteableProjectFilter,
+        ?UserInterface $user = null
+    ): QueryBuilder;
 }

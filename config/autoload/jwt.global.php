@@ -10,7 +10,8 @@ return [
         'nbf' => (int)str_replace(['"', "'"], "", getenv('JWT_NBF')),
         'exp' => (int)str_replace(['"', "'"], "", getenv('JWT_EXP')),
         'auth' => [
-            'secret' => getenv('JWT_SECRET'),
+            'secret'    => getenv('JWT_SECRET'),
+            'algorithm' => ["HS256", "HS512", "HS384"],
         ]
     ]
 ];

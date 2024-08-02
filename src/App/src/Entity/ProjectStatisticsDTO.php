@@ -14,7 +14,7 @@ class ProjectStatisticsDTO implements JsonSerializable
     private string $campaignThemeRgb;
     private string $title;
     private string $type;
-    private int $voted;
+    private int $votedCount;
     private int $plusVoted = 0;
     private bool $win;
 
@@ -25,7 +25,7 @@ class ProjectStatisticsDTO implements JsonSerializable
         string $campaignThemeRgb,
         string $title,
         string $type,
-        int $voted,
+        int $votedCount,
         bool $win
     ) {
         $this->id                = $id;
@@ -34,7 +34,7 @@ class ProjectStatisticsDTO implements JsonSerializable
         $this->campaignThemeRgb  = $campaignThemeRgb;
         $this->title             = $title;
         $this->type              = $type;
-        $this->voted             = $voted;
+        $this->votedCount        = $votedCount;
         $this->win               = $win;
     }
 
@@ -67,9 +67,9 @@ class ProjectStatisticsDTO implements JsonSerializable
         return $this->win;
     }
 
-    public function getVoted(): int
+    public function getVoteCount(): int
     {
-        return $this->plusVoted + $this->voted;
+        return $this->plusVoted + $this->votedCount;
     }
 
     public function setPlusVoted(int $vote): void
@@ -83,7 +83,7 @@ class ProjectStatisticsDTO implements JsonSerializable
             'id'             => $this->getId(),
             'title'          => $this->getTitle(),
             'campaign_theme' => $this->getCampaignTheme(),
-            'voted'          => $this->getVoted(),
+            'voted'          => $this->getVoteCount(),
             'type'           => $this->getType(),
             'win'            => $this->getWin(),
         ];

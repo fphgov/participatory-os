@@ -81,6 +81,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     ], 'app.api.user.vote');
 
     $app->get('/app/api/vote/list', [
+        App\Middleware\OptionalUserMiddleware::class,
         App\Handler\Vote\ListHandler::class
     ], 'app.api.vote.list');
 

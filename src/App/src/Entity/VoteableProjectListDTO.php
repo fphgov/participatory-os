@@ -23,6 +23,7 @@ class VoteableProjectListDTO
         private string $location,
         private string $statusCode,
         private string $statusTitle,
+        private ?int $voteCount,
         private ?int $voted,
         private ?string $tagId = null,
         private ?string $tagName = null
@@ -35,7 +36,8 @@ class VoteableProjectListDTO
         $this->location          = $location;
         $this->statusCode        = $statusCode;
         $this->statusTitle       = $statusTitle;
-        $this->voted         = $voted;
+        $this->voteCount         = $voteCount;
+        $this->voted             = $voted;
         $this->tagId             = $tagId;
         $this->tagName           = $tagName;
     }
@@ -80,6 +82,11 @@ class VoteableProjectListDTO
         }
 
         return $tags;
+    }
+
+    public function getVoteCount(): ?int
+    {
+        return $this->voteCount;
     }
 
     public function getVoted(): ?int
