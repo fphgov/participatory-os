@@ -93,12 +93,12 @@ final class VoteHandler implements RequestHandlerInterface
             ], 409);
         } catch (VoteUserCategoryExistsException $e) {
             return new JsonResponse([
-                'message' => 'Ebben a kategóriában már szavaztál!',
+                'message' => 'Ebben a kategóriában már szavaztál',
                 'code'    => 'ALREADY_EXISTS_CATEGORY'
             ], 409);
         } catch (VoteUserCategoryAlreadyTotalVotesException $e) {
             return new JsonResponse([
-                'message' => 'Ebben a kategóriában már nem maradt szavazatod!',
+                'message' => 'Ebben a kategóriában nincs már több szavazatod',
                 'code'    => 'ALREADY_TOTAL_VOTES_CATEGORY'
             ], 409);
         } catch (MissingVoteTypeAndCampaignCategoriesException $e) {
