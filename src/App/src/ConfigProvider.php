@@ -65,6 +65,8 @@ class ConfigProvider
                 Handler\User\VoteHandler::class               => Handler\User\VoteHandlerFactory::class,
                 Handler\User\IdeaHandler::class               => Handler\User\IdeaHandlerFactory::class,
                 Handler\User\PrizeHandler::class              => Handler\User\PrizeHandlerFactory::class,
+                Handler\User\PrizeSimpleHandler::class        => Handler\User\PrizeSimpleHandlerFactory::class,
+                Handler\User\NewsletterSimpleHandler::class   => Handler\User\NewsletterSimpleHandlerFactory::class,
                 Handler\Page\GetHandler::class                => Handler\Page\GetHandlerFactory::class,
                 Handler\Article\GetHandler::class             => Handler\Article\GetHandlerFactory::class,
                 Handler\Article\GetAllHandler::class          => Handler\Article\GetAllHandlerFactory::class,

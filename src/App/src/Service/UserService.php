@@ -99,6 +99,30 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
+    public function newsletterActivateSimple(User $user): void
+    {
+        $date = new DateTime();
+
+        $newsletter = new Newsletter();
+        $newsletter->setEmail($user->getEmail());
+        $newsletter->setFirstname($user->getFirstname());
+        $newsletter->setLastname($user->getLastname());
+        $newsletter->setCreatedAt($date);
+        $newsletter->setUpdatedAt($date);
+
+        $this->em->persist($newsletter);
+
+        $this->em->flush();
+    }
+
+    public function prizeActivateSimple(User $user): void
+    {
+        $user->getUserPreference()->setPrize(! $user->getUserPreference()->getPrize());
+        $user->getUserPreference()->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+    }
+
     public function prizeActivate(string $prizeHash): void
     {
         $userPreference = $this->userPreferenceRepository->findOneBy([

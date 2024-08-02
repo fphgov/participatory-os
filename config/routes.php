@@ -40,6 +40,18 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\User\PrizeHandler::class
     ], 'app.api.user.prize');
 
+    $app->post('/app/api/user/simple/prize', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\User\PrizeSimpleHandler::class
+    ], 'app.api.user.simple.prize');
+
+    $app->post('/app/api/user/simple/newsletter', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\User\NewsletterSimpleHandler::class
+    ], 'app.api.user.simple.newsletter');
+
     $app->post('/app/api/user/forgot/password', [
         App\Handler\User\ForgotPasswordHandler::class
     ], 'app.api.user.forgot.password');
