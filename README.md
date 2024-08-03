@@ -30,7 +30,7 @@ docker run -it --rm --entrypoint=/bin/sh \
     -v ./.certs/fph_corp_enterprise_issuer_ca2.crt:/root/.mc/certs/CAs/fph_corp_enterprise_issuer_ca2.crt \
     minio/mc
 
-mc alias set prod https://participatory-minio.prod.intra.fph.hu <minio_username> <minio_password> --api s3v4
+mc alias set prod https://participatory-minio-api.prod.intra.fph.hu <minio_username> <minio_password> --api s3v4
 mc alias set local http://minio:9000 <minio_username> <minio_password> --api s3v4
 
 mc mirror --watch prod/shared local/shared
