@@ -25,18 +25,6 @@ use function error_log;
 
 final class UserService implements UserServiceInterface
 {
-    /** @var array */
-    private $config;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var Logger */
-    private $audit;
-
-    /** @var MailServiceInterface */
-    private $mailService;
-
     /** @var UserRepository */
     private $userRepository;
 
@@ -47,10 +35,10 @@ final class UserService implements UserServiceInterface
     private $mailLogRepository;
 
     public function __construct(
-        array $config,
-        EntityManagerInterface $em,
-        Logger $audit,
-        MailServiceInterface $mailService
+        private array $config,
+        private EntityManagerInterface $em,
+        private Logger $audit,
+        private MailServiceInterface $mailService
     ) {
         $this->config                   = $config;
         $this->em                       = $em;
@@ -86,8 +74,6 @@ final class UserService implements UserServiceInterface
 
             $newsletter = new Newsletter();
             $newsletter->setEmail($user->getEmail());
-            $newsletter->setFirstname($user->getFirstname());
-            $newsletter->setLastname($user->getLastname());
             $newsletter->setCreatedAt($date);
             $newsletter->setUpdatedAt($date);
 
@@ -99,14 +85,12 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function newsletterActivateSimple(User $user): void
+    public function newsletterActivateSimple(UserInterface $user): void
     {
         $date = new DateTime();
 
         $newsletter = new Newsletter();
         $newsletter->setEmail($user->getEmail());
-        $newsletter->setFirstname($user->getFirstname());
-        $newsletter->setLastname($user->getLastname());
         $newsletter->setCreatedAt($date);
         $newsletter->setUpdatedAt($date);
 
@@ -115,7 +99,7 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function prizeActivateSimple(User $user): void
+    public function prizeActivateSimple(UserInterface $user): void
     {
         $user->getUserPreference()->setPrize(! $user->getUserPreference()->getPrize());
         $user->getUserPreference()->setUpdatedAt(new DateTime());

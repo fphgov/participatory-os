@@ -13,6 +13,10 @@ interface UserServiceInterface
 
     public function confirmation(array $filteredData, string $hash): void;
 
+    public function newsletterActivateSimple(UserInterface $user): void;
+
+    public function prizeActivateSimple(UserInterface $user): void;
+
     public function prizeActivate(string $prizeHash): void;
 
     public function resetPassword(string $hash, string $password): void;
