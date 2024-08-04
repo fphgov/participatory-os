@@ -58,6 +58,7 @@ class ConfigProvider
                 Handler\User\GetPreferenceHandler::class      => Handler\User\GetPreferenceHandlerFactory::class,
                 Handler\User\GetVoteHandler::class            => Handler\User\GetVoteHandlerFactory::class,
                 Handler\User\ActivateHandler::class           => Handler\User\ActivateHandlerFactory::class,
+                Handler\User\LoginByHashHandler::class        => Handler\User\LoginByHashHandlerFactory::class,
                 Handler\User\ConfirmationHandler::class       => Handler\User\ConfirmationHandlerFactory::class,
                 Handler\User\ForgotPasswordHandler::class     => Handler\User\ForgotPasswordHandlerFactory::class,
                 Handler\User\ResetPasswordHandler::class      => Handler\User\ResetPasswordHandlerFactory::class,

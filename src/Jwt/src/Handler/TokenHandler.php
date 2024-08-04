@@ -5,34 +5,33 @@ declare(strict_types=1);
 namespace Jwt\Handler;
 
 use App\Entity\User;
+use App\Entity\UserInterface;
 use App\Model\PBKDF2Password;
-use DateTimeImmutable;
+use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token as TokenInterface;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Jwt\Service\TokenServiceInterface;
 
 use function in_array;
 use function strtolower;
 
 class TokenHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var array */
-    private $config;
-
-    public function __construct(EntityManagerInterface $em, array $config)
-    {
-        $this->em     = $em;
-        $this->config = $config;
+    public function __construct(
+        protected EntityManagerInterface $em,
+        private UserServiceInterface $userService,
+        private TokenServiceInterface $tokenService,
+        private array $config
+    ) {
+        $this->em           = $em;
+        $this->userService  = $userService;
+        $this->tokenService = $tokenService;
+        $this->config       = $config;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -42,7 +41,11 @@ class TokenHandler implements RequestHandlerInterface
 
         $userRepository = $this->em->getRepository(User::class);
 
-        if (! isset($postBody['email']) || ! isset($postBody['password'])) {
+        if (! isset($postBody['email']) && !isset($postBody['type'])) {
+            return $this->badAuthentication();
+        }
+
+        if (!isset($postBody['password']) && $postBody['type'] === "password") {
             return $this->badAuthentication();
         }
 
@@ -63,24 +66,39 @@ class TokenHandler implements RequestHandlerInterface
             return $this->badAuthentication();
         }
 
+        if ($postBody['type'] === "login") {
+            return $this->loginWithMagicLink($user);
+        }
+
+        return $this->loginWithPassword($user, $postBody['password']);
+    }
+
+    private function loginWithPassword(UserInterface $user, string $password)
+    {
         $passwordModel = new PBKDF2Password($user->getPassword(), PBKDF2Password::PW_REPRESENTATION_STORABLE);
 
-        if (! $passwordModel->verify($postBody['password'])) {
+        if (!$passwordModel->verify($password)) {
             return $this->badAuthentication();
         }
 
-        $userData = [
-            'username'  => $user->getUsername(),
-            'firstname' => $user->getFirstname(),
-            'lastname'  => $user->getLastname(),
-            'email'     => $user->getEmail(),
-            'role'      => $user->getRole(),
-        ];
-
-        $token = $this->generateToken($userData);
+        $token = $this->tokenService->createTokenWithUserData($user);
 
         return new JsonResponse([
-            'token' => $token->toString(),
+            'message' => 'Sikeres authentikáció',
+            'token'   => $token->toString(),
+        ], 200);
+    }
+
+    private function loginWithMagicLink(UserInterface $user) {
+        try {
+            $this->userService->accountLoginWithMagicLink($user);
+        } catch (\Exception $e) {
+            return $this->badAuthentication();
+        }
+
+        return new JsonResponse([
+            'message' => 'Az általad megadott e-mail címre elküldtünk egy levelet a további teendőkkel kapcsolatban!',
+            'token'   => null,
         ], 200);
     }
 
@@ -89,29 +107,5 @@ class TokenHandler implements RequestHandlerInterface
         return new JsonResponse([
             'message' => 'Hibás bejelentkezési adatok vagy inaktív fiók. Próbálj jelszó emlékeztetőt kérni, ha nem tudsz belépni.',
         ], 400);
-    }
-
-    /** @var array claim */
-    private function generateToken(array $claim = []): TokenInterface
-    {
-        $configuration = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($this->config['auth']['secret'])
-        );
-
-        $time = new DateTimeImmutable();
-
-        // $usedAfter = $time->modify('+' . $this->config['nbf'] . ' minute');
-        $expiresAt = $time->modify('+' . $this->config['exp'] . ' hour');
-
-        return $configuration->builder()
-                    ->issuedBy($this->config['iss']) // Configures the issuer (iss claim)
-                    ->permittedFor($this->config['aud']) // Configures the issuer (iss claim)
-                    ->identifiedBy($this->config['jti']) // Configures the audience (aud claim)
-                    ->issuedAt($time) // Configures the time that the token was issued (iat claim)
-                    // ->canOnlyBeUsedAfter($usedAfter) // Configures the time that the token can be used (nbf claim)
-                    ->expiresAt($expiresAt) // Configures the expiration time of the token (exp claim)
-                    ->withClaim('user', $claim)
-                    ->getToken($configuration->signer(), $configuration->signingKey());
     }
 }

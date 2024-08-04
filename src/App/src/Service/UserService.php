@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 use Laminas\Log\Logger;
+use Jwt\Service\TokenServiceInterface;
 
 use function error_log;
 
@@ -38,12 +39,14 @@ final class UserService implements UserServiceInterface
         private array $config,
         private EntityManagerInterface $em,
         private Logger $audit,
-        private MailServiceInterface $mailService
+        private MailServiceInterface $mailService,
+        private TokenServiceInterface $tokenService
     ) {
         $this->config                   = $config;
         $this->em                       = $em;
         $this->audit                    = $audit;
         $this->mailService              = $mailService;
+        $this->tokenService             = $tokenService;
         $this->userRepository           = $this->em->getRepository(User::class);
         $this->userPreferenceRepository = $this->em->getRepository(UserPreference::class);
         $this->mailLogRepository        = $this->em->getRepository(MailLog::class);
@@ -58,6 +61,26 @@ final class UserService implements UserServiceInterface
         $user->setUpdatedAt(new DateTime());
 
         $this->em->flush();
+    }
+
+    public function loginWithHash(string $hash): string
+    {
+        $user = $this->userRepository->getUserByHash($hash);
+
+        $user->setHash(null);
+        $user->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+
+        $userData = [
+            'username'  => $user->getUsername(),
+            'firstname' => $user->getFirstname(),
+            'lastname'  => $user->getLastname(),
+            'email'     => $user->getEmail(),
+            'role'      => $user->getRole(),
+        ];
+
+        return $this->tokenService->generateToken($userData)->toString();
     }
 
     public function confirmation(array $filteredData, string $hash): void
@@ -219,6 +242,16 @@ final class UserService implements UserServiceInterface
         if (! $user->getActive()) {
             $this->sendAccountConfirmationReminderEmail($user);
         }
+    }
+
+    public function accountLoginWithMagicLink(UserInterface $user): void
+    {
+        $user->setHash($user->generateToken());
+        $user->setActive(true);
+
+        $this->em->flush();
+
+        $this->sendMagicLinkForLogin($user);
     }
 
     public function sendPrizeNotification(UserInterface $user): void
@@ -413,6 +446,16 @@ final class UserService implements UserServiceInterface
         ];
 
         $this->mailService->send('account-confirmation-reminder', $tplData, $user);
+    }
+
+    private function sendMagicLinkForLogin(UserInterface $user): void {
+        $tplData = [
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'magicLink'        => $this->config['app']['url'] . '/profil/belepes/' . $user->getHash(),
+        ];
+
+        $this->mailService->send('magic-link', $tplData, $user);
     }
 
     public function getRepository(): EntityRepository

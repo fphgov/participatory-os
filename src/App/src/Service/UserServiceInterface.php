@@ -11,6 +11,8 @@ interface UserServiceInterface
 {
     public function activate(string $hash): void;
 
+    public function loginWithHash(string $hash): string;
+
     public function confirmation(array $filteredData, string $hash): void;
 
     public function newsletterActivateSimple(UserInterface $user): void;
@@ -24,6 +26,8 @@ interface UserServiceInterface
     public function forgotPassword(string $email): void;
 
     public function accountConfirmation(UserInterface $user): void;
+
+    public function accountLoginWithMagicLink(UserInterface $user): void;
 
     public function sendPrizeNotification(UserInterface $user): void;
 

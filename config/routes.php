@@ -32,6 +32,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\User\ActivateHandler::class
     ], 'app.api.user.activate');
 
+    $app->get('/app/api/user/magic/{hash}', [
+        App\Handler\User\LoginByHashHandler::class
+    ], 'app.api.user.magic.login');
+
     $app->post('/app/api/user/confirmation/{hash}', [
         App\Handler\User\ConfirmationHandler::class
     ], 'app.api.user.confirmation');

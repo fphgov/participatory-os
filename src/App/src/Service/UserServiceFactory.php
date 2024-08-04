@@ -8,6 +8,7 @@ use App\Middleware\AuditMiddleware;
 use App\Service\MailServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use Jwt\Service\TokenServiceInterface;
 
 final class UserServiceFactory
 {
@@ -22,7 +23,8 @@ final class UserServiceFactory
             $config,
             $container->get(EntityManagerInterface::class),
             $container->get(AuditMiddleware::class)->getLogger(),
-            $container->get(MailServiceInterface::class)
+            $container->get(MailServiceInterface::class),
+            $container->get(TokenServiceInterface::class),
         );
     }
 }
