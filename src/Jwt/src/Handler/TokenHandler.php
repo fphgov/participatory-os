@@ -51,6 +51,10 @@ class TokenHandler implements RequestHandlerInterface
 
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
+        if (! $user && $postBody['type'] === "login") {
+            return $this->sendNotificationNoHasAccount($postBody['email']);
+        }
+
         if (! $user) {
             return $this->badAuthentication();
         }
@@ -86,6 +90,19 @@ class TokenHandler implements RequestHandlerInterface
         return new JsonResponse([
             'message' => 'Sikeres authentikáció',
             'token'   => $token->toString(),
+        ], 200);
+    }
+
+    private function sendNotificationNoHasAccount(string $email) {
+        try {
+            $this->userService->accountLoginNoHasAccount($email);
+        } catch (\Exception $e) {
+            return $this->badAuthentication();
+        }
+
+        return new JsonResponse([
+            'message' => 'Az általad megadott e-mail címre elküldtünk egy levelet a további teendőkkel kapcsolatban!',
+            'token'   => null,
         ], 200);
     }
 

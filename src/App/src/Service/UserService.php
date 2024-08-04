@@ -254,6 +254,11 @@ final class UserService implements UserServiceInterface
         $this->sendMagicLinkForLogin($user);
     }
 
+    public function accountLoginNoHasAccount(string $email): void
+    {
+        $this->sendNoHasAccount($email);
+    }
+
     public function sendPrizeNotification(UserInterface $user): void
     {
         $userPreference = $user->getUserPreference();
@@ -456,6 +461,15 @@ final class UserService implements UserServiceInterface
         ];
 
         $this->mailService->send('magic-link', $tplData, $user);
+    }
+
+    private function sendNoHasAccount(string $email): void {
+        $tplData = [
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+        ];
+
+        $this->mailService->sendDirectEmail('no-has-account', $tplData, $email);
     }
 
     public function getRepository(): EntityRepository

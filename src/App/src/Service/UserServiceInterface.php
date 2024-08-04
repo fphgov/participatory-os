@@ -29,6 +29,8 @@ interface UserServiceInterface
 
     public function accountLoginWithMagicLink(UserInterface $user): void;
 
+    public function accountLoginNoHasAccount(string $email): void;
+
     public function sendPrizeNotification(UserInterface $user): void;
 
     public function registration(array $filteredParams): UserInterface;

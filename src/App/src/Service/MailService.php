@@ -125,6 +125,45 @@ class MailService implements MailServiceInterface
         }
     }
 
+    public function sendDirectEmail(string $mailCode, array $tplData, string $email): void
+    {
+        $this->mailAdapter->clear();
+
+        $anonymusUser = $this->em->getReference(User::class, 1);
+
+        $mail = $this->mailRepository->findOneBy([
+            'code' => $mailCode,
+        ]);
+
+        try {
+            $this->mailAdapter->getMessage()->addTo($email);
+            $this->mailAdapter->getMessage()->setSubject($mail->getSubject());
+
+            $layout = $this->getLayout();
+
+            if ($layout) {
+                $this->mailAdapter->setLayout($layout);
+                $this->mailAdapter->setCss($this->getCss());
+            }
+
+            $template = $this->mailAdapter->setTemplate(
+                $this->mailContentHelper->create($mailCode, $tplData)
+            );
+
+            if ($layout) {
+                $template->addImage(basename($this->getHeaderImagePath()), $this->getHeaderImagePath());
+            }
+
+            $this->mailQueueService->add($anonymusUser, $this->mailAdapter);
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+
+            $this->audit->err('Notification no added to MailQueueService', [
+                'extra' => $mailCode . " | " . $anonymusUser->getId() . " | " . $e->getMessage(),
+            ]);
+        }
+    }
+
     public function sendRaw(EmailContentModelInterface $emailContentModel, array $tplData, User $user): void
     {
         $this->mailAdapter->clear();

@@ -15,6 +15,7 @@ use App\Exception\NoHasProjectInCurrentCampaignException;
 use App\Exception\DuplicateCampaignCategoriesException;
 use App\Exception\VoteUserCategoryExistsException;
 use App\Exception\VoteUserCategoryAlreadyTotalVotesException;
+use App\Exception\VoteTypeNoExistsInDatabaseException;
 use App\Middleware\CampaignMiddleware;
 use App\Middleware\UserMiddleware;
 use App\Service\VoteServiceInterface;

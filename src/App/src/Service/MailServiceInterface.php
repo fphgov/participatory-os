@@ -14,5 +14,7 @@ interface MailServiceInterface
 
     public function send(string $mailCode, array $tplData, User $user): void;
 
+    public function sendDirectEmail(string $mailCode, array $tplData, string $email): void;
+
     public function sendRaw(EmailContentModelInterface $emailContentModel, array $tplData, User $user): void;
 }
