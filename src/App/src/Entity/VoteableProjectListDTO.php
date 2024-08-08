@@ -21,6 +21,8 @@ class VoteableProjectListDTO
         private string $title,
         private string $description,
         private string $location,
+        private ?float $latitude,
+        private ?float $longitude,
         private string $statusCode,
         private string $statusTitle,
         private ?int $voteCount,
@@ -34,6 +36,8 @@ class VoteableProjectListDTO
         $this->title             = $title;
         $this->description       = $description;
         $this->location          = $location;
+        $this->latitude         = $latitude;
+        $this->longitude        = $longitude;
         $this->statusCode        = $statusCode;
         $this->statusTitle       = $statusTitle;
         $this->voteCount         = $voteCount;
@@ -102,6 +106,16 @@ class VoteableProjectListDTO
     public function getLocation(): string
     {
         return $this->location;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
     }
 
     public function getDescription(): string
