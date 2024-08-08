@@ -27,7 +27,7 @@ interface UserServiceInterface
 
     public function accountConfirmation(UserInterface $user): void;
 
-    public function accountLoginWithMagicLink(UserInterface $user): void;
+    public function accountLoginWithMagicLink(UserInterface $user, ?string $pathname = null): void;
 
     public function accountLoginNoHasAccount(string $email): void;
 

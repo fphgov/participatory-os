@@ -71,7 +71,7 @@ class TokenHandler implements RequestHandlerInterface
         }
 
         if ($postBody['type'] === "login") {
-            return $this->loginWithMagicLink($user);
+            return $this->loginWithMagicLink($user, $postBody['pathname'] ?? null);
         }
 
         return $this->loginWithPassword($user, $postBody['password']);
@@ -106,9 +106,9 @@ class TokenHandler implements RequestHandlerInterface
         ], 200);
     }
 
-    private function loginWithMagicLink(UserInterface $user) {
+    private function loginWithMagicLink(UserInterface $user, ?string $pathname = null) {
         try {
-            $this->userService->accountLoginWithMagicLink($user);
+            $this->userService->accountLoginWithMagicLink($user, $pathname);
         } catch (\Exception $e) {
             return $this->badAuthentication();
         }
