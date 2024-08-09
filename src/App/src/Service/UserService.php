@@ -280,7 +280,7 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function registration(array $filteredParams): UserInterface
+    public function registration(array $filteredParams, bool $sendActivationEmail = true): UserInterface
     {
         $date = new DateTime();
 
@@ -321,7 +321,9 @@ final class UserService implements UserServiceInterface
         $this->em->persist($user);
         $this->em->flush();
 
-        $this->sendActivationEmail($user);
+        if ($sendActivationEmail) {
+            $this->sendActivationEmail($user);
+        }
 
         return $user;
     }

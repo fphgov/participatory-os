@@ -10,7 +10,6 @@ use App\Model\PBKDF2Password;
 use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
-use Lcobucci\JWT\Token as TokenInterface;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -41,8 +40,20 @@ class TokenHandler implements RequestHandlerInterface
 
         $userRepository = $this->em->getRepository(User::class);
 
-        if (! isset($postBody['email']) && !isset($postBody['type'])) {
-            return $this->badAuthentication();
+        if (
+            $postBody['type'] === "authentication" &&
+            (
+                !isset($postBody['privacy']) ||
+                !isset($postBody['liveInCity']) ||
+                $postBody['privacy'] !== 'on' ||
+                $postBody['liveInCity'] !== 'on'
+            )
+        ) {
+            return $this->badRequest();
+        }
+
+        if (!isset($postBody['email']) && !isset($postBody['type'])) {
+            return $this->badRequest();
         }
 
         if (!isset($postBody['password']) && $postBody['type'] === "password") {
@@ -51,15 +62,25 @@ class TokenHandler implements RequestHandlerInterface
 
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
-        if (! $user && $postBody['type'] === "login") {
+        if ($postBody['type'] === "authentication") {
+            return $this->registrationAndLoginWithMagicLink(
+                $postBody['email'],
+                $postBody['prize'],
+                (isset($postBody['newsletter']) && $postBody['newsletter'] === 'on'),
+                $user,
+                $postBody['pathname'] ?? null,
+            );
+        }
+
+        if (!$user && $postBody['type'] === "login") {
             return $this->sendNotificationNoHasAccount($postBody['email']);
         }
 
-        if (! $user) {
+        if (!$user) {
             return $this->badAuthentication();
         }
 
-        if (! $user->getActive()) {
+        if (!$user->getActive()) {
             return $this->badAuthentication();
         }
 
@@ -119,10 +140,53 @@ class TokenHandler implements RequestHandlerInterface
         ], 200);
     }
 
+    private function registrationAndLoginWithMagicLink($email, $prize, ?bool $newsletter = false, ?UserInterface $user = null, ?string $pathname = null) {
+        try {
+            if (!$user) {
+                $user = $this->userService->registration([
+                    'password' => '',
+                    'birthyear' => null,
+                    'postal_code' => null,
+                    'postal_code_type' => null,
+                    'live_in_city' => true,
+                    'hear_about' => '',
+                    'privacy' => true,
+                    'reminder_email' => false,
+                    'prize' => $prize,
+                    'firstname' => '',
+                    'lastname' => '',
+                    'email' => $email,
+                ], false);
+            }
+
+            $this->userService->accountLoginWithMagicLink($user, $pathname);
+        } catch (Exception $e) {
+            return $this->badAuthentication();
+        }
+
+        if ($newsletter) {
+            try {
+                $this->userService->newsletterActivateSimple($user);
+            } catch (Exception $e) {}
+        }
+
+        return new JsonResponse([
+            'message' => 'Az általad megadott e-mail címre elküldtünk egy levelet a további teendőkkel kapcsolatban!',
+            'token'   => null,
+        ], 200);
+    }
+
     private function badAuthentication(): JsonResponse
     {
         return new JsonResponse([
             'message' => 'Hibás bejelentkezési adatok vagy inaktív fiók. Próbálj jelszó emlékeztetőt kérni, ha nem tudsz belépni.',
+        ], 400);
+    }
+
+    private function badRequest(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Kérlek add meg az összes csillaggal megjelölt mezőt.',
         ], 400);
     }
 }
