@@ -98,7 +98,7 @@ class MailService implements MailServiceInterface
 
         try {
             $this->mailAdapter->getMessage()->addTo($user->getEmail());
-            $this->mailAdapter->getMessage()->setSubject($mail->getSubject());
+            $this->mailAdapter->getMessage()->setSubject($mail->getSubject() ?? '');
 
             $layout = $this->getLayout();
 
@@ -137,7 +137,7 @@ class MailService implements MailServiceInterface
 
         try {
             $this->mailAdapter->getMessage()->addTo($email);
-            $this->mailAdapter->getMessage()->setSubject($mail->getSubject());
+            $this->mailAdapter->getMessage()->setSubject($mail->getSubject() ?? '');
 
             $layout = $this->getLayout();
 
