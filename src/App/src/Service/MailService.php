@@ -98,7 +98,7 @@ class MailService implements MailServiceInterface
 
         try {
             $this->mailAdapter->getMessage()->addTo($user->getEmail());
-            $this->mailAdapter->getMessage()->setSubject($mail->getSubject() ?? '');
+            $this->mailAdapter->getMessage()->setSubject($mail?->getSubject() ?? '');
 
             $layout = $this->getLayout();
 
@@ -117,7 +117,7 @@ class MailService implements MailServiceInterface
 
             $this->mailQueueService->add($user, $this->mailAdapter);
         } catch (Throwable $e) {
-            error_log($e->getMessage());
+            error_log($e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine());
 
             $this->audit->err('Notification no added to MailQueueService', [
                 'extra' => $mailCode . " | " . $user->getId() . " | " . $e->getMessage(),
@@ -137,7 +137,7 @@ class MailService implements MailServiceInterface
 
         try {
             $this->mailAdapter->getMessage()->addTo($email);
-            $this->mailAdapter->getMessage()->setSubject($mail->getSubject() ?? '');
+            $this->mailAdapter->getMessage()->setSubject($mail?->getSubject() ?? '');
 
             $layout = $this->getLayout();
 
