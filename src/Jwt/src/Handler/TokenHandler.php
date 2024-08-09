@@ -41,7 +41,7 @@ class TokenHandler implements RequestHandlerInterface
         $userRepository = $this->em->getRepository(User::class);
 
         if (
-            $postBody['type'] === "authentication" &&
+            ($postBody['type'] === "authentication" || $postBody['type'] === "registration") &&
             (
                 !isset($postBody['privacy']) ||
                 !isset($postBody['liveInCity']) ||
@@ -62,7 +62,7 @@ class TokenHandler implements RequestHandlerInterface
 
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
-        if ($postBody['type'] === "authentication") {
+        if ($postBody['type'] === "authentication" || $postBody['type'] === "registration") {
             return $this->registrationAndLoginWithMagicLink(
                 $postBody['email'],
                 $postBody['prize'],
