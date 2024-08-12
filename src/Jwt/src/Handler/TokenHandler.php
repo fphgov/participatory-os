@@ -9,6 +9,7 @@ use App\Entity\UserInterface;
 use App\Model\PBKDF2Password;
 use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
@@ -130,7 +131,7 @@ class TokenHandler implements RequestHandlerInterface
     private function loginWithMagicLink(UserInterface $user, ?string $pathname = null) {
         try {
             $this->userService->accountLoginWithMagicLink($user, $pathname);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->badAuthentication();
         }
 
@@ -161,6 +162,7 @@ class TokenHandler implements RequestHandlerInterface
 
             $this->userService->accountLoginWithMagicLink($user, $pathname);
         } catch (Exception $e) {
+            error_log($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
             return $this->badAuthentication();
         }
 
