@@ -36,8 +36,8 @@ class VoteableProjectListDTO
         $this->title             = $title;
         $this->description       = $description;
         $this->location          = $location;
-        $this->latitude         = $latitude;
-        $this->longitude        = $longitude;
+        $this->latitude          = $latitude;
+        $this->longitude         = $longitude;
         $this->statusCode        = $statusCode;
         $this->statusTitle       = $statusTitle;
         $this->voteCount         = $voteCount;

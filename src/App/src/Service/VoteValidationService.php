@@ -8,7 +8,6 @@ use App\Entity\CampaignInterface;
 use App\Entity\PhaseInterface;
 use App\Entity\ProjectInterface;
 use App\Entity\ProjectTypeInterface;
-use App\Entity\Setting;
 use App\Entity\UserInterface;
 use App\Entity\Vote;
 use App\Entity\VoteTypeInterface;
@@ -19,7 +18,6 @@ use App\Exception\VoteUserExistsException;
 use App\Exception\VoteUserProjectExistsException;
 use App\Exception\VoteUserCategoryExistsException;
 use App\Exception\VoteUserCategoryAlreadyTotalVotesException;
-use App\Exception\VoteTypeNoExistsInDatabaseException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -30,21 +28,14 @@ use function array_unique;
 
 final class VoteValidationService implements VoteValidationServiceInterface
 {
-    const VOTE_TYPE_DEFAULT_COUNT = 1;
-    const VOTE_TYPE_4_COUNT = 3;
-
     /** @var EntityRepository */
     private $voteRepository;
-
-    /** @var EntityRepository */
-    private $settingRepository;
 
     public function __construct(
         private EntityManagerInterface $em
     ) {
-        $this->em                = $em;
-        $this->voteRepository    = $this->em->getRepository(Vote::class);
-        $this->settingRepository = $this->em->getRepository(Setting::class);
+        $this->em             = $em;
+        $this->voteRepository = $this->em->getRepository(Vote::class);
     }
 
     public function checkExistsVote(

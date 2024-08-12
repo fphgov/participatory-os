@@ -12,6 +12,9 @@ use App\Entity\VoteTypeInterface;
 
 interface VoteValidationServiceInterface
 {
+    const VOTE_TYPE_DEFAULT_COUNT = 1;
+    const VOTE_TYPE_4_COUNT = 3;
+
     public function checkExistsVote(
         UserInterface $user,
         PhaseInterface $phase,
