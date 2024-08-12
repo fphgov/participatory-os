@@ -14,6 +14,7 @@ use App\Exception\VoteUserExistsException;
 use App\Exception\VoteUserProjectExistsException;
 use App\Exception\VoteUserCategoryExistsException;
 use App\Exception\VoteUserCategoryAlreadyTotalVotesException;
+use App\Exception\VoteTypeNoExistsInDatabaseException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
