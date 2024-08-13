@@ -54,7 +54,7 @@ env:
   - name: APP_PHONE
     value: ""
   - name: APP_URL
-    value: https://reszveteli.budapest.hu
+    value: https://otlet.budapest.dev
   - name: RECAPTCHA_SECRET
     value: _from_google_
   - name: ARCGIS_GATEWAY_HOST
@@ -70,9 +70,9 @@ env:
   - name: JWT_SECRET
     value: ""
   - name: JWT_ISS
-    value: "https://reszveteli.budapest.hu/app"
+    value: "https://otlet.budapest.dev/app"
   - name: JWT_AUD
-    value: "https://reszveteli.budapest.hu/app"
+    value: "https://otlet.budapest.dev/app"
   - name: JWT_NBF
     value: "0"
   - name: JWT_EXP
