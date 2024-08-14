@@ -178,7 +178,10 @@ final class UserService implements UserServiceInterface
     ): void {
         $userPreference = $user->getUserPreference();
 
-        $userPreference->setBirthyear((int) $filteredParams['birthyear']);
+        $birthyear = (int) $filteredParams['birthyear'];
+        $birthyear = $birthyear !== 0 ? $birthyear : null;
+
+        $userPreference->setBirthyear($birthyear);
         $userPreference->setPostalCode((string) $filteredParams['postal_code']);
         $userPreference->setUpdatedAt(new DateTime());
 
@@ -288,8 +291,11 @@ final class UserService implements UserServiceInterface
         $userPreference = new UserPreference();
         $password       = new PBKDF2Password($filteredParams['password']);
 
+        $birthyear = (int) $filteredParams['birthyear'];
+        $birthyear = $birthyear !== 0 ? $birthyear : null;
+
         $userPreference->setUser($user);
-        $userPreference->setBirthyear((int) $filteredParams['birthyear']);
+        $userPreference->setBirthyear($birthyear);
         $userPreference->setPostalCode((string) $filteredParams['postal_code']);
         $userPreference->setPostalCodeType((int) $filteredParams['postal_code_type']);
         $userPreference->setLiveInCity((bool) $filteredParams['live_in_city']);
