@@ -218,20 +218,13 @@ class UserRegistrationFilter extends InputFilter
                         Validator\StringLength::INVALID   => 'Hibás mező tipus. Csak szöveg fogadható el',
                     ],
                 ]),
-                new IsInt([
-                    'messages' => [
-                        IsInt::INVALID        => 'Csak számérték adható meg',
-                        IsInt::NOT_INT        => 'Csak egész számérték adható meg',
-                        IsInt::NOT_INT_STRICT => 'Csak egész számérték adható meg',
-                    ]
-                ]),
                 new Validator\NumberComparison([
                     'messages'  => [
-                        Validator\NumberComparison::ERROR_NOT_NUMERIC           => 'Expected a numeric value',
+                        Validator\NumberComparison::ERROR_NOT_NUMERIC           => 'Csak egész számérték adható meg',
                         Validator\NumberComparison::ERROR_NOT_GREATER_INCLUSIVE => 'Az évszám minimum %min% lehet',
                         Validator\NumberComparison::ERROR_NOT_GREATER           => 'Az évszám minimum %min% lehet',
                         Validator\NumberComparison::ERROR_NOT_LESS_INCLUSIVE    => 'Csak 14 év feletti személyek regisztrálhatnak',
-                        Validator\NumberComparison::ERROR_NOT_LESS              => 'Values must be less than %max%. Received "%value%"',
+                        Validator\NumberComparison::ERROR_NOT_LESS              => 'A %max% értéknél kevesebbnek kell lennie',
                     ],
                     'min'          => 1990,
                     'max'          => (int)(new \DateTime())->format('Y') - 14,
