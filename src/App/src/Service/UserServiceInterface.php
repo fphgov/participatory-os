@@ -23,6 +23,8 @@ interface UserServiceInterface
 
     public function resetPassword(string $hash, string $password): void;
 
+    public function changePersonalData(UserInterface $user, array $filteredParams): void;
+
     public function forgotPassword(string $email): void;
 
     public function accountConfirmation(UserInterface $user): void;

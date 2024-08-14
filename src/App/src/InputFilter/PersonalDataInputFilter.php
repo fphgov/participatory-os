@@ -15,7 +15,7 @@ class PersonalDataInputFilter extends InputFilter
     {
         $this->add([
             'name'        => 'birthyear',
-            'allow_empty' => false,
+            'allow_empty' => true,
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
@@ -64,7 +64,7 @@ class PersonalDataInputFilter extends InputFilter
 
         $this->add([
             'name'        => 'postal_code',
-            'allow_empty' => false,
+            'allow_empty' => true,
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
@@ -93,7 +93,6 @@ class PersonalDataInputFilter extends InputFilter
                     'messages' => [
                         Validator\Regex::INVALID   => 'A megadott típus érvénytelen, nem várt paraméter',
                         Validator\Regex::NOT_MATCH => "Csak budapesti irányítószám adható meg",
-                        Validator\Regex::ERROROUS  => "Szerver hiba az ellenőrzés során",
                     ]
                 ]),
             ],
