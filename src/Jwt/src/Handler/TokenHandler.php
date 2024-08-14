@@ -191,7 +191,7 @@ class TokenHandler implements RequestHandlerInterface
     private function badRequest(): JsonResponse
     {
         return new JsonResponse([
-            'message' => 'Kérlek add meg az összes csillaggal megjelölt mezőt.',
+            'message' => 'Kérlek, jelöld be az összes csillaggal megjelölt mezőt.',
         ], 400);
     }
 }
