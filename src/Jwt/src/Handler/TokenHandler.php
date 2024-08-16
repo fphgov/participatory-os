@@ -42,8 +42,8 @@ class TokenHandler implements RequestHandlerInterface
         $userRepository = $this->em->getRepository(User::class);
 
         if (
-            ($postBody['type'] === "authentication" || $postBody['type'] === "registration") &&
-            (
+            in_array($postBody['type'], UserServiceInterface::AUTH_TYPES)
+            && (
                 !isset($postBody['privacy']) ||
                 !isset($postBody['liveInCity']) ||
                 $postBody['privacy'] !== 'on' ||
@@ -66,10 +66,11 @@ class TokenHandler implements RequestHandlerInterface
 
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
-        if ($postBody['type'] === "authentication" || $postBody['type'] === "registration") {
+        if (in_array($postBody['type'], UserServiceInterface::AUTH_TYPES)) {
             return $this->registrationAndLoginWithMagicLink(
+                $postBody['type'],
                 $postBody['email'],
-                $postBody['prize'],
+                (isset($postBody['prize']) && $postBody['prize'] === 'on'),
                 (isset($postBody['newsletter']) && $postBody['newsletter'] === 'on'),
                 $user,
                 $postBody['pathname'] ?? null,
@@ -144,26 +145,43 @@ class TokenHandler implements RequestHandlerInterface
         ], 200);
     }
 
-    private function registrationAndLoginWithMagicLink($email, $prize, ?bool $newsletter = false, ?UserInterface $user = null, ?string $pathname = null) {
+    private function registrationAndLoginWithMagicLink(
+        string $type,
+        string $email,
+        bool $prize,
+        ?bool $newsletter = false,
+        ?UserInterface $user = null,
+        ?string $pathname = null
+    ) {
         try {
-            if (!$user) {
+            $isNewAccount = false;
+
+            if (! $user) {
+                $isNewAccount = true;
+
                 $user = $this->userService->registration([
-                    'password' => '',
-                    'birthyear' => null,
-                    'postal_code' => null,
+                    'password'         => '',
+                    'birthyear'        => null,
+                    'postal_code'      => null,
                     'postal_code_type' => null,
-                    'live_in_city' => true,
-                    'hear_about' => '',
-                    'privacy' => true,
-                    'reminder_email' => false,
-                    'prize' => $prize,
-                    'firstname' => '',
-                    'lastname' => '',
-                    'email' => $email,
+                    'live_in_city'     => true,
+                    'hear_about'       => '',
+                    'privacy'          => true,
+                    'reminder_email'   => false,
+                    'prize'            => $prize,
+                    'firstname'        => '',
+                    'lastname'         => '',
+                    'email'            => $email,
                 ], false);
             }
 
-            $this->userService->accountLoginWithMagicLink($user, $pathname);
+            if ($type === UserServiceInterface::AUTH_AUTHENTICATION) {
+                $this->userService->accountLoginWithMagicLinkAuthentication($user, $pathname);
+            } else if ($isNewAccount) {
+                $this->userService->accountLoginWithMagicLinkIsNewAccount($user, $pathname);
+            } else {
+                $this->userService->accountLoginWithMagicLink($user, $pathname);
+            }
         } catch (Exception $e) {
             error_log($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
             return $this->badAuthentication();

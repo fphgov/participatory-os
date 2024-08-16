@@ -9,6 +9,14 @@ use Doctrine\ORM\EntityRepository;
 
 interface UserServiceInterface
 {
+    public const AUTH_AUTHENTICATION = 'authentication';
+    public const AUTH_REGISTRATION   = 'registration';
+
+    public const AUTH_TYPES = [
+        self::AUTH_AUTHENTICATION,
+        self::AUTH_REGISTRATION
+    ];
+
     public function activate(string $hash): void;
 
     public function loginWithHash(string $hash): string;
@@ -30,6 +38,10 @@ interface UserServiceInterface
     public function accountConfirmation(UserInterface $user): void;
 
     public function accountLoginWithMagicLink(UserInterface $user, ?string $pathname = null): void;
+
+    public function accountLoginWithMagicLinkIsNewAccount(UserInterface $user, ?string $pathname = null): void;
+
+    public function accountLoginWithMagicLinkAuthentication(UserInterface $user, ?string $pathname = null): void;
 
     public function accountLoginNoHasAccount(string $email): void;
 
