@@ -11,10 +11,17 @@ interface UserServiceInterface
 {
     public const AUTH_AUTHENTICATION = 'authentication';
     public const AUTH_REGISTRATION   = 'registration';
+    public const AUTH_LOGIN          = 'login';
+
+    public const AUTH_REGISTRATION_TYPES = [
+        self::AUTH_AUTHENTICATION,
+        self::AUTH_REGISTRATION,
+    ];
 
     public const AUTH_TYPES = [
         self::AUTH_AUTHENTICATION,
-        self::AUTH_REGISTRATION
+        self::AUTH_REGISTRATION,
+        self::AUTH_LOGIN,
     ];
 
     public function activate(string $hash): void;
