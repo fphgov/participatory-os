@@ -7,7 +7,7 @@ namespace App\Service;
 use App\Entity\UserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 
-interface VoteServiceMessageInterface
+interface VoteMessageServiceInterface
 {
     public function votingWithJsonMessage(
         UserInterface $user,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\User;
 
 use App\Middleware\UserMiddleware;
-use App\Service\VoteServiceMessageInterface;
+use App\Service\VoteMessageServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,10 +15,10 @@ final class VoteHandler implements RequestHandlerInterface
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private VoteServiceMessageInterface $voteServiceMessage,
+        private VoteMessageServiceInterface $voteMessageService,
     ) {
         $this->em                 = $em;
-        $this->voteServiceMessage = $voteServiceMessage;
+        $this->voteMessageService = $voteMessageService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -26,6 +26,6 @@ final class VoteHandler implements RequestHandlerInterface
         $user = $request->getAttribute(UserMiddleware::class);
         $body = $request->getParsedBody();
 
-        return $this->voteServiceMessage->votingWithJsonMessage($user, $body);
+        return $this->voteMessageService->votingWithJsonMessage($user, $body);
     }
 }

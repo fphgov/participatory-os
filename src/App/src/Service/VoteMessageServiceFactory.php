@@ -10,10 +10,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Laminas\InputFilter\InputFilterPluginManager;
 use Psr\Container\ContainerInterface;
 
-final class VoteServiceMessageFactory
+final class VoteMessageServiceFactory
 {
     /**
-     * @return VoteServiceMessage
+     * @return VoteMessageService
      */
     public function __invoke(ContainerInterface $container)
     {
@@ -21,7 +21,7 @@ final class VoteServiceMessageFactory
         $pluginManager = $container->get(InputFilterPluginManager::class);
         $inputFilter   = $pluginManager->get(VoteFilter::class);
 
-        return new VoteServiceMessage(
+        return new VoteMessageService(
             $container->get(EntityManagerInterface::class),
             $container->get(VoteServiceInterface::class),
             $inputFilter

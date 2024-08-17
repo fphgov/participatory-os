@@ -131,7 +131,7 @@ class ConfigProvider
                 Service\ArticleServiceInterface::class        => Service\ArticleServiceFactory::class,
                 Service\SettingServiceInterface::class        => Service\SettingServiceFactory::class,
                 Service\VoteServiceInterface::class           => Service\VoteServiceFactory::class,
-                Service\VoteServiceMessageInterface::class    => Service\VoteServiceMessageFactory::class,
+                Service\VoteMessageServiceInterface::class    => Service\VoteMessageServiceFactory::class,
                 Service\VoteValidationServiceInterface::class => Service\VoteValidationServiceFactory::class,
                 Service\IdeaServiceInterface::class           => Service\IdeaServiceFactory::class,
                 Service\IdeaAnswerServiceInterface::class     => Service\IdeaAnswerServiceFactory::class,

@@ -22,7 +22,7 @@ use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\InputFilter\InputFilterInterface;
 
-final class VoteServiceMessage implements VoteServiceMessageInterface
+final class VoteMessageService implements VoteMessageServiceInterface
 {
     public function __construct(
         private EntityManagerInterface $em,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\User;
 
-use App\Service\VoteServiceMessageInterface;
+use App\Service\VoteMessageServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 
@@ -14,7 +14,7 @@ final class VoteHandlerFactory
     {
         return new VoteHandler(
             $container->get(EntityManagerInterface::class),
-            $container->get(VoteServiceMessageInterface::class),
+            $container->get(VoteMessageServiceInterface::class),
         );
     }
 }
