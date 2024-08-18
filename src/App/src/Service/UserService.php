@@ -187,7 +187,7 @@ final class UserService implements UserServiceInterface
     }
 
     public function changeAboutData(
-        User $user,
+        UserInterface $user,
         array $filteredParams
     ): void {
         $userPreference = $user->getUserPreference();

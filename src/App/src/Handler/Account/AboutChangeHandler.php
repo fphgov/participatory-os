@@ -6,7 +6,6 @@ namespace App\Handler\Account;
 
 use App\Middleware\UserMiddleware;
 use App\Service\UserServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\InputFilter\InputFilterInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -15,18 +14,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AboutChangeHandler implements RequestHandlerInterface
 {
-    /** @var UserServiceInterface **/
-    private $userService;
-
-    /** @var InputFilterInterface **/
-    private $aboutFilter;
-
     public function __construct(
-        UserServiceInterface $userService,
-        InputFilterInterface $aboutFilter
+        private UserServiceInterface $userService,
+        private InputFilterInterface $aboutFilter
     ) {
-        $this->userService  = $userService;
-        $this->aboutFilter  = $aboutFilter;
+        $this->userService = $userService;
+        $this->aboutFilter = $aboutFilter;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -53,7 +46,7 @@ final class AboutChangeHandler implements RequestHandlerInterface
         $this->userService->changeAboutData($user, $this->aboutFilter->getValues());
 
         return new JsonResponse([
-            'message' => 'Sikeres személyes adat módosítás',
+            'message' => 'Sikeres adat módosítás',
         ]);
     }
 }

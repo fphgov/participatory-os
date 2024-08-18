@@ -40,6 +40,8 @@ interface UserServiceInterface
 
     public function changePersonalData(UserInterface $user, array $filteredParams): void;
 
+    public function changeAboutData(UserInterface $user, array $filteredParams): void;
+
     public function forgotPassword(string $email): void;
 
     public function accountConfirmation(UserInterface $user): void;
