@@ -18,40 +18,21 @@ use Mail\Model\EmailContentModelInterface;
 use Throwable;
 
 use function basename;
-use function error_log;
 use function getenv;
 use function file_get_contents;
 
 class MailService implements MailServiceInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
     /** @var MailRepository */
     private $mailRepository;
 
-    /** @var Logger */
-    private $audit;
-
-    /** @var MailAdapterInterface */
-    private $mailAdapter;
-
-    /** @var MailContentHelper */
-    private $mailContentHelper;
-
-    /** @var MailContentRawHelper */
-    private $mailContentRawHelper;
-
-    /** @var MailQueueServiceInterface */
-    private $mailQueueService;
-
     public function __construct(
-        EntityManagerInterface $em,
-        Logger $audit,
-        MailAdapterInterface $mailAdapter,
-        MailContentHelper $mailContentHelper,
-        MailContentRawHelper $mailContentRawHelper,
-        MailQueueServiceInterface $mailQueueService
+        private EntityManagerInterface $em,
+        private Logger $audit,
+        private MailAdapterInterface $mailAdapter,
+        private MailContentHelper $mailContentHelper,
+        private MailContentRawHelper $mailContentRawHelper,
+        private MailQueueServiceInterface $mailQueueService
     ) {
         $this->em                   = $em;
         $this->audit                = $audit;
@@ -117,10 +98,9 @@ class MailService implements MailServiceInterface
 
             $this->mailQueueService->add($user, $this->mailAdapter);
         } catch (Throwable $e) {
-            error_log($e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine());
-
             $this->audit->err('Notification no added to MailQueueService', [
-                'extra' => $mailCode . " | " . $user->getId() . " | " . $e->getMessage(),
+                'extra' => $mailCode . " | " . $user->getId() . " | " .
+                $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }
@@ -156,10 +136,9 @@ class MailService implements MailServiceInterface
 
             $this->mailQueueService->add($anonymusUser, $this->mailAdapter);
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-
             $this->audit->err('Notification no added to MailQueueService', [
-                'extra' => $mailCode . " | " . $anonymusUser->getId() . " | " . $e->getMessage(),
+                'extra' => $mailCode . " | " . $anonymusUser->getId() . " | " .
+                $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }
@@ -189,10 +168,9 @@ class MailService implements MailServiceInterface
 
             $this->mailQueueService->add($user, $this->mailAdapter);
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-
             $this->audit->err('Notification raw no added to MailQueueService', [
-                'extra' => $emailContentModel->getSubject() . " | " . $user->getId() . " | " . $e->getMessage(),
+                'extra' => $emailContentModel->getSubject() . " | " . $user->getId() . " | " .
+                $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }

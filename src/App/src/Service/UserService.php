@@ -22,8 +22,6 @@ use Exception;
 use Laminas\Log\Logger;
 use Jwt\Service\TokenServiceInterface;
 
-use function error_log;
-
 final class UserService implements UserServiceInterface
 {
     /** @var UserRepository */
@@ -399,10 +397,8 @@ final class UserService implements UserServiceInterface
 
             $this->em->flush();
         } catch (Exception $e) {
-            error_log($e->getMessage());
-
             $this->audit->err('Failed delete user', [
-                'extra' => $e->getMessage(),
+                'extra' => $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }

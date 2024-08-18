@@ -11,6 +11,7 @@ use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Log\Logger;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,14 +24,16 @@ use function strtolower;
 class TokenHandler implements RequestHandlerInterface
 {
     public function __construct(
-        protected EntityManagerInterface $em,
+        private EntityManagerInterface $em,
         private UserServiceInterface $userService,
         private TokenServiceInterface $tokenService,
+        private Logger $audit,
         private array $config
     ) {
         $this->em           = $em;
         $this->userService  = $userService;
         $this->tokenService = $tokenService;
+        $this->audit        = $audit;
         $this->config       = $config;
     }
 
@@ -123,7 +126,7 @@ class TokenHandler implements RequestHandlerInterface
         try {
             $this->userService->accountLoginNoHasAccount($email);
         } catch (\Exception $e) {
-            return $this->badAuthentication();
+            return $this->badAuthentication($e);
         }
 
         return new JsonResponse([
@@ -136,7 +139,7 @@ class TokenHandler implements RequestHandlerInterface
         try {
             $this->userService->accountLoginWithMagicLink($user, $pathname);
         } catch (Exception $e) {
-            return $this->badAuthentication();
+            return $this->badAuthentication($e);
         }
 
         return new JsonResponse([
@@ -183,14 +186,15 @@ class TokenHandler implements RequestHandlerInterface
                 $this->userService->accountLoginWithMagicLink($user, $pathname);
             }
         } catch (Exception $e) {
-            error_log($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
-            return $this->badAuthentication();
+            return $this->badAuthentication($e);
         }
 
         if ($newsletter) {
             try {
                 $this->userService->newsletterActivateSimple($user);
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                $this->audit->err($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
+            }
         }
 
         return new JsonResponse([
@@ -199,8 +203,12 @@ class TokenHandler implements RequestHandlerInterface
         ], 200);
     }
 
-    private function badAuthentication(): JsonResponse
+    private function badAuthentication($e = null): JsonResponse
     {
+        if ($e) {
+            $this->audit->err($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
+        }
+
         return new JsonResponse([
             'message' => 'Hibás bejelentkezési adatok vagy inaktív fiók. Próbálj jelszó emlékeztetőt kérni, ha nem tudsz belépni.',
         ], 400);
