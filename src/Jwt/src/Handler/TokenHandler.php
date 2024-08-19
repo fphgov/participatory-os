@@ -58,7 +58,7 @@ class TokenHandler implements RequestHandlerInterface
 
         if (
             !isset($postBody['email']) && !isset($postBody['type']) ||
-            $postBody['type'] === "registration" && $postBody['email'] === ""
+            isset($postBody['email']) && $postBody['email'] === ""
         ) {
             return $this->badRequest();
         }
