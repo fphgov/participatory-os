@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Mezzio\Authorization\Acl\LaminasAcl;
+use Mezzio\Authorization\Acl\LaminasAclFactory;
 use Mezzio\Authorization\AuthorizationInterface;
 
 return [

@@ -15,7 +15,7 @@ $rtel->addResolveTargetEntity(App\Entity\MailQueueInterface::class, App\Entity\M
 $rtel->addResolveTargetEntity(App\Entity\MediaInterface::class, App\Entity\Media::class, []);
 $rtel->addResolveTargetEntity(App\Entity\OfflineVoteInterface::class, App\Entity\OfflineVote::class, []);
 $rtel->addResolveTargetEntity(App\Entity\ProjectInterface::class, App\Entity\Project::class, []);
-$rtel->addResolveTargetEntity(App\Entity\SettingsInterface::class, App\Entity\Settings::class, []);
+$rtel->addResolveTargetEntity(App\Entity\SettingInterface::class, App\Entity\Setting::class, []);
 $rtel->addResolveTargetEntity(App\Entity\UserInterface::class, App\Entity\User::class, []);
 $rtel->addResolveTargetEntity(App\Entity\TagInterface::class, App\Entity\Tag::class, []);
 $rtel->addResolveTargetEntity(App\Entity\UserPreferenceInterface::class, App\Entity\UserPreference::class, []);
