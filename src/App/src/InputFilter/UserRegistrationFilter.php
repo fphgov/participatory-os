@@ -226,7 +226,7 @@ class UserRegistrationFilter extends InputFilter
                         Validator\NumberComparison::ERROR_NOT_LESS_INCLUSIVE    => 'Érvénytelen dátum, csak 14 év feletti személyek regisztrálhatnak',
                         Validator\NumberComparison::ERROR_NOT_LESS              => 'A %max% értéknél kevesebbnek kell lennie',
                     ],
-                    'min'          => 1990,
+                    'min'          => 1900,
                     'max'          => (int)(new \DateTime())->format('Y') - 14,
                     'inclusiveMin' => true,
                     'inclusiveMax' => true,
