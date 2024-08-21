@@ -32,14 +32,18 @@ class PersonalDataInputFilter extends InputFilter
                         Validator\StringLength::INVALID   => 'Hibás mező tipus. Csak szöveg fogadható el',
                     ],
                 ]),
-                new Validator\Between([
+                new Validator\NumberComparison([
                     'messages'  => [
-                        Validator\Between::VALUE_NOT_NUMERIC    => 'Csak egész számérték adható meg',
-                        Validator\Between::NOT_BETWEEN          => 'Az évszám minimum %min% és maximum %max% lehet',
+                        Validator\NumberComparison::ERROR_NOT_NUMERIC           => 'Csak egész számérték adható meg',
+                        Validator\NumberComparison::ERROR_NOT_GREATER_INCLUSIVE => 'Az évszám minimum %min% lehet',
+                        Validator\NumberComparison::ERROR_NOT_GREATER           => 'Az évszám minimum %min% lehet',
+                        Validator\NumberComparison::ERROR_NOT_LESS_INCLUSIVE    => 'Érvénytelen dátum, csak 14 év feletti személyek regisztrálhatnak',
+                        Validator\NumberComparison::ERROR_NOT_LESS              => 'A %max% értéknél kevesebbnek kell lennie',
                     ],
                     'min'          => 1990,
                     'max'          => (int)(new \DateTime())->format('Y') - 14,
-                    'inclusive' => true,
+                    'inclusiveMin' => true,
+                    'inclusiveMax' => true,
                 ]),
             ],
             'filters'     => [
