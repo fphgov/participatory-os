@@ -32,6 +32,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\User\ActivateHandler::class
     ], 'app.api.user.activate');
 
+    $app->get('/app/api/user/magic/{hash}', [
+        App\Handler\User\LoginByHashHandler::class
+    ], 'app.api.user.magic.login');
+
     $app->post('/app/api/user/confirmation/{hash}', [
         App\Handler\User\ConfirmationHandler::class
     ], 'app.api.user.confirmation');
@@ -39,6 +43,18 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/app/api/user/prize/{hash}', [
         App\Handler\User\PrizeHandler::class
     ], 'app.api.user.prize');
+
+    $app->post('/app/api/user/simple/prize', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\User\PrizeSimpleHandler::class
+    ], 'app.api.user.simple.prize');
+
+    $app->post('/app/api/user/simple/newsletter', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\User\NewsletterSimpleHandler::class
+    ], 'app.api.user.simple.newsletter');
 
     $app->post('/app/api/user/forgot/password', [
         App\Handler\User\ForgotPasswordHandler::class
@@ -53,6 +69,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Middleware\UserMiddleware::class,
         App\Handler\User\GetHandler::class
     ], 'app.api.user');
+
+    $app->get('/app/api/user-preference', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\User\GetPreferenceHandler::class
+    ], 'app.api.user.preference');
 
     $app->post('/app/api/user/idea', [
         Jwt\Handler\JwtAuthMiddleware::class,
@@ -75,6 +97,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     ], 'app.api.user.vote');
 
     $app->get('/app/api/vote/list', [
+        App\Middleware\OptionalUserMiddleware::class,
         App\Handler\Vote\ListHandler::class
     ], 'app.api.vote.list');
 
@@ -102,6 +125,18 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Middleware\UserMiddleware::class,
         App\Handler\Account\PasswordChangeHandler::class,
     ], 'app.api.account.password.change');
+
+    $app->post('/app/api/user/personal', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\Account\PersonalChangeHandler::class,
+    ], 'app.api.account.personal.change');
+
+    $app->post('/app/api/user/about', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        App\Handler\Account\AboutChangeHandler::class,
+    ], 'app.api.account.about.change');
 
     $app->delete('/app/api/user/delete', [
         Jwt\Handler\JwtAuthMiddleware::class,

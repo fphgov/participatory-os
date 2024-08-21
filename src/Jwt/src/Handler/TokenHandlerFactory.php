@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Jwt\Handler;
 
+use App\Middleware\AuditMiddleware;
+use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Jwt\Service\TokenServiceInterface;
 
 class TokenHandlerFactory
 {
@@ -20,7 +23,10 @@ class TokenHandlerFactory
 
         return new TokenHandler(
             $container->get(EntityManagerInterface::class),
-            $config['jwt']
+            $container->get(UserServiceInterface::class),
+            $container->get(TokenServiceInterface::class),
+            $container->get(AuditMiddleware::class)->getLogger(),
+            $config['jwt'],
         );
     }
 }

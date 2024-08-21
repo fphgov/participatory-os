@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Campaign;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Collections\Collection;
 
 final class CampaignRepository extends EntityRepository
 {
@@ -34,5 +36,14 @@ final class CampaignRepository extends EntityRepository
         }
 
         return $selectables;
+    }
+
+    public function getAllVoteableCampaignTheme(Campaign $campaign): Collection
+    {
+        $filteredCampaign = $this->findOneBy([
+            'id' => $campaign,
+        ]);
+
+        return $filteredCampaign->getCampaignThemeCollection();
     }
 }

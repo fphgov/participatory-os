@@ -94,13 +94,13 @@ class ProjectInputFilter extends InputFilter
                         IsInt::NOT_INT_STRICT => 'Csak egész számérték adható meg',
                     ],
                 ]),
-                new Validator\GreaterThan([
+                new Validator\NumberComparison([
                     'messages'  => [
-                        Validator\GreaterThan::NOT_GREATER           => 'A "Becsült összeg" mezőértéke nem lehet negatív',
-                        Validator\GreaterThan::NOT_GREATER_INCLUSIVE => 'A "Becsült összeg" mezőértéke nem lehet negatív',
+                        Validator\NumberComparison::ERROR_NOT_GREATER           => 'A "Becsült összeg" mezőértéke nem lehet negatív',
+                        Validator\NumberComparison::ERROR_NOT_GREATER_INCLUSIVE => 'A "Becsült összeg" mezőértéke nem lehet negatív',
                     ],
-                    'min'       => 0,
-                    'inclusive' => true,
+                    'min'          => 0,
+                    'inclusiveMin' => true,
                 ]),
             ],
             'filters'     => [

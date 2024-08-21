@@ -42,7 +42,7 @@ env:
   - name: SMTP_DEFAULTS_ADD_FROM
     value: noreply@budapest.hu
   - name: SMTP_DEFAULTS_ADD_FROM_NAME
-    value: "Ötlet.budapest.hu"
+    value: "otlet.budapest.hu"
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
     value: budapest.hu
   - name: APP_MUNICIPALITY
@@ -54,7 +54,7 @@ env:
   - name: APP_PHONE
     value: ""
   - name: APP_URL
-    value: https://reszveteli.budapest.hu
+    value: https://otlet.budapest.dev
   - name: RECAPTCHA_SECRET
     value: _from_google_
   - name: ARCGIS_GATEWAY_HOST
@@ -70,9 +70,9 @@ env:
   - name: JWT_SECRET
     value: ""
   - name: JWT_ISS
-    value: "https://reszveteli.budapest.hu/app"
+    value: "https://otlet.budapest.dev/app"
   - name: JWT_AUD
-    value: "https://reszveteli.budapest.hu/app"
+    value: "https://otlet.budapest.dev/app"
   - name: JWT_NBF
     value: "0"
   - name: JWT_EXP
@@ -130,13 +130,15 @@ env:
   - name: APP_PAGINATION_MAX_PAGE_SIZE
     value: "21"
   - name: APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE
-    value: "12"
+    value: "200"
   - name: APP_ACCOUNT_CLEAR_TIME_HOUR
     value: "120"
   - name: APP_SERVICE_FILE
     value: "s3"
   - name: APP_STAT_TOKEN
     value: ""
+  - name: MINIO_REGION
+    value: "eu-west-2"
 
 imagePullSecrets: []
 nameOverride: ""

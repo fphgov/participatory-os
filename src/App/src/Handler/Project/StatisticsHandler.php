@@ -64,17 +64,17 @@ final class StatisticsHandler implements RequestHandlerInterface
                 continue;
             }
 
-            $tmpDto->setPlusVoted($offlineProjectDto[0]->getVoted());
+            $tmpDto->setPlusVoted($offlineProjectDto[0]->getVoteCount());
 
             $result[] = $tmpDto;
         }
 
         usort($result, function($a, $b): int {
-            if ($a->getVoted() == $b->getVoted()) {
+            if ($a->getVoteCount() == $b->getVoteCount()) {
                 return 0;
             }
 
-            return $a->getVoted() < $b->getVoted() ? 1 : -1;
+            return $a->getVoteCount() < $b->getVoteCount() ? 1 : -1;
         });
 
         return new JsonResponse([

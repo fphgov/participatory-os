@@ -20,23 +20,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 use Laminas\Log\Logger;
-
-use function error_log;
+use Jwt\Service\TokenServiceInterface;
 
 final class UserService implements UserServiceInterface
 {
-    /** @var array */
-    private $config;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var Logger */
-    private $audit;
-
-    /** @var MailServiceInterface */
-    private $mailService;
-
     /** @var UserRepository */
     private $userRepository;
 
@@ -47,15 +34,17 @@ final class UserService implements UserServiceInterface
     private $mailLogRepository;
 
     public function __construct(
-        array $config,
-        EntityManagerInterface $em,
-        Logger $audit,
-        MailServiceInterface $mailService
+        private array $config,
+        private EntityManagerInterface $em,
+        private Logger $audit,
+        private MailServiceInterface $mailService,
+        private TokenServiceInterface $tokenService
     ) {
         $this->config                   = $config;
         $this->em                       = $em;
         $this->audit                    = $audit;
         $this->mailService              = $mailService;
+        $this->tokenService             = $tokenService;
         $this->userRepository           = $this->em->getRepository(User::class);
         $this->userPreferenceRepository = $this->em->getRepository(UserPreference::class);
         $this->mailLogRepository        = $this->em->getRepository(MailLog::class);
@@ -72,6 +61,26 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
+    public function loginWithHash(string $hash): string
+    {
+        $user = $this->userRepository->getUserByHash($hash);
+
+        $user->setHash(null);
+        $user->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+
+        $userData = [
+            'username'  => $user->getUsername(),
+            'firstname' => $user->getFirstname(),
+            'lastname'  => $user->getLastname(),
+            'email'     => $user->getEmail(),
+            'role'      => $user->getRole(),
+        ];
+
+        return $this->tokenService->generateToken($userData)->toString();
+    }
+
     public function confirmation(array $filteredData, string $hash): void
     {
         $user = $this->userRepository->getUserByHash($hash);
@@ -86,8 +95,6 @@ final class UserService implements UserServiceInterface
 
             $newsletter = new Newsletter();
             $newsletter->setEmail($user->getEmail());
-            $newsletter->setFirstname($user->getFirstname());
-            $newsletter->setLastname($user->getLastname());
             $newsletter->setCreatedAt($date);
             $newsletter->setUpdatedAt($date);
 
@@ -95,6 +102,28 @@ final class UserService implements UserServiceInterface
         }
 
         $user->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+    }
+
+    public function newsletterActivateSimple(UserInterface $user): void
+    {
+        $date = new DateTime();
+
+        $newsletter = new Newsletter();
+        $newsletter->setEmail($user->getEmail());
+        $newsletter->setCreatedAt($date);
+        $newsletter->setUpdatedAt($date);
+
+        $this->em->persist($newsletter);
+
+        $this->em->flush();
+    }
+
+    public function prizeActivateSimple(UserInterface $user): void
+    {
+        $user->getUserPreference()->setPrize(! $user->getUserPreference()->getPrize());
+        $user->getUserPreference()->setUpdatedAt(new DateTime());
 
         $this->em->flush();
     }
@@ -137,6 +166,34 @@ final class UserService implements UserServiceInterface
         $user->setHash(null);
         $user->setPassword($password->getStorableRepresentation());
         $user->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+    }
+
+    public function changePersonalData(
+        UserInterface $user,
+        array $filteredParams
+    ): void {
+        $userPreference = $user->getUserPreference();
+
+        $birthyear = (int) $filteredParams['birthyear'];
+        $birthyear = $birthyear !== 0 ? $birthyear : null;
+
+        $userPreference->setBirthyear($birthyear);
+        $userPreference->setPostalCode((string) $filteredParams['postal_code']);
+        $userPreference->setUpdatedAt(new DateTime());
+
+        $this->em->flush();
+    }
+
+    public function changeAboutData(
+        UserInterface $user,
+        array $filteredParams
+    ): void {
+        $userPreference = $user->getUserPreference();
+
+        $userPreference->setHearAbout((string) $filteredParams['hear_about']);
+        $userPreference->setUpdatedAt(new DateTime());
 
         $this->em->flush();
     }
@@ -188,6 +245,47 @@ final class UserService implements UserServiceInterface
         }
     }
 
+    public function accountLoginWithMagicLink(
+        UserInterface $user,
+        ?string $pathname = null
+    ): void {
+        $user->setHash($user->generateToken());
+        $user->setActive(true);
+
+        $this->em->flush();
+
+        $this->sendMagicLinkForLogin($user, $pathname);
+    }
+
+    public function accountLoginWithMagicLinkIsNewAccount(
+        UserInterface $user,
+        ?string $pathname = null
+    ): void {
+        $user->setHash($user->generateToken());
+        $user->setActive(true);
+
+        $this->em->flush();
+
+        $this->sendMagicLinkForLoginIsNewAccount($user, $pathname);
+    }
+
+    public function accountLoginWithMagicLinkAuthentication(
+        UserInterface $user,
+        ?string $pathname = null
+    ): void {
+        $user->setHash($user->generateToken());
+        $user->setActive(true);
+
+        $this->em->flush();
+
+        $this->sendMagicLinkForLoginAuthentication($user, $pathname);
+    }
+
+    public function accountLoginNoHasAccount(string $email): void
+    {
+        $this->sendNoHasAccount($email);
+    }
+
     public function sendPrizeNotification(UserInterface $user): void
     {
         $userPreference = $user->getUserPreference();
@@ -209,7 +307,7 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function registration(array $filteredParams): UserInterface
+    public function registration(array $filteredParams, bool $sendActivationEmail = true): UserInterface
     {
         $date = new DateTime();
 
@@ -217,8 +315,11 @@ final class UserService implements UserServiceInterface
         $userPreference = new UserPreference();
         $password       = new PBKDF2Password($filteredParams['password']);
 
+        $birthyear = (int) $filteredParams['birthyear'];
+        $birthyear = $birthyear !== 0 ? $birthyear : null;
+
         $userPreference->setUser($user);
-        $userPreference->setBirthyear((int) $filteredParams['birthyear']);
+        $userPreference->setBirthyear($birthyear);
         $userPreference->setPostalCode((string) $filteredParams['postal_code']);
         $userPreference->setPostalCodeType((int) $filteredParams['postal_code_type']);
         $userPreference->setLiveInCity((bool) $filteredParams['live_in_city']);
@@ -250,7 +351,9 @@ final class UserService implements UserServiceInterface
         $this->em->persist($user);
         $this->em->flush();
 
-        $this->sendActivationEmail($user);
+        if ($sendActivationEmail) {
+            $this->sendActivationEmail($user);
+        }
 
         return $user;
     }
@@ -294,10 +397,8 @@ final class UserService implements UserServiceInterface
 
             $this->em->flush();
         } catch (Exception $e) {
-            error_log($e->getMessage());
-
             $this->audit->err('Failed delete user', [
-                'extra' => $e->getMessage(),
+                'extra' => $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
         }
     }
@@ -380,6 +481,65 @@ final class UserService implements UserServiceInterface
         ];
 
         $this->mailService->send('account-confirmation-reminder', $tplData, $user);
+    }
+
+    private function sendMagicLinkForLogin(UserInterface $user, ?string $pathname = null): void {
+        $magicLink = $this->config['app']['url'] . '/profil/belepes/' . $user->getHash();
+
+        if ($pathname) {
+            $magicLink .= '?pathname=' . $pathname;
+        }
+
+        $tplData = [
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'magicLink'        => $magicLink,
+        ];
+
+        $this->mailService->send('magic-link', $tplData, $user);
+    }
+
+    private function sendMagicLinkForLoginIsNewAccount(UserInterface $user, ?string $pathname = null): void
+    {
+        $magicLink = $this->config['app']['url'] . '/profil/belepes/' . $user->getHash();
+
+        if ($pathname) {
+            $magicLink .= '?pathname=' . $pathname;
+        }
+
+        $tplData = [
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'magicLink'        => $magicLink,
+        ];
+
+        $this->mailService->send('magic-link-new-account', $tplData, $user);
+    }
+
+    private function sendMagicLinkForLoginAuthentication(UserInterface $user, ?string $pathname = null): void
+    {
+        $magicLink = $this->config['app']['url'] . '/profil/belepes/' . $user->getHash();
+
+        if ($pathname) {
+            $magicLink .= '?pathname=' . $pathname;
+        }
+
+        $tplData = [
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'magicLink'        => $magicLink,
+        ];
+
+        $this->mailService->send('magic-link-authentication', $tplData, $user);
+    }
+
+    private function sendNoHasAccount(string $email): void {
+        $tplData = [
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+        ];
+
+        $this->mailService->sendDirectEmail('no-has-account', $tplData, $email);
     }
 
     public function getRepository(): EntityRepository

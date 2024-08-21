@@ -23,12 +23,6 @@ use function file_get_contents;
 
 class MailAdapter implements MailAdapterInterface
 {
-    /** @var array */
-    private $config;
-
-    /** @var Smtp */
-    private $transport;
-
     /** @var Message */
     private $message;
 
@@ -48,8 +42,8 @@ class MailAdapter implements MailAdapterInterface
     private $name = '';
 
     public function __construct(
-        Smtp $transport,
-        array $config
+        private Smtp $transport,
+        private array $config
     ) {
         $this->transport = $transport;
         $this->config    = $config;

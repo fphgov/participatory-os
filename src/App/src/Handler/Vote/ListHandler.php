@@ -7,6 +7,7 @@ namespace App\Handler\Vote;
 use App\Service\VoteServiceInterface;
 use App\Exception\DifferentPhaseException;
 use App\Entity\ProjectCollection;
+use App\Middleware\OptionalUserMiddleware;
 use App\Model\VoteableProjectFilterModel;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
@@ -35,6 +36,7 @@ final class ListHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $user        = $request->getAttribute(OptionalUserMiddleware::class);
         $queryParams = $request->getQueryParams();
 
         $voteableProjectFilter = new VoteableProjectFilterModel();
@@ -48,7 +50,8 @@ final class ListHandler implements RequestHandlerInterface
 
         try {
             $qb = $this->voteService->getVoteablesProjects(
-                $voteableProjectFilter
+                $voteableProjectFilter,
+                $user
             );
 
             $resource = $this->createCollection(

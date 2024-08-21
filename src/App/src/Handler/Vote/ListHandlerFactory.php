@@ -13,6 +13,8 @@ final class ListHandlerFactory
 {
     public function __invoke(ContainerInterface $container): ListHandler
     {
+        $config = $container->has('config') ? $container->get('config') : [];
+
         return new ListHandler(
             $container->get(VoteServiceInterface::class),
             isset($config['app']['pagination']['maxPageSizeForVote']) ? (int) $config['app']['pagination']['maxPageSizeForVote'] : 12,

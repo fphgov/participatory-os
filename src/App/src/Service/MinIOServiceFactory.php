@@ -14,7 +14,7 @@ final class MinIOServiceFactory
         $config = $container->has('config') ? $container->get('config') : [];
 
         $s3 = new S3Client([
-            'region'                  => '',
+            'region'                  => $config['minio']['region'],
             'endpoint'                => $config['minio']['endpoint'],
             'use_path_style_endpoint' => true,
             'useSSL'                  => $config['minio']['useSSL'],

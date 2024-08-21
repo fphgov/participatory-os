@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Mezzio\Authorization\Acl\LaminasAcl;
+use Mezzio\Authorization\Acl\LaminasAclFactory;
 use Mezzio\Authorization\AuthorizationInterface;
 
 return [
@@ -24,6 +25,7 @@ return [
 
             App\Middleware\AuditMiddleware::class             => App\Middleware\AuditMiddlewareFactory::class,
             App\Middleware\UserMiddleware::class              => App\Middleware\UserMiddlewareFactory::class,
+            App\Middleware\OptionalUserMiddleware::class      => App\Middleware\OptionalUserMiddlewareFactory::class,
             App\Middleware\PhaseMiddleware::class             => App\Middleware\PhaseMiddlewareFactory::class,
             App\Middleware\CampaignMiddleware::class          => App\Middleware\CampaignMiddlewareFactory::class,
             App\Middleware\StatisticsAccountMiddleware::class => App\Middleware\StatisticsAccountMiddlewareFactory::class,

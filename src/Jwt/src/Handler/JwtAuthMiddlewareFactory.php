@@ -25,6 +25,7 @@ class JwtAuthMiddlewareFactory
             "secure"    => false,
             "relaxed"   => ["localhost", "*.budapest.hu"],
             "secret"    => $config['jwt']['auth']['secret'],
+            "algorithm" => $config['jwt']['auth']['algorithm'],
             "attribute" => JwtAuthMiddleware::class,
         ]);
 

@@ -116,7 +116,11 @@ final class VoteService implements VoteServiceInterface
         UserInterface $user,
         VoteTypeInterface $voteType,
         array $projects
-    ): void {
+    ): array {
+        $data = [
+            'remainingVote' => [],
+        ];
+
         $phase = $this->phaseService->phaseCheck(PhaseInterface::PHASE_VOTE);
 
         $dbProjects = $this->projectRepository->findBy([
@@ -143,7 +147,23 @@ final class VoteService implements VoteServiceInterface
 
         $this->em->flush();
 
+        foreach ($dbProjects as $project) {
+            $remainingVote = $this->voteValidationService->getAvailableVoteCount(
+                $user,
+                $phase->getCampaign(),
+                $voteType,
+                $project
+            );
+
+            $data['remainingVote'][] = [
+                'id'    => $project->getId(),
+                'votes' => $remainingVote,
+            ];
+        }
+
         $this->successVote($user, $votes);
+
+        return $data;
     }
 
     /**
@@ -172,13 +192,16 @@ final class VoteService implements VoteServiceInterface
         $this->mailService->send('vote-success', $tplData, $user);
     }
 
-    public function getVoteablesProjects(VoteableProjectFilterModel $voteableProjectFilter): QueryBuilder
-    {
+    public function getVoteablesProjects(
+        VoteableProjectFilterModel $voteableProjectFilter,
+        ?UserInterface $user = null
+    ): QueryBuilder {
         $phase = $this->phaseService->phaseCheck(PhaseInterface::PHASE_VOTE);
 
         return $this->projectRepository->getVoteables(
             $phase->getCampaign(),
-            $voteableProjectFilter
+            $voteableProjectFilter,
+            $user
         );
     }
 

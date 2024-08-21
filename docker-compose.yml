@@ -1,15 +1,12 @@
-version: '3.5'
-
 services:
   db:
     image: mysql:5.7
-    container_name: participatory-db
     command: --explicit_defaults_for_timestamp --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     env_file: .env
     ports:
       - 3306:3306
     volumes:
-      - ./docker/data/mysql:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
       - ./docker/config/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     networks:
       - default
@@ -18,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: docker/config/webapp/Dockerfile
-    container_name: participatory-webapp
     expose:
       - 9004
     volumes:
@@ -29,10 +25,12 @@ services:
       - ./docker/config/webapp/php/ini/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
       - ./docker/config/webapp/php/ini/postal.ini:/usr/local/etc/php/conf.d/postal.ini
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost" ]
+      test: curl --fail http://localhost/app/api/ping || exit 1
       interval: 1m30s
       timeout: 10s
       retries: 3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file: .env
     depends_on:
       - db
@@ -41,7 +39,6 @@ services:
 
   nginx:
     image: fphgov/nginx
-    container_name: participatory-nginx
     networks:
       - default
     ports:
@@ -49,7 +46,7 @@ services:
       - 443:443
     volumes:
       - ./docker/config/nginx:/etc/nginx/conf.d
-      - ./docker/data/nginx/logs:/var/log/nginx
+      - ./data/nginx/logs:/var/log/nginx
       - ./:/var/www/html
       - ./docker/config/cert:/opt/cert
     depends_on:
@@ -66,7 +63,7 @@ services:
     image: bitnami/minio:2022-debian-11
     ports:
       - 9000:9000
-      - 9002:9001
+      - 9001:9001
     volumes:
       - ./data/minio:/data
     env_file:
@@ -77,7 +74,6 @@ services:
       MINIO_DEFAULT_BUCKETS: 'private,shared:public'
 
   dozzle:
-    container_name: participatory-dozzle
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

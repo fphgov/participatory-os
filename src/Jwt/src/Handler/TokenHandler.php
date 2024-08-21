@@ -5,34 +5,36 @@ declare(strict_types=1);
 namespace Jwt\Handler;
 
 use App\Entity\User;
+use App\Entity\UserInterface;
 use App\Model\PBKDF2Password;
-use DateTimeImmutable;
+use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Token as TokenInterface;
+use Laminas\Log\Logger;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Jwt\Service\TokenServiceInterface;
 
 use function in_array;
 use function strtolower;
 
 class TokenHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var array */
-    private $config;
-
-    public function __construct(EntityManagerInterface $em, array $config)
-    {
-        $this->em     = $em;
-        $this->config = $config;
+    public function __construct(
+        private EntityManagerInterface $em,
+        private UserServiceInterface $userService,
+        private TokenServiceInterface $tokenService,
+        private Logger $audit,
+        private array $config
+    ) {
+        $this->em           = $em;
+        $this->userService  = $userService;
+        $this->tokenService = $tokenService;
+        $this->audit        = $audit;
+        $this->config       = $config;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -42,17 +44,51 @@ class TokenHandler implements RequestHandlerInterface
 
         $userRepository = $this->em->getRepository(User::class);
 
-        if (! isset($postBody['email']) || ! isset($postBody['password'])) {
+        if (
+            in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)
+            && (
+                !isset($postBody['privacy']) ||
+                !isset($postBody['liveInCity']) ||
+                $postBody['privacy'] !== 'on' ||
+                $postBody['liveInCity'] !== 'on'
+            )
+        ) {
+            return $this->badRequest();
+        }
+
+        if (
+            !isset($postBody['email']) && !isset($postBody['type']) ||
+            isset($postBody['email']) && $postBody['email'] === ""
+        ) {
+            return $this->badRequest();
+        }
+
+        if (!isset($postBody['password']) && $postBody['type'] === "password") {
             return $this->badAuthentication();
         }
 
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
-        if (! $user) {
+        if (in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)) {
+            return $this->registrationAndLoginWithMagicLink(
+                $postBody['type'],
+                $postBody['email'],
+                (isset($postBody['prize']) && $postBody['prize'] === 'on'),
+                (isset($postBody['newsletter']) && $postBody['newsletter'] === 'on'),
+                $user,
+                $postBody['pathname'] ?? null,
+            );
+        }
+
+        if (!$user && $postBody['type'] === "login") {
+            return $this->sendNotificationNoHasAccount($postBody['email']);
+        }
+
+        if (!$user) {
             return $this->badAuthentication();
         }
 
-        if (! $user->getActive()) {
+        if (!$user->getActive()) {
             return $this->badAuthentication();
         }
 
@@ -63,55 +99,125 @@ class TokenHandler implements RequestHandlerInterface
             return $this->badAuthentication();
         }
 
+        if ($postBody['type'] === "login") {
+            return $this->loginWithMagicLink($user, $postBody['pathname'] ?? null);
+        }
+
+        return $this->loginWithPassword($user, $postBody['password']);
+    }
+
+    private function loginWithPassword(UserInterface $user, string $password)
+    {
         $passwordModel = new PBKDF2Password($user->getPassword(), PBKDF2Password::PW_REPRESENTATION_STORABLE);
 
-        if (! $passwordModel->verify($postBody['password'])) {
+        if (!$passwordModel->verify($password)) {
             return $this->badAuthentication();
         }
 
-        $userData = [
-            'username'  => $user->getUsername(),
-            'firstname' => $user->getFirstname(),
-            'lastname'  => $user->getLastname(),
-            'email'     => $user->getEmail(),
-            'role'      => $user->getRole(),
-        ];
-
-        $token = $this->generateToken($userData);
+        $token = $this->tokenService->createTokenWithUserData($user);
 
         return new JsonResponse([
-            'token' => $token->toString(),
+            'message' => 'Sikeres authentikáció',
+            'token'   => $token->toString(),
         ], 200);
     }
 
-    private function badAuthentication(): JsonResponse
+    private function sendNotificationNoHasAccount(string $email) {
+        try {
+            $this->userService->accountLoginNoHasAccount($email);
+        } catch (\Exception $e) {
+            return $this->badAuthentication($e);
+        }
+
+        return new JsonResponse([
+            'message' => 'Az általad megadott e-mail címre elküldtünk egy levelet a további teendőkkel kapcsolatban!',
+            'token'   => null,
+        ], 200);
+    }
+
+    private function loginWithMagicLink(UserInterface $user, ?string $pathname = null) {
+        try {
+            $this->userService->accountLoginWithMagicLink($user, $pathname);
+        } catch (Exception $e) {
+            return $this->badAuthentication($e);
+        }
+
+        return new JsonResponse([
+            'message' => 'Az általad megadott e-mail címre elküldtünk egy levelet a további teendőkkel kapcsolatban!',
+            'token'   => null,
+        ], 200);
+    }
+
+    private function registrationAndLoginWithMagicLink(
+        string $type,
+        string $email,
+        bool $prize,
+        ?bool $newsletter = false,
+        ?UserInterface $user = null,
+        ?string $pathname = null
+    ) {
+        try {
+            $isNewAccount = false;
+
+            if (! $user) {
+                $isNewAccount = true;
+
+                $user = $this->userService->registration([
+                    'password'         => '',
+                    'birthyear'        => null,
+                    'postal_code'      => null,
+                    'postal_code_type' => null,
+                    'live_in_city'     => true,
+                    'hear_about'       => '',
+                    'privacy'          => true,
+                    'reminder_email'   => false,
+                    'prize'            => $prize,
+                    'firstname'        => '',
+                    'lastname'         => '',
+                    'email'            => $email,
+                ], false);
+            }
+
+            if ($type === UserServiceInterface::AUTH_AUTHENTICATION) {
+                $this->userService->accountLoginWithMagicLinkAuthentication($user, $pathname);
+            } else if ($isNewAccount) {
+                $this->userService->accountLoginWithMagicLinkIsNewAccount($user, $pathname);
+            } else {
+                $this->userService->accountLoginWithMagicLink($user, $pathname);
+            }
+        } catch (Exception $e) {
+            return $this->badAuthentication($e);
+        }
+
+        if ($newsletter) {
+            try {
+                $this->userService->newsletterActivateSimple($user);
+            } catch (Exception $e) {
+                $this->audit->err($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
+            }
+        }
+
+        return new JsonResponse([
+            'message' => 'Az általad megadott e-mail címre elküldtünk egy levelet a további teendőkkel kapcsolatban!',
+            'token'   => null,
+        ], 200);
+    }
+
+    private function badAuthentication($e = null): JsonResponse
     {
+        if ($e) {
+            $this->audit->err($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
+        }
+
         return new JsonResponse([
             'message' => 'Hibás bejelentkezési adatok vagy inaktív fiók. Próbálj jelszó emlékeztetőt kérni, ha nem tudsz belépni.',
         ], 400);
     }
 
-    /** @var array claim */
-    private function generateToken(array $claim = []): TokenInterface
+    private function badRequest(): JsonResponse
     {
-        $configuration = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($this->config['auth']['secret'])
-        );
-
-        $time = new DateTimeImmutable();
-
-        // $usedAfter = $time->modify('+' . $this->config['nbf'] . ' minute');
-        $expiresAt = $time->modify('+' . $this->config['exp'] . ' hour');
-
-        return $configuration->builder()
-                    ->issuedBy($this->config['iss']) // Configures the issuer (iss claim)
-                    ->permittedFor($this->config['aud']) // Configures the issuer (iss claim)
-                    ->identifiedBy($this->config['jti']) // Configures the audience (aud claim)
-                    ->issuedAt($time) // Configures the time that the token was issued (iat claim)
-                    // ->canOnlyBeUsedAfter($usedAfter) // Configures the time that the token can be used (nbf claim)
-                    ->expiresAt($expiresAt) // Configures the expiration time of the token (exp claim)
-                    ->withClaim('user', $claim)
-                    ->getToken($configuration->signer(), $configuration->signingKey());
+        return new JsonResponse([
+            'message' => 'Kérlek, jelöld be az összes csillaggal megjelölt mezőt.',
+        ], 400);
     }
 }

@@ -63,3 +63,4 @@ supervisord.pid
 mysql-hide
 .htpasswd
 auth.json
+.certs

@@ -36,8 +36,9 @@ class ConfigProvider
         return [
             'invokables' => [],
             'factories'  => [
-                Handler\JwtAuthMiddleware::class => Handler\JwtAuthMiddlewareFactory::class,
-                Handler\TokenHandler::class      => Handler\TokenHandlerFactory::class,
+                Handler\JwtAuthMiddleware::class     => Handler\JwtAuthMiddlewareFactory::class,
+                Handler\TokenHandler::class          => Handler\TokenHandlerFactory::class,
+                Service\TokenServiceInterface::class => Service\TokenServiceFactory::class,
             ],
         ];
     }

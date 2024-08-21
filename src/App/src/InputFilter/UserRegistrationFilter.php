@@ -218,28 +218,18 @@ class UserRegistrationFilter extends InputFilter
                         Validator\StringLength::INVALID   => 'Hibás mező tipus. Csak szöveg fogadható el',
                     ],
                 ]),
-                new IsInt([
-                    'messages' => [
-                        IsInt::INVALID        => 'Csak számérték adható meg',
-                        IsInt::NOT_INT        => 'Csak egész számérték adható meg',
-                        IsInt::NOT_INT_STRICT => 'Csak egész számérték adható meg',
-                    ]
-                ]),
-                new Validator\LessThan([
-                    'max'       => (int)(new \DateTime())->format('Y') - 14,
-                    'inclusive' => true,
-                    'messages' => [
-                        Validator\LessThan::NOT_LESS           => "The input is not less than '%max%'",
-                        Validator\LessThan::NOT_LESS_INCLUSIVE => "Csak 14 év feletti személyek regisztrálhatnak",
-                    ]
-                ]),
-                new Validator\GreaterThan([
-                    'min'       => 1900,
-                    'inclusive' => true,
-                    'messages' => [
-                        Validator\GreaterThan::NOT_GREATER           => "The input is not greater than '%min%'",
-                        Validator\GreaterThan::NOT_GREATER_INCLUSIVE => "Az évszám minimum %min% lehet",
-                    ]
+                new Validator\NumberComparison([
+                    'messages'  => [
+                        Validator\NumberComparison::ERROR_NOT_NUMERIC           => 'Csak egész számérték adható meg',
+                        Validator\NumberComparison::ERROR_NOT_GREATER_INCLUSIVE => 'Az évszám minimum %min% lehet',
+                        Validator\NumberComparison::ERROR_NOT_GREATER           => 'Az évszám minimum %min% lehet',
+                        Validator\NumberComparison::ERROR_NOT_LESS_INCLUSIVE    => 'Érvénytelen dátum, csak 14 év feletti személyek regisztrálhatnak',
+                        Validator\NumberComparison::ERROR_NOT_LESS              => 'A %max% értéknél kevesebbnek kell lennie',
+                    ],
+                    'min'          => 1900,
+                    'max'          => (int)(new \DateTime())->format('Y') - 14,
+                    'inclusiveMin' => true,
+                    'inclusiveMax' => true,
                 ]),
             ],
             'filters'     => [
@@ -279,7 +269,6 @@ class UserRegistrationFilter extends InputFilter
                     'messages' => [
                         Validator\Regex::INVALID   => 'A megadott típus érvénytelen, nem várt paraméter',
                         Validator\Regex::NOT_MATCH => "Csak budapesti irányítószám adható meg",
-                        Validator\Regex::ERROROUS  => "Szerver hiba az ellenőrzés során",
                     ]
                 ]),
             ],
