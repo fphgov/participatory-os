@@ -13,7 +13,7 @@ use App\Entity\VoteTypeInterface;
 interface VoteValidationServiceInterface
 {
     const VOTE_TYPE_DEFAULT_COUNT = 1;
-    const VOTE_TYPE_4_COUNT = 3;
+    const VOTE_TYPE_4_COUNT = 4;
 
     public function checkExistsVote(
         UserInterface $user,
