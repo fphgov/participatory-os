@@ -42,7 +42,7 @@ env:
   - name: SMTP_DEFAULTS_ADD_FROM
     value: noreply@budapest.hu
   - name: SMTP_DEFAULTS_ADD_FROM_NAME
-    value: "Ötlet.budapest.hu"
+    value: "otlet.budapest.hu"
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
     value: budapest.hu
   - name: APP_MUNICIPALITY
