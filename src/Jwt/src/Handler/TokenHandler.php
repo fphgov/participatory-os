@@ -45,6 +45,7 @@ class TokenHandler implements RequestHandlerInterface
         $userRepository = $this->em->getRepository(User::class);
 
         if (
+            isset($postBody['type']) &&
             in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)
             && (
                 !isset($postBody['privacy']) ||
