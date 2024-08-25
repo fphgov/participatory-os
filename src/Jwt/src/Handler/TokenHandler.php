@@ -70,7 +70,7 @@ class TokenHandler implements RequestHandlerInterface
 
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
-        if (in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)) {
+        if (isset($postBody['type']) && in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)) {
             return $this->registrationAndLoginWithMagicLink(
                 $postBody['type'],
                 $postBody['email'],
@@ -81,7 +81,7 @@ class TokenHandler implements RequestHandlerInterface
             );
         }
 
-        if (!$user && $postBody['type'] === "login") {
+        if (!$user && isset($postBody['type']) && $postBody['type'] === "login") {
             return $this->sendNotificationNoHasAccount($postBody['email']);
         }
 
@@ -100,7 +100,7 @@ class TokenHandler implements RequestHandlerInterface
             return $this->badAuthentication();
         }
 
-        if ($postBody['type'] === "login") {
+        if (isset($postBody['type']) && $postBody['type'] === "login") {
             return $this->loginWithMagicLink($user, $postBody['pathname'] ?? null);
         }
 
