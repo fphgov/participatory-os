@@ -1,3 +1,4 @@
+0 0 * * * /usr/local/bin/php -f /var/www/html/bin/cron/clear-account.php
 * * * * * /usr/local/bin/php -f /var/www/html/bin/cron/notifications.php
 * * * * * sleep 15; /usr/local/bin/php -f /var/www/html/bin/cron/notifications.php
 * * * * * sleep 30; /usr/local/bin/php -f /var/www/html/bin/cron/notifications.php
