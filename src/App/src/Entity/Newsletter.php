@@ -15,6 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Newsletter implements NewsletterInterface
 {
+    const TYPE_UNSUBSCRIBE = 'unsubscribe';
+    const TYPE_SUBSCRIBE = 'subscribe';
+
     use EntityMetaTrait;
     use EntityTrait;
 
@@ -31,6 +34,13 @@ class Newsletter implements NewsletterInterface
      * @Groups({"full_detail"})
      */
     private bool $sync = false;
+
+    /**
+     * @ORM\Column(name="type", type="string", length=100)
+     *
+     * @Groups({"full_detail"})
+     */
+    private ?string $type = null;
 
     public function setEmail(string $email): void
     {
@@ -50,5 +60,15 @@ class Newsletter implements NewsletterInterface
     public function getSync(): bool
     {
         return $this->sync;
+    }
+
+    public function setType(?string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
     }
 }

@@ -30,7 +30,7 @@ interface UserServiceInterface
 
     public function confirmation(array $filteredData, string $hash): void;
 
-    public function newsletterActivateSimple(UserInterface $user): void;
+    public function newsletterActivateSimple(UserInterface $user, $subscribe): void;
 
     public function prizeActivateSimple(UserInterface $user): void;
 

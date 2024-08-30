@@ -14,7 +14,6 @@ use App\Exception\UserNotActiveException;
 use App\Exception\UserNotFoundException;
 use App\Model\PBKDF2Password;
 use App\Repository\UserRepository;
-use App\Service\MailServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -24,13 +23,9 @@ use Jwt\Service\TokenServiceInterface;
 
 final class UserService implements UserServiceInterface
 {
-    /** @var UserRepository */
     private $userRepository;
-
-    /** @var EntityRepository */
+    private $newsletterRepository;
     private $userPreferenceRepository;
-
-    /** @var EntityRepository */
     private $mailLogRepository;
 
     public function __construct(
@@ -46,6 +41,7 @@ final class UserService implements UserServiceInterface
         $this->mailService              = $mailService;
         $this->tokenService             = $tokenService;
         $this->userRepository           = $this->em->getRepository(User::class);
+        $this->newsletterRepository           = $this->em->getRepository(Newsletter::class);
         $this->userPreferenceRepository = $this->em->getRepository(UserPreference::class);
         $this->mailLogRepository        = $this->em->getRepository(MailLog::class);
     }
@@ -95,6 +91,7 @@ final class UserService implements UserServiceInterface
 
             $newsletter = new Newsletter();
             $newsletter->setEmail($user->getEmail());
+            $newsletter->setType(Newsletter::TYPE_SUBSCRIBE);
             $newsletter->setCreatedAt($date);
             $newsletter->setUpdatedAt($date);
 
@@ -106,12 +103,24 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function newsletterActivateSimple(UserInterface $user): void
+    public function newsletterActivateSimple(UserInterface $user, $subscribe): void
     {
         $date = new DateTime();
 
-        $newsletter = new Newsletter();
+        $newsletter = $this->newsletterRepository->findOneBy([
+            'email' => $user->getEmail(),
+        ]);
+
+        if (!$subscribe && !$newsletter) {
+            return;
+        }
+
+        if (!$newsletter) {
+            $newsletter = new Newsletter();
+        }
+
         $newsletter->setEmail($user->getEmail());
+        $newsletter->setType($subscribe ? Newsletter::TYPE_SUBSCRIBE : Newsletter::TYPE_UNSUBSCRIBE);
         $newsletter->setCreatedAt($date);
         $newsletter->setUpdatedAt($date);
 

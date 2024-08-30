@@ -22,4 +22,8 @@ interface NewsletterInterface extends EntityInterface
     public function setSync(bool $sync): void;
 
     public function getSync(): bool;
+
+    public function setType(?string $type): void;
+
+    public function getType(): ?string;
 }
