@@ -58,5 +58,9 @@ interface UserServiceInterface
 
     public function registration(array $filteredParams): UserInterface;
 
+    public function clearAccounts(): void;
+
+    public function clearAccount(UserInterface $user): bool;
+
     public function getRepository(): EntityRepository;
 }

@@ -377,7 +377,7 @@ final class UserService implements UserServiceInterface
         return $user;
     }
 
-    public function clearAccount(): void
+    public function clearAccounts(): void
     {
         $users = $this->userRepository->noActivatedUsers(
             $this->config['app']['account']['clearTimeHour']
@@ -385,41 +385,7 @@ final class UserService implements UserServiceInterface
 
         try {
             foreach ($users as $user) {
-                $userPreference = $user->getUserPreference();
-                $userVotes      = $user->getVoteCollection();
-                $ideas          = $user->getIdeaCollection();
-
-                $anonymusUser = $this->em->getReference(User::class, 1);
-
-                foreach ($ideas as $idea) {
-                    $idea->setSubmitter($anonymusUser);
-                }
-
-                foreach ($userVotes as $userVote) {
-                    $userVote->setUser($anonymusUser);
-                }
-
-                if ($userPreference !== null) {
-                    $this->em->remove($userPreference);
-                }
-
-                $mailLogs = $this->mailLogRepository->findBy([
-                    'user' => $user,
-                ]);
-
-                foreach ($mailLogs as $mailLog) {
-                    $mailLog->setUser($anonymusUser);
-                }
-
-                $newsletters = $this->newsletterRepository->findBy([
-                    'email' => $user->getEmail(),
-                ]);
-
-                foreach ($newsletters as $newsletter) {
-                    $this->em->remove($newsletter);
-                }
-
-                $this->em->remove($user);
+                $this->deleteAccount($user, false);
             }
 
             $this->em->flush();
@@ -427,6 +393,68 @@ final class UserService implements UserServiceInterface
             $this->audit->err('Failed delete user', [
                 'extra' => $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
+        }
+    }
+
+    public function clearAccount(UserInterface $user): bool
+    {
+        $success = false;
+
+        try {
+            $this->deleteAccount($user, true);
+
+            $success = true;
+        } catch (Exception $e) {
+            $this->audit->err('Failed delete user', [
+                'extra' => $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+
+        return $success;
+    }
+
+    private function deleteAccount(
+        UserInterface $user,
+        bool $flush
+    ): void {
+        $userPreference = $user->getUserPreference();
+        $userVotes      = $user->getVoteCollection();
+        $ideas          = $user->getIdeaCollection();
+
+        $anonymusUser = $this->em->getReference(User::class, 1);
+
+        foreach ($ideas as $idea) {
+            $idea->setSubmitter($anonymusUser);
+        }
+
+        foreach ($userVotes as $userVote) {
+            $userVote->setUser($anonymusUser);
+        }
+
+        if ($userPreference !== null) {
+            $this->em->remove($userPreference);
+        }
+
+        $mailLogs = $this->mailLogRepository->findBy([
+            'user' => $user,
+        ]);
+
+        foreach ($mailLogs as $mailLog) {
+            $mailLog->setUser($anonymusUser);
+        }
+
+        $newsletters = $this->newsletterRepository->findBy([
+            'email' => $user->getEmail(),
+        ]);
+
+        foreach ($newsletters as $newsletter) {
+            $this->em->remove($newsletter);
+        }
+
+        $this->em->remove($user);
+
+        if ($flush) {
+            $this->em->flush();
         }
     }
 

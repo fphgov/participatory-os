@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace App\Handler\Account;
 
+use App\Service\UserServiceInterface;
 use App\Middleware\UserMiddleware;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-use function sprintf;
-
 final class DeleteHandler implements RequestHandlerInterface
 {
-    private array $config;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
     public function __construct(
-        array $config,
-        EntityManagerInterface $em
+        private array $config,
+        private EntityManagerInterface $em,
+        private UserServiceInterface $userService
     ) {
-        $this->config = $config;
-        $this->em     = $em;
+        $this->config      = $config;
+        $this->em          = $em;
+        $this->userService = $userService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -41,13 +36,18 @@ final class DeleteHandler implements RequestHandlerInterface
             ], 404);
         }
 
-        $user->setActive(false);
-        $user->setUpdatedAt(new DateTime());
+        $isRemoved = $this->userService->clearAccount($user);
 
-        $this->em->flush();
+        if (! $isRemoved) {
+            return new JsonResponse([
+                'errors' => [
+                    'delete' => 'Sikertelen profil törlés!'
+                ],
+            ], 500);
+        }
 
         return new JsonResponse([
-            'message' => sprintf('A fiók törlésének kérését fogadtuk. A fiók %d óra múlva törlödni fog automatikusan.', $this->config['app']['account']['clearTimeHour']),
+            'message' => 'Sikeres profil törlés!',
         ]);
     }
 }

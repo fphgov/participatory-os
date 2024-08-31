@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Account;
 
+use App\Service\UserServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 
@@ -15,7 +16,8 @@ final class DeleteHandlerFactory
 
         return new DeleteHandler(
             $config,
-            $container->get(EntityManagerInterface::class)
+            $container->get(EntityManagerInterface::class),
+            $container->get(UserServiceInterface::class)
         );
     }
 }
