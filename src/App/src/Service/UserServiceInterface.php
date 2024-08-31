@@ -32,7 +32,7 @@ interface UserServiceInterface
 
     public function newsletterActivateSimple(UserInterface $user, bool $subscribe): void;
 
-    public function prizeActivateSimple(UserInterface $user): void;
+    public function prizeActivateSimple(UserInterface $user): bool;
 
     public function prizeActivate(string $prizeHash): void;
 
