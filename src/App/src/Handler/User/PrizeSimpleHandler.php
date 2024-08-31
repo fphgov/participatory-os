@@ -24,16 +24,24 @@ final class PrizeSimpleHandler implements RequestHandlerInterface
     {
         $user = $request->getAttribute(UserMiddleware::class);
 
+        $isPrize = false;
+
         try {
-            $this->userService->prizeActivateSimple($user);
+            $isPrize = $this->userService->prizeActivateSimple($user);
         } catch (Exception $e) {
             return new JsonResponse([
                 'message' => 'Váratlan hiba történt',
             ], 404);
         }
 
+        if ($isPrize) {
+            return new JsonResponse([
+                'message' => 'Sikeresen feliratkoztál a nyereményjátékra!',
+            ]);
+        }
+
         return new JsonResponse([
-            'message' => 'Sikeres nyereményjáték részvétel módosítás',
+            'message' => 'Sikeresen leiratkoztál a nyereményjátékról!',
         ]);
     }
 }

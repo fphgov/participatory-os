@@ -120,12 +120,16 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function prizeActivateSimple(UserInterface $user): void
+    public function prizeActivateSimple(UserInterface $user): bool
     {
-        $user->getUserPreference()->setPrize(! $user->getUserPreference()->getPrize());
+        $isPrize = ! $user->getUserPreference()->getPrize();
+
+        $user->getUserPreference()->setPrize($isPrize);
         $user->getUserPreference()->setUpdatedAt(new DateTime());
 
         $this->em->flush();
+
+        return $isPrize;
     }
 
     public function prizeActivate(string $prizeHash): void
