@@ -22,21 +22,20 @@ final class NewsletterSimpleHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $user = $request->getAttribute(UserMiddleware::class);
-        $body = $request->getParsedBody();
+        $user       = $request->getAttribute(UserMiddleware::class);
+        $body       = $request->getParsedBody();
         $newsletter = $body['newsletter'] ?? '0';
-        $subscribe = ($newsletter === '1');
-
-        $this->audit->info('subscribe: ' . $newsletter);
+        $subscribe  = ($newsletter === '1');
 
         try {
             $this->userService->newsletterActivateSimple($user, $subscribe);
 
             return new JsonResponse([
-            'message' => $subscribe ? 'Sikeres feliratkozás a hírlevélre' : 'Sikeres leiratkozás a hírlevélről',
-        ]);
+                'message' => $subscribe ? 'Sikeresen feliratkoztál a hírlevélre' : 'Sikeresen leiratkoztál a hírlevélről',
+            ]);
         } catch (Exception $e) {
             $this->audit->err($e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine());
+
             return new JsonResponse([
                 'message' => 'Váratlan hiba történt',
             ], 500);

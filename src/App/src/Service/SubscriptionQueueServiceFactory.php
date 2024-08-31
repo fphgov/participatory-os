@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 final class SubscriptionQueueServiceFactory
 {
@@ -20,8 +21,18 @@ final class SubscriptionQueueServiceFactory
     {
         $config = $container->has('config') ? $container->get('config') : [];
 
+        if (
+            ! isset($config['newsletter']) ||
+            ! isset($config['newsletter']['url']) ||
+            ! isset($config['newsletter']['cid']) ||
+            ! $config['newsletter']['url'] ||
+            ! $config['newsletter']['cid']
+        ) {
+            throw new ServiceNotFoundException('Missing SubscriptionQueueService setting!');
+        }
+
         return new SubscriptionQueueService(
-            $config,
+            $config['newsletter'],
             $container->get(EntityManagerInterface::class),
             $container->get(AuditMiddleware::class)->getLogger(),
         );

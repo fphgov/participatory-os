@@ -13,6 +13,9 @@ use App\Entity\UserPreferenceInterface;
 use App\Exception\UserNotActiveException;
 use App\Exception\UserNotFoundException;
 use App\Model\PBKDF2Password;
+use App\Repository\MailLogRepository;
+use App\Repository\NewsletterRepository;
+use App\Repository\UserPreferenceRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,10 +26,10 @@ use Jwt\Service\TokenServiceInterface;
 
 final class UserService implements UserServiceInterface
 {
-    private $userRepository;
-    private $newsletterRepository;
-    private $userPreferenceRepository;
-    private $mailLogRepository;
+    private UserRepository $userRepository;
+    private NewsletterRepository $newsletterRepository;
+    private UserPreferenceRepository $userPreferenceRepository;
+    private MailLogRepository $mailLogRepository;
 
     public function __construct(
         private array $config,
@@ -41,7 +44,7 @@ final class UserService implements UserServiceInterface
         $this->mailService              = $mailService;
         $this->tokenService             = $tokenService;
         $this->userRepository           = $this->em->getRepository(User::class);
-        $this->newsletterRepository           = $this->em->getRepository(Newsletter::class);
+        $this->newsletterRepository     = $this->em->getRepository(Newsletter::class);
         $this->userPreferenceRepository = $this->em->getRepository(UserPreference::class);
         $this->mailLogRepository        = $this->em->getRepository(MailLog::class);
     }
@@ -103,25 +106,28 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function newsletterActivateSimple(UserInterface $user, $subscribe): void
-    {
+    public function newsletterActivateSimple(
+        UserInterface $user,
+        bool $subscribe
+    ): void {
         $date = new DateTime();
 
         $newsletter = $this->newsletterRepository->findOneBy([
             'email' => $user->getEmail(),
         ]);
 
-        if (!$subscribe && !$newsletter) {
+        if (! $subscribe && ! $newsletter) {
             return;
         }
 
-        if (!$newsletter) {
+        if (! $newsletter) {
             $newsletter = new Newsletter();
+            $newsletter->setCreatedAt($date);
         }
 
         $newsletter->setEmail($user->getEmail());
         $newsletter->setType($subscribe ? Newsletter::TYPE_SUBSCRIBE : Newsletter::TYPE_UNSUBSCRIBE);
-        $newsletter->setCreatedAt($date);
+        $newsletter->setSync(false);
         $newsletter->setUpdatedAt($date);
 
         $this->em->persist($newsletter);
@@ -399,6 +405,14 @@ final class UserService implements UserServiceInterface
 
                 foreach ($mailLogs as $mailLog) {
                     $mailLog->setUser($anonymusUser);
+                }
+
+                $newsletters = $this->newsletterRepository->findBy([
+                    'email' => $user->getEmail(),
+                ]);
+
+                foreach ($newsletters as $newsletter) {
+                    $this->em->remove($newsletter);
                 }
 
                 $this->em->remove($user);

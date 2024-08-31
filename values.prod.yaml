@@ -137,6 +137,10 @@ env:
     value: "s3"
   - name: APP_STAT_TOKEN
     value: ""
+  - name: NEWSLETTER_API_URL
+    value: "https://hirlevel.budapest.hu/api"
+  - name: NEWSLETTER_API_CID
+    value: "aSQV5beZ_"
 
 imagePullSecrets: []
 nameOverride: ""

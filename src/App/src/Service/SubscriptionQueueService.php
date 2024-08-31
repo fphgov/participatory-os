@@ -8,38 +8,29 @@ use App\Entity\Newsletter;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Laminas\Log\Logger;
-use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use GuzzleHttp\Client;
 use Throwable;
 
 final class SubscriptionQueueService implements SubscriptionQueueServiceInterface
 {
-    const SUBSCRIBE_ENDPOINT = 'subscribe.php';
-    const UNSUBSCRIBE_ENDPOINT = 'unsubscribe.php';
-
-    private array $config;
-    private EntityManagerInterface $em;
-    private Logger $audit;
-    private string $newsletterApi;
-    private string $subscribeCid;
+    private string $apiUrl;
+    private string $cid;
     private ?Client $httpClient = null;
 
     public function __construct(
-        array $config,
-        EntityManagerInterface $em,
-        Logger $audit
+        private array $config,
+        private EntityManagerInterface $em,
+        private Logger $audit
     ) {
         $this->config = $config;
         $this->em     = $em;
         $this->audit  = $audit;
 
-        if ($this->config['subscription']['newsletterApi'] === null) {
-            throw new ServiceNotFoundException('Missing service setting!');
-        }
-
-        $this->newsletterApi = $this->config['subscription']['newsletterApi'];
-        $this->subscribeCid = $this->config['subscription']['subscribeCid'];
-        $this->httpClient    = new Client();
+        $this->apiUrl     = $this->config['url'];
+        $this->cid        = $this->config['cid'];
+        $this->httpClient = new Client([
+            'verify' => false,
+        ]);
     }
 
     /**
@@ -47,14 +38,14 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
      */
     public function subscribe(Newsletter $newsletter): void
     {
-        $response = $this->httpClient->post($this->newsletterApi . '/' . self::SUBSCRIBE_ENDPOINT, [
+        $response = $this->httpClient->post($this->apiUrl . '/' . self::SUBSCRIBE_ENDPOINT, [
             'headers' => [
                 'Accept-Encoding' => 'application/json',
-                'Accept'  => 'application/json',
-                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Accept'          => 'application/json',
+                'Content-Type'    => 'application/x-www-form-urlencoded',
             ],
             'form_params' => [
-                'cid' => $this->subscribeCid,
+                'cid'   => $this->cid,
                 'email' => $newsletter->getEmail(),
             ]
         ]);
@@ -63,7 +54,9 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
             $this->audit->info('Subscription failed: ' . $response->getBody());
         }
 
-        $this->audit->info('Subscription successful (' . $newsletter->getEmail() . ':' . $this->subscribeCid . ')');
+        $this->audit->info('Subscription successful (' . $newsletter->getEmail() . ':' . $this->cid . ')');
+
+        $newsletter->setSync(true);
 
         $this->em->persist($newsletter);
         $this->em->flush();
@@ -74,14 +67,14 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
      */
     public function unsubscribe(Newsletter $newsletter): void
     {
-        $response = $this->httpClient->post($this->newsletterApi . '/' . self::UNSUBSCRIBE_ENDPOINT, [
+        $response = $this->httpClient->post($this->apiUrl . '/' . self::UNSUBSCRIBE_ENDPOINT, [
             'headers' => [
                 'Accept-Encoding' => 'application/json',
-                'Accept'  => 'application/json',
-                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Accept'          => 'application/json',
+                'Content-Type'    => 'application/x-www-form-urlencoded',
             ],
             'form_params' => [
-                'cid' => $this->subscribeCid,
+                'cid'   => $this->cid,
                 'email' => $newsletter->getEmail(),
             ]
         ]);
@@ -90,9 +83,10 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
             $this->audit->info('Unsubscription failed: ' . $response->getBody());
         }
 
-        $this->audit->info('Unsubscription successful (' . $newsletter->getEmail() . ':' . $this->subscribeCid . ')');
+        $this->audit->info('Unsubscription successful (' . $newsletter->getEmail() . ':' . $this->cid . ')');
 
         $newsletter->setSync(true);
+
         $this->em->persist($newsletter);
         $this->em->flush();
     }
@@ -101,7 +95,9 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
     {
         $mailQueueRepository = $this->em->getRepository(Newsletter::class);
 
-        $newsletters = $mailQueueRepository->findBy([], []);
+        $newsletters = $mailQueueRepository->findBy([
+            'sync' => false,
+        ]);
 
         foreach ($newsletters as $newsletter) {
             try {

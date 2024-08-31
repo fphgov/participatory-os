@@ -6,6 +6,7 @@ namespace App\Handler\User;
 
 use App\Entity\Newsletter;
 use App\Middleware\UserMiddleware;
+use App\Repository\NewsletterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -14,13 +15,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class GetPreferenceHandler implements RequestHandlerInterface
 {
-    private $em;
-    private $newsletterRepository;
+    private NewsletterRepository $newsletterRepository;
 
     public function __construct(
-        EntityManagerInterface $em
+        private EntityManagerInterface $em
     ) {
-        $this->em = $em;
+        $this->em                   = $em;
         $this->newsletterRepository = $this->em->getRepository(Newsletter::class);
     }
 
@@ -37,6 +37,7 @@ final class GetPreferenceHandler implements RequestHandlerInterface
         ]);
 
         $subscribe = false;
+
         if ($newsletter && $newsletter->getType() === Newsletter::TYPE_SUBSCRIBE) {
             $subscribe = true;
         }
