@@ -137,6 +137,8 @@ env:
     value: "s3"
   - name: APP_STAT_TOKEN
     value: ""
+  - name: MINIO_REGION
+    value: "eu-west-2"
   - name: NEWSLETTER_API_URL
     value: "https://hirlevel.budapest.hu/api"
   - name: NEWSLETTER_API_CID

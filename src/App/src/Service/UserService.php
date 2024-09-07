@@ -538,7 +538,8 @@ final class UserService implements UserServiceInterface
         $this->mailService->send('account-confirmation-reminder', $tplData, $user);
     }
 
-    private function sendMagicLinkForLogin(UserInterface $user, ?string $pathname = null): void {
+    private function sendMagicLinkForLogin(UserInterface $user, ?string $pathname = null): void
+    {
         $magicLink = $this->config['app']['url'] . '/profil/belepes/' . $user->getHash();
 
         if ($pathname) {
@@ -588,7 +589,8 @@ final class UserService implements UserServiceInterface
         $this->mailService->send('magic-link-authentication', $tplData, $user);
     }
 
-    private function sendNoHasAccount(string $email): void {
+    private function sendNoHasAccount(string $email): void
+    {
         $tplData = [
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
