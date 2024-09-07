@@ -30,7 +30,7 @@ interface UserServiceInterface
 
     public function confirmation(array $filteredData, string $hash): void;
 
-    public function newsletterActivateSimple(UserInterface $user): void;
+    public function newsletterActivateSimple(UserInterface $user, bool $subscribe): void;
 
     public function prizeActivateSimple(UserInterface $user): bool;
 
@@ -57,6 +57,10 @@ interface UserServiceInterface
     public function sendPrizeNotification(UserInterface $user): void;
 
     public function registration(array $filteredParams): UserInterface;
+
+    public function clearAccounts(): void;
+
+    public function clearAccount(UserInterface $user): bool;
 
     public function getRepository(): EntityRepository;
 }

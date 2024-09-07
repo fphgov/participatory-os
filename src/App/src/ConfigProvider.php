@@ -124,6 +124,7 @@ class ConfigProvider
                 Handler\Mail\AdminModifyHandler::class        => Handler\Mail\AdminModifyHandlerFactory::class,
                 Handler\Phase\CheckHandler::class             => Handler\Phase\CheckHandlerFactory::class,
                 Service\MailQueueServiceInterface::class      => Service\MailQueueServiceFactory::class,
+                Service\SubscriptionQueueServiceInterface::class      => Service\SubscriptionQueueServiceFactory::class,
                 Service\MediaServiceInterface::class          => Service\MediaServiceFactory::class,
                 Service\MinIOServiceInterface::class          => Service\MinIOServiceFactory::class,
                 Service\UserServiceInterface::class           => Service\UserServiceFactory::class,

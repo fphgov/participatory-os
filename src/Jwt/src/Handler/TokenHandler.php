@@ -192,7 +192,7 @@ class TokenHandler implements RequestHandlerInterface
 
         if ($newsletter) {
             try {
-                $this->userService->newsletterActivateSimple($user);
+                $this->userService->newsletterActivateSimple($user, true);
             } catch (Exception $e) {
                 $this->audit->err($e->getMessage() . ' - ' . $e->getFile() . ':' . $e->getLine());
             }

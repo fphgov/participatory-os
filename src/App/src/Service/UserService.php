@@ -13,8 +13,10 @@ use App\Entity\UserPreferenceInterface;
 use App\Exception\UserNotActiveException;
 use App\Exception\UserNotFoundException;
 use App\Model\PBKDF2Password;
+use App\Repository\MailLogRepository;
+use App\Repository\NewsletterRepository;
+use App\Repository\UserPreferenceRepository;
 use App\Repository\UserRepository;
-use App\Service\MailServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -24,14 +26,10 @@ use Jwt\Service\TokenServiceInterface;
 
 final class UserService implements UserServiceInterface
 {
-    /** @var UserRepository */
-    private $userRepository;
-
-    /** @var EntityRepository */
-    private $userPreferenceRepository;
-
-    /** @var EntityRepository */
-    private $mailLogRepository;
+    private UserRepository $userRepository;
+    private NewsletterRepository $newsletterRepository;
+    private UserPreferenceRepository $userPreferenceRepository;
+    private MailLogRepository $mailLogRepository;
 
     public function __construct(
         private array $config,
@@ -46,6 +44,7 @@ final class UserService implements UserServiceInterface
         $this->mailService              = $mailService;
         $this->tokenService             = $tokenService;
         $this->userRepository           = $this->em->getRepository(User::class);
+        $this->newsletterRepository     = $this->em->getRepository(Newsletter::class);
         $this->userPreferenceRepository = $this->em->getRepository(UserPreference::class);
         $this->mailLogRepository        = $this->em->getRepository(MailLog::class);
     }
@@ -95,6 +94,7 @@ final class UserService implements UserServiceInterface
 
             $newsletter = new Newsletter();
             $newsletter->setEmail($user->getEmail());
+            $newsletter->setType(Newsletter::TYPE_SUBSCRIBE);
             $newsletter->setCreatedAt($date);
             $newsletter->setUpdatedAt($date);
 
@@ -106,13 +106,28 @@ final class UserService implements UserServiceInterface
         $this->em->flush();
     }
 
-    public function newsletterActivateSimple(UserInterface $user): void
-    {
+    public function newsletterActivateSimple(
+        UserInterface $user,
+        bool $subscribe
+    ): void {
         $date = new DateTime();
 
-        $newsletter = new Newsletter();
+        $newsletter = $this->newsletterRepository->findOneBy([
+            'email' => $user->getEmail(),
+        ]);
+
+        if (! $subscribe && ! $newsletter) {
+            return;
+        }
+
+        if (! $newsletter) {
+            $newsletter = new Newsletter();
+            $newsletter->setCreatedAt($date);
+        }
+
         $newsletter->setEmail($user->getEmail());
-        $newsletter->setCreatedAt($date);
+        $newsletter->setType($subscribe ? Newsletter::TYPE_SUBSCRIBE : Newsletter::TYPE_UNSUBSCRIBE);
+        $newsletter->setSync(false);
         $newsletter->setUpdatedAt($date);
 
         $this->em->persist($newsletter);
@@ -362,7 +377,7 @@ final class UserService implements UserServiceInterface
         return $user;
     }
 
-    public function clearAccount(): void
+    public function clearAccounts(): void
     {
         $users = $this->userRepository->noActivatedUsers(
             $this->config['app']['account']['clearTimeHour']
@@ -370,33 +385,7 @@ final class UserService implements UserServiceInterface
 
         try {
             foreach ($users as $user) {
-                $userPreference = $user->getUserPreference();
-                $userVotes      = $user->getVoteCollection();
-                $ideas          = $user->getIdeaCollection();
-
-                $anonymusUser = $this->em->getReference(User::class, 1);
-
-                foreach ($ideas as $idea) {
-                    $idea->setSubmitter($anonymusUser);
-                }
-
-                foreach ($userVotes as $userVote) {
-                    $userVote->setUser($anonymusUser);
-                }
-
-                if ($userPreference !== null) {
-                    $this->em->remove($userPreference);
-                }
-
-                $mailLogs = $this->mailLogRepository->findBy([
-                    'user' => $user,
-                ]);
-
-                foreach ($mailLogs as $mailLog) {
-                    $mailLog->setUser($anonymusUser);
-                }
-
-                $this->em->remove($user);
+                $this->deleteAccount($user, false);
             }
 
             $this->em->flush();
@@ -404,6 +393,68 @@ final class UserService implements UserServiceInterface
             $this->audit->err('Failed delete user', [
                 'extra' => $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
             ]);
+        }
+    }
+
+    public function clearAccount(UserInterface $user): bool
+    {
+        $success = false;
+
+        try {
+            $this->deleteAccount($user, true);
+
+            $success = true;
+        } catch (Exception $e) {
+            $this->audit->err('Failed delete user', [
+                'extra' => $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+
+        return $success;
+    }
+
+    private function deleteAccount(
+        UserInterface $user,
+        bool $flush
+    ): void {
+        $userPreference = $user->getUserPreference();
+        $userVotes      = $user->getVoteCollection();
+        $ideas          = $user->getIdeaCollection();
+
+        $anonymusUser = $this->em->getReference(User::class, 1);
+
+        foreach ($ideas as $idea) {
+            $idea->setSubmitter($anonymusUser);
+        }
+
+        foreach ($userVotes as $userVote) {
+            $userVote->setUser($anonymusUser);
+        }
+
+        if ($userPreference !== null) {
+            $this->em->remove($userPreference);
+        }
+
+        $mailLogs = $this->mailLogRepository->findBy([
+            'user' => $user,
+        ]);
+
+        foreach ($mailLogs as $mailLog) {
+            $mailLog->setUser($anonymusUser);
+        }
+
+        $newsletters = $this->newsletterRepository->findBy([
+            'email' => $user->getEmail(),
+        ]);
+
+        foreach ($newsletters as $newsletter) {
+            $this->em->remove($newsletter);
+        }
+
+        $this->em->remove($user);
+
+        if ($flush) {
+            $this->em->flush();
         }
     }
 

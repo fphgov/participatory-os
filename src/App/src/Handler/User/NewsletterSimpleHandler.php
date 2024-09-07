@@ -8,6 +8,7 @@ use App\Service\UserServiceInterface;
 use App\Middleware\UserMiddleware;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Log\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -15,25 +16,29 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class NewsletterSimpleHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private UserServiceInterface $userService
-    ) {
-        $this->userService = $userService;
-    }
+        private readonly Logger               $audit,
+        private readonly UserServiceInterface $userService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $user = $request->getAttribute(UserMiddleware::class);
+        $user       = $request->getAttribute(UserMiddleware::class);
+        $body       = $request->getParsedBody();
+        $newsletter = $body['newsletter'] ?? '0';
+        $subscribe  = ($newsletter === '1');
 
         try {
-            $this->userService->newsletterActivateSimple($user);
+            $this->userService->newsletterActivateSimple($user, $subscribe);
+
+            return new JsonResponse([
+                'message' => $subscribe ? 'Sikeresen feliratkoztál a hírlevélre' : 'Sikeresen leiratkoztál a hírlevélről',
+            ]);
         } catch (Exception $e) {
+            $this->audit->err($e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine());
+
             return new JsonResponse([
                 'message' => 'Váratlan hiba történt',
-            ], 404);
+            ], 500);
         }
-
-        return new JsonResponse([
-            'message' => 'Sikeres feliratkozás hírlevélre',
-        ]);
     }
 }

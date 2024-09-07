@@ -32,6 +32,13 @@ class Newsletter implements NewsletterInterface
      */
     private bool $sync = false;
 
+    /**
+     * @ORM\Column(name="type", type="string", length=100, nullable=false, options={"default": "subscribe"})
+     *
+     * @Groups({"full_detail"})
+     */
+    private string $type;
+
     public function setEmail(string $email): void
     {
         $this->email = $email;
@@ -50,5 +57,15 @@ class Newsletter implements NewsletterInterface
     public function getSync(): bool
     {
         return $this->sync;
+    }
+
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }
