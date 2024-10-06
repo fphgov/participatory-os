@@ -79,10 +79,12 @@ RUN /usr/bin/crontab /etc/crontabs/docker-crontab
 EXPOSE $XDEBUG_CLIENT_PORT
 
 RUN sed -i 's/9000/9004/' /usr/local/etc/php-fpm.d/zz-docker.conf
+
+# https://spot13.com/pmcalculator/
 RUN sed -i 's/pm.max_children = 5/pm.max_children = 816/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.start_servers = 2/pm.start_servers = 60/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 25/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 45/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.start_servers = 2/pm.start_servers = 61/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 61/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 183/' /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9004
 
