@@ -66,10 +66,11 @@ COPY ./k8s/php/ini/security.ini /usr/local/etc/php/conf.d/security.ini
 COPY ./k8s/php/ini/upload.ini /usr/local/etc/php/conf.d/upload.ini
 COPY ./docker/config/webapp/php/ini/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
+# https://spot13.com/pmcalculator/
 RUN sed -i 's/pm.max_children = 5/pm.max_children = 816/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.start_servers = 2/pm.start_servers = 60/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 25/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 45/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.start_servers = 2/pm.start_servers = 61/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 61/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 183/' /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9000
 
