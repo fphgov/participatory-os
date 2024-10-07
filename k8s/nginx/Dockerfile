@@ -55,7 +55,7 @@ RUN set -ex \
 COPY . .
 RUN php -d allow_url_fopen=on /usr/local/bin/composer install --no-ansi --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader
 
-FROM fphgov/nginx AS app
+FROM fphgov/nginx:2.0 AS app
 
 COPY  ./k8s/nginx /etc/nginx/conf.d
 COPY --from=builder /var/www/html /var/www/html
