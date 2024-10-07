@@ -111,11 +111,18 @@ class TokenHandler implements RequestHandlerInterface
     {
         $passwordModel = new PBKDF2Password($user->getPassword(), PBKDF2Password::PW_REPRESENTATION_STORABLE);
 
+        if ($this->userService->isToManyLoginAttempt($user)) {
+            return $this->toManyAttempt();
+        }
+
         if (!$passwordModel->verify($password)) {
+            $this->userService->addUserLoginAttempt($user, true);
             return $this->badAuthentication();
         }
 
         $token = $this->tokenService->createTokenWithUserData($user);
+
+        $this->userService->addUserLoginAttempt($user, false);
 
         return new JsonResponse([
             'message' => 'Sikeres authentikáció',
@@ -219,6 +226,13 @@ class TokenHandler implements RequestHandlerInterface
     {
         return new JsonResponse([
             'message' => 'Kérlek, jelöld be az összes csillaggal megjelölt mezőt.',
+        ], 400);
+    }
+
+    private function toManyAttempt(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Túl sok sikertelen bejelentkezési kísérlet! Kérlek várj 15 percet mielött újra probálkoznál.',
         ], 400);
     }
 }
