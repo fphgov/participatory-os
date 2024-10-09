@@ -82,9 +82,12 @@ RUN sed -i 's/9000/9004/' /usr/local/etc/php-fpm.d/zz-docker.conf
 
 # https://spot13.com/pmcalculator/
 RUN sed -i 's/pm.max_children = 5/pm.max_children = 816/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.start_servers = 2/pm.start_servers = 61/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 61/' /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 183/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.start_servers = 2/pm.start_servers = 160/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.min_spare_servers = 1/pm.min_spare_servers = 80/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/pm.max_spare_servers = 3/pm.max_spare_servers = 240/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/;php_admin_value[memory_limit] = 32M/php_admin_value[memory_limit] = 512M/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/;pm.max_spawn_rate = 32/pm.max_spawn_rate = 40/' /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i 's/;pm.max_requests = 500/pm.max_requests = 480/' /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9004
 
