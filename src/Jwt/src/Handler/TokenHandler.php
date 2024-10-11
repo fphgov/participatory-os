@@ -46,6 +46,26 @@ class TokenHandler implements RequestHandlerInterface
 
         if (
             isset($postBody['type']) &&
+            isset($postBody['token']) &&
+            $postBody['type'] === "logout" &&
+            $routeResult->getMatchedRouteName() === 'app.api.logout'
+        ) {
+            $user = $userRepository->findOneBy(['hash' => $postBody['token']]);
+
+            $this->audit->err($user);
+
+            if ($user) {
+                $user->setHash();
+                $this->em->persist($user);
+                $this->em->flush();
+
+                return $this->logoutRequestSuccess();
+            }
+            return $this->logoutRequestFailed();
+        }
+
+        if (
+            isset($postBody['type']) &&
             in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)
             && (
                 !isset($postBody['privacy']) ||
@@ -219,6 +239,20 @@ class TokenHandler implements RequestHandlerInterface
     {
         return new JsonResponse([
             'message' => 'Kérlek, jelöld be az összes csillaggal megjelölt mezőt.',
+        ], 400);
+    }
+
+    private function logoutRequestSuccess(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Sikeres kijelentkezés',
+        ], 200);
+    }
+
+    private function logoutRequestFailed(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Sikertelen kijelentkezés',
         ], 400);
     }
 }
