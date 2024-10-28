@@ -28,5 +28,4 @@ CREATE TABLE `user_login_attempt`
     INDEX `idx_user_id` (`user_id`),
     INDEX `idx_timestamp` (`timestamp`),
     INDEX `idx_is_failed` (`is_failed`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
