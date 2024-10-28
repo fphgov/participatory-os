@@ -623,9 +623,9 @@ final class UserService implements UserServiceInterface
             ->getResult();
 
         $this->audit->info('Failed login attempts', [
-            'user' => $user->getId(),
+            'user'        => $user->getId(),
             'blockedTime' => $blockedTime->format('Y-m-d H:i:s'),
-            'attempts' => count($failedAttempts),
+            'attempts'    => count($failedAttempts),
         ]);
 
         return count($failedAttempts) >= 5;

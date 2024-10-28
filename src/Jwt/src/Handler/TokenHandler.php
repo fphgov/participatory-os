@@ -115,8 +115,9 @@ class TokenHandler implements RequestHandlerInterface
             return $this->toManyAttempt();
         }
 
-        if (!$passwordModel->verify($password)) {
+        if (! $passwordModel->verify($password)) {
             $this->userService->addUserLoginAttempt($user, true);
+
             return $this->badAuthentication();
         }
 
