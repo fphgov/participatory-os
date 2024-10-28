@@ -29,7 +29,7 @@ class UserLoginAttempt implements UserLoginAttemptInterface
 
     /**
      * @ORM\OneToOne(targetEntity="User", inversedBy="userLoginAttempt")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false, unique=false)
      */
     private User $user;
 
