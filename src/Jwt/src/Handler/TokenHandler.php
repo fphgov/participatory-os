@@ -233,7 +233,7 @@ class TokenHandler implements RequestHandlerInterface
     private function toManyAttempt(): JsonResponse
     {
         return new JsonResponse([
-            'message' => 'Túl sok sikertelen bejelentkezési kísérlet! Kérlek várj 15 percet mielött újra probálkoznál.',
+            'message' => 'Túl sok sikertelen bejelentkezési kísérlet! Kérlek, várj 15 percet, mielőtt újra próbálkoznál.',
         ], 400);
     }
 }
