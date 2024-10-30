@@ -51,10 +51,8 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
         ]);
 
         if ($response->getStatusCode() !== 200) {
-            $this->audit->info('Subscription failed: ' . $response->getBody());
+            $this->audit->info('Subscription failed');
         }
-
-        $this->audit->info('Subscription successful (' . $newsletter->getEmail() . ':' . $this->cid . ')');
 
         $newsletter->setSync(true);
 
@@ -80,10 +78,8 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
         ]);
 
         if ($response->getStatusCode() === 200) {
-            $this->audit->info('Unsubscription failed: ' . $response->getBody());
+            $this->audit->info('Unsubscription failed');
         }
-
-        $this->audit->info('Unsubscription successful (' . $newsletter->getEmail() . ':' . $this->cid . ')');
 
         $newsletter->setSync(true);
 

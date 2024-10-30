@@ -63,4 +63,8 @@ interface UserServiceInterface
     public function clearAccount(UserInterface $user): bool;
 
     public function getRepository(): EntityRepository;
+
+    public function isToManyLoginAttempt(UserInterface $user): bool;
+
+    public function addUserLoginAttempt(UserInterface $user, bool $isFailed): void;
 }

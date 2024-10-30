@@ -8,6 +8,7 @@ use App\Entity\MailLog;
 use App\Entity\Newsletter;
 use App\Entity\User;
 use App\Entity\UserInterface;
+use App\Entity\UserLoginAttempt;
 use App\Entity\UserPreference;
 use App\Entity\UserPreferenceInterface;
 use App\Exception\UserNotActiveException;
@@ -15,6 +16,7 @@ use App\Exception\UserNotFoundException;
 use App\Model\PBKDF2Password;
 use App\Repository\MailLogRepository;
 use App\Repository\NewsletterRepository;
+use App\Repository\UserLoginAttemptRepository;
 use App\Repository\UserPreferenceRepository;
 use App\Repository\UserRepository;
 use DateTime;
@@ -30,6 +32,7 @@ final class UserService implements UserServiceInterface
     private NewsletterRepository $newsletterRepository;
     private UserPreferenceRepository $userPreferenceRepository;
     private MailLogRepository $mailLogRepository;
+    private UserLoginAttemptRepository $userLoginAttemptRepository;
 
     public function __construct(
         private array $config,
@@ -38,15 +41,16 @@ final class UserService implements UserServiceInterface
         private MailServiceInterface $mailService,
         private TokenServiceInterface $tokenService
     ) {
-        $this->config                   = $config;
-        $this->em                       = $em;
-        $this->audit                    = $audit;
-        $this->mailService              = $mailService;
-        $this->tokenService             = $tokenService;
-        $this->userRepository           = $this->em->getRepository(User::class);
-        $this->newsletterRepository     = $this->em->getRepository(Newsletter::class);
-        $this->userPreferenceRepository = $this->em->getRepository(UserPreference::class);
-        $this->mailLogRepository        = $this->em->getRepository(MailLog::class);
+        $this->config                     = $config;
+        $this->em                         = $em;
+        $this->audit                      = $audit;
+        $this->mailService                = $mailService;
+        $this->tokenService               = $tokenService;
+        $this->userRepository             = $this->em->getRepository(User::class);
+        $this->userLoginAttemptRepository = $this->em->getRepository(UserLoginAttempt::class);
+        $this->newsletterRepository       = $this->em->getRepository(Newsletter::class);
+        $this->userPreferenceRepository   = $this->em->getRepository(UserPreference::class);
+        $this->mailLogRepository          = $this->em->getRepository(MailLog::class);
     }
 
     public function activate(string $hash): void
@@ -602,5 +606,39 @@ final class UserService implements UserServiceInterface
     public function getRepository(): EntityRepository
     {
         return $this->userRepository;
+    }
+
+    public function isToManyLoginAttempt(UserInterface $user): bool
+    {
+        $blockedTime = new DateTime('-15 minutes');
+
+        $failedAttempts = $this->userLoginAttemptRepository->createQueryBuilder('ula')
+            ->where('ula.user = :user_id')
+            ->andWhere('ula.isFailed = :isFailed')
+            ->andWhere('ula.timestamp > :timestamp')
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('isFailed', 1)
+            ->setParameter('timestamp', $blockedTime->format('Y-m-d H:i:s'))
+            ->getQuery()
+            ->getResult();
+
+        $this->audit->info('Failed login attempts', [
+            'user'        => $user->getId(),
+            'blockedTime' => $blockedTime->format('Y-m-d H:i:s'),
+            'attempts'    => count($failedAttempts),
+        ]);
+
+        return count($failedAttempts) >= 5;
+    }
+
+    public function addUserLoginAttempt(UserInterface $user, bool $isFailed): void
+    {
+        $userLoginAttempt = new UserLoginAttempt();
+        $userLoginAttempt->setUser($user);
+        $userLoginAttempt->setIsFailed($isFailed);
+        $userLoginAttempt->setTimestamp((new DateTime()));
+
+        $this->em->persist($userLoginAttempt);
+        $this->em->flush();
     }
 }
