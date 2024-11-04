@@ -33,6 +33,13 @@ class User implements UserInterface
     private ?UserPreference $userPreference;
 
     /**
+     * @ORM\OneToOne(targetEntity="UserLoginAttempt", mappedBy="user", cascade={"persist"})
+     *
+     * @Ignore()
+     */
+    private ?UserLoginAttempt $userLoginAttempt;
+
+    /**
      * @ORM\OneToMany(targetEntity="Vote", mappedBy="user", cascade={"persist"})
      *
      * @Ignore()
@@ -104,6 +111,16 @@ class User implements UserInterface
     {
         $this->votes = new ArrayCollection();
         $this->ideas = new ArrayCollection();
+    }
+
+    public function setUserLoginAttempt(?UserLoginAttempt $userLoginAttempt = null): void
+    {
+        $this->userLoginAttempt = $userLoginAttempt;
+    }
+
+    public function getUserLoginAttempt(): ?UserLoginAttempt
+    {
+        return $this->userLoginAttempt;
     }
 
     public function setUserPreference(?UserPreference $userPreference = null): void
