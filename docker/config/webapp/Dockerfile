@@ -6,6 +6,7 @@ ENV LANGUAGE "C.UTF-8"
 ENV LC_ALL "C.UTF-8"
 
 RUN apk add --no-cache --update \
+        linux-headers \
         curl-dev \
         git \
         wget \
