@@ -24,17 +24,11 @@ use function strtolower;
 class TokenHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private EntityManagerInterface $em,
-        private UserServiceInterface $userService,
-        private TokenServiceInterface $tokenService,
-        private Logger $audit,
-        private array $config
+        private readonly EntityManagerInterface $em,
+        private readonly UserServiceInterface   $userService,
+        private readonly TokenServiceInterface  $tokenService,
+        private readonly Logger                 $audit,
     ) {
-        $this->em           = $em;
-        $this->userService  = $userService;
-        $this->tokenService = $tokenService;
-        $this->audit        = $audit;
-        $this->config       = $config;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -50,15 +44,7 @@ class TokenHandler implements RequestHandlerInterface
             $postBody['type'] === "logout" &&
             $routeResult->getMatchedRouteName() === 'app.api.logout'
         ) {
-            $user = $userRepository->findOneBy(['hash' => $postBody['token']]);
-
-            $this->audit->err($user);
-
-            if ($user) {
-                $user->setHash();
-                $this->em->persist($user);
-                $this->em->flush();
-
+            if ($this->tokenService->invalidateToken($postBody['token'])) {
                 return $this->logoutRequestSuccess();
             }
             return $this->logoutRequestFailed();
