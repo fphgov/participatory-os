@@ -57,14 +57,6 @@ env:
     value: https://otlet.budapest.dev
   - name: RECAPTCHA_SECRET
     value: _from_google_
-  - name: ARCGIS_GATEWAY_HOST
-    value: ""
-  - name: ARCGIS_GATEWAY_PORT
-    value: ""
-  - name: ARCGIS_USERNAME
-    value: ""
-  - name: ARCGIS_PASSWORD
-    value: ""
   - name: JWT_JTI
     value: ""
   - name: JWT_SECRET
@@ -83,10 +75,6 @@ env:
     value: ""
   - name: MINIO_ENDPOINT
     value: "http://participatory-minio:9000"
-  - name: ARCGIS_URL_GEN_TOKEN
-    value: "https://kapu.budapestkozut.hu/arcgis/tokens/generateToken"
-  - name: ARCGIS_URL_FIND_ADDRESS
-    value: "https://kapu.budapestkozut.hu/arcgis/rest/services/mernokimodul_v4/01_alapadatok/MapServer/2/query"
   - name: SMTP_CONNECTION_CONFIG_SSL
     value: ""
   - name: DB_PASSWORD

@@ -222,10 +222,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Article\GetHandler::class
     ], 'app.api.article.show');
 
-    $app->post('/app/api/geocoding', [
-        App\Handler\Tools\GetAddressHandler::class
-    ], 'app.api.geocoding');
-
     $app->get('/app/api/phase/check', [
         App\Handler\Phase\CheckHandler::class
     ], 'app.api.phase.check');

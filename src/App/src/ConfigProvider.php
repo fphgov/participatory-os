@@ -115,7 +115,6 @@ class ConfigProvider
                 Handler\Media\DownloadHandler::class          => Handler\Media\DownloadHandlerFactory::class,
                 Handler\File\GetHandler::class                => Handler\File\GetHandlerFactory::class,
                 Handler\File\PutHandler::class                => Handler\File\PutHandlerFactory::class,
-                Handler\Tools\GetAddressHandler::class        => Handler\Tools\GetAddressHandlerFactory::class,
                 Handler\Tools\UploadHandler::class            => Handler\Tools\UploadHandlerFactory::class,
                 Handler\Workflow\GetStatesHandler::class      => Handler\Workflow\GetStatesHandlerFactory::class,
                 Handler\Workflow\GetExtrasHandler::class      => Handler\Workflow\GetExtrasHandlerFactory::class,
