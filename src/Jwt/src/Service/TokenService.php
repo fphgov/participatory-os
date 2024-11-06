@@ -4,19 +4,32 @@ declare(strict_types=1);
 
 namespace Jwt\Service;
 
+use App\Entity\BlacklistedTokens;
 use App\Entity\UserInterface;
+use App\Repository\BlacklistedTokensRepository;
+use DateTime;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Encoding\CannotDecodeContent;
+use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token as TokenInterface;
+use Lcobucci\JWT\Token\InvalidTokenStructure;
+use Lcobucci\JWT\Token\Parser;
+use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 
 final class TokenService implements TokenServiceInterface
 {
+    private BlacklistedTokensRepository $blacklistedTokensRepository;
+
     public function __construct(
-        private array $config,
+        private readonly array                  $config,
+        private readonly EntityManagerInterface $em,
     ) {
-        $this->config = $config;
+        $this->blacklistedTokensRepository = $this->em->getRepository(BlacklistedTokens::class);
     }
 
     public function generateToken(array $claim = []): TokenInterface
@@ -53,5 +66,31 @@ final class TokenService implements TokenServiceInterface
         ];
 
         return $this->generateToken($userData);
+    }
+
+    public function invalidateToken(string $token): bool
+    {
+        try {
+            $blacklistedToken = new BlacklistedTokens();
+            $blacklistedToken->setToken($token);
+            $blacklistedToken->setCreatedAt(new DateTime());
+
+            $this->em->persist($blacklistedToken);
+            $this->em->flush();
+        } catch (Exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isTokenBlacklisted(string $token): bool
+    {
+        $blacklistedToken = $this->blacklistedTokensRepository->findOneBy(['token' => $token]);
+
+        if ($blacklistedToken) {
+            return true;
+        }
+        return false;
     }
 }

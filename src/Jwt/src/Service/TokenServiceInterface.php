@@ -12,4 +12,8 @@ interface TokenServiceInterface
     public function generateToken(array $claim = []): TokenInterface;
 
     public function createTokenWithUserData(UserInterface $user): TokenInterface;
+
+    public function invalidateToken(string $token): bool;
+
+    public function isTokenBlacklisted(string $token): bool;
 }

@@ -24,17 +24,11 @@ use function strtolower;
 class TokenHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private EntityManagerInterface $em,
-        private UserServiceInterface $userService,
-        private TokenServiceInterface $tokenService,
-        private Logger $audit,
-        private array $config
+        private readonly EntityManagerInterface $em,
+        private readonly UserServiceInterface   $userService,
+        private readonly TokenServiceInterface  $tokenService,
+        private readonly Logger                 $audit,
     ) {
-        $this->em           = $em;
-        $this->userService  = $userService;
-        $this->tokenService = $tokenService;
-        $this->audit        = $audit;
-        $this->config       = $config;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -43,6 +37,18 @@ class TokenHandler implements RequestHandlerInterface
         $routeResult = $request->getAttribute(RouteResult::class);
 
         $userRepository = $this->em->getRepository(User::class);
+
+        if (
+            isset($postBody['type']) &&
+            isset($postBody['token']) &&
+            $postBody['type'] === "logout" &&
+            $routeResult->getMatchedRouteName() === 'app.api.logout'
+        ) {
+            if ($this->tokenService->invalidateToken($postBody['token'])) {
+                return $this->logoutRequestSuccess();
+            }
+            return $this->logoutRequestFailed();
+        }
 
         if (
             isset($postBody['type']) &&
@@ -234,6 +240,20 @@ class TokenHandler implements RequestHandlerInterface
     {
         return new JsonResponse([
             'message' => 'Túl sok sikertelen bejelentkezési kísérlet! Kérlek, várj 15 percet, mielőtt újra próbálkoznál.',
+        ], 400);
+    }
+
+    private function logoutRequestSuccess(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Sikeres kijelentkezés',
+        ], 200);
+    }
+
+    private function logoutRequestFailed(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Sikertelen kijelentkezés',
         ], 400);
     }
 }

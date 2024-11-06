@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Jwt\Handler;
 
+use Jwt\Service\TokenServiceInterface;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -12,18 +14,38 @@ use Tuupola\Middleware\JwtAuthentication;
 
 class JwtAuthMiddleware implements MiddlewareInterface
 {
-    /** @var JwtAuthentication */
-    private $auth;
-
-    public function __construct(JwtAuthentication $auth)
+    public function __construct(
+        private readonly JwtAuthentication $auth,
+        private readonly TokenServiceInterface $tokenService
+    )
     {
-        $this->auth = $auth;
     }
 
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
+        $token = $this->extractToken($request);
+
+        if (!$token || $this->tokenService->isTokenBlacklisted($token)) {
+            return new JsonResponse([
+                'message' => 'Bejelentkezés szükséges',
+            ], 404);
+        }
+
         return $this->auth->process($request, $handler);
+    }
+
+    private function extractToken(ServerRequestInterface $request): ?string
+    {
+        if ($request->hasHeader('Authorization')) {
+            $authHeader = $request->getHeaderLine('Authorization');
+
+            if (str_starts_with($authHeader, 'Bearer ')) {
+                return substr($authHeader, 7);
+            }
+        }
+
+        return null;
     }
 }

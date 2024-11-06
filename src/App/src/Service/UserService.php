@@ -53,22 +53,26 @@ final class UserService implements UserServiceInterface
         $this->mailLogRepository          = $this->em->getRepository(MailLog::class);
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function activate(string $hash): void
     {
         $user = $this->userRepository->getUserByHash($hash);
 
-        $user->setHash(null);
         $user->setActive(true);
         $user->setUpdatedAt(new DateTime());
 
         $this->em->flush();
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function loginWithHash(string $hash): string
     {
         $user = $this->userRepository->getUserByHash($hash);
 
-        $user->setHash(null);
         $user->setUpdatedAt(new DateTime());
 
         $this->em->flush();
