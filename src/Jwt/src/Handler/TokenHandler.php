@@ -74,6 +74,10 @@ class TokenHandler implements RequestHandlerInterface
             return $this->badAuthentication();
         }
 
+        if (!$this->validateEmail($postBody['email'])) {
+            return $this->invalidEmail();
+        }
+
         $user = $userRepository->findOneBy(['email' => strtolower($postBody['email'])]);
 
         if (isset($postBody['type']) && in_array($postBody['type'], UserServiceInterface::AUTH_REGISTRATION_TYPES)) {
@@ -111,6 +115,15 @@ class TokenHandler implements RequestHandlerInterface
         }
 
         return $this->loginWithPassword($user, $postBody['password']);
+    }
+
+    private function validateEmail(string $email): bool
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function loginWithPassword(UserInterface $user, string $password)
@@ -233,6 +246,13 @@ class TokenHandler implements RequestHandlerInterface
     {
         return new JsonResponse([
             'message' => 'Kérlek, jelöld be az összes csillaggal megjelölt mezőt.',
+        ], 400);
+    }
+
+    private function invalidEmail(): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => 'Helytelen email címet adtál meg.',
         ], 400);
     }
 
