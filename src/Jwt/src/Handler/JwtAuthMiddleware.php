@@ -28,9 +28,7 @@ class JwtAuthMiddleware implements MiddlewareInterface
         $token = $this->extractToken($request);
 
         if (!$token || $this->tokenService->isTokenBlacklisted($token)) {
-            return new JsonResponse([
-                'message' => 'Bejelentkezés szükséges',
-            ], 404);
+            return new JsonResponse([], 401);
         }
 
         return $this->auth->process($request, $handler);

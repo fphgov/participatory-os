@@ -68,7 +68,7 @@ env:
   - name: JWT_NBF
     value: "0"
   - name: JWT_EXP
-    value: "1"
+    value: "24"
   - name: MINIO_ROOT_USER
     value: "participatory"
   - name: MINIO_ROOT_PASSWORD
