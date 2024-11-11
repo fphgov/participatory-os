@@ -131,8 +131,8 @@ env:
     value: "https://hirlevel.budapest.hu/api"
   - name: NEWSLETTER_API_CID
     value: "aSQV5beZ_"
-  - name: CORS_ORIGIN
-    value: "https://otlet.budapest.dev"
+  # - name: CORS_ORIGIN
+  #   value: "https://otlet.budapest.dev"
 
 imagePullSecrets: []
 nameOverride: ""
