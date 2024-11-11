@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\CampaignLocation;
 use App\Entity\CampaignTheme;
 use App\Entity\Idea;
+use App\Entity\IdeaCampaignLocation;
 use App\Entity\IdeaInterface;
 use App\Entity\Link;
 use App\Entity\Media;
@@ -118,8 +119,20 @@ final class IdeaService implements IdeaServiceInterface
             $idea->setCostCondition((bool)$filteredParams['cost_condition']);
         }
 
+        $fullName = explode(' ', $filteredParams['fullName']);
+        $firstname = array_shift($fullName);
+        $lastname = implode(' ', $fullName);
+
+        $user = $idea->getSubmitter();
+        $user->setFirstname($firstname);
+        $user->setLastname($lastname);
+
+        $userPreference = $user->getUserPreference();
+        $userPreference->setBirthyear(intval($filteredParams['birthYear']));
+        $userPreference->setPostalCode($filteredParams['postalCode']);
+
         if (isset($filteredParams['phone'])) {
-            $idea->getSubmitter()->getUserPreference()->setPhone($filteredParams['phone']);
+            $userPreference->setPhone($filteredParams['phone']);
         }
 
         if (isset($filteredParams['location']) && ! empty($filteredParams['location'])) {
@@ -146,14 +159,22 @@ final class IdeaService implements IdeaServiceInterface
             }
         }
 
-        if (isset($filteredParams['location_district']) && !empty($filteredParams['location_district'])) {
-            $location = $this->campaignLocationRepository->findOneBy([
-                'code'     => $filteredParams['location_district'],
-                'campaign' => $phase->getCampaign(),
-            ]);
+        if (!empty($filteredParams['location_districts'])) {
+            $locationDistricts = explode(',', $filteredParams['location_districts']);
+            foreach ($locationDistricts as $locationDistrict) {
+                $location = $this->campaignLocationRepository->findOneBy([
+                    'code'     => $locationDistrict,
+                    'campaign' => $phase->getCampaign(),
+                ]);
 
-            if ($location instanceof CampaignLocation) {
-                $idea->setCampaignLocation($location);
+                if ($location instanceof CampaignLocation) {
+                    $IdeaCampaignLocation = new IdeaCampaignLocation();
+                    $IdeaCampaignLocation->setIdea($idea);
+                    $IdeaCampaignLocation->setCampaignLocation($location);
+                    $IdeaCampaignLocation->setCreatedAt($date);
+                    $IdeaCampaignLocation->setUpdatedAt($date);
+                    $this->em->persist($IdeaCampaignLocation);
+                }
             }
         }
 

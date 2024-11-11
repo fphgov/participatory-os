@@ -46,12 +46,12 @@ class Idea implements IdeaInterface
     private CampaignTheme $campaignTheme;
 
     /**
-     * @ORM\ManyToOne(targetEntity="CampaignLocation")
+     * @ORM\ManyToOne(targetEntity="IdeaCampaignLocation")
      * @ORM\JoinColumn(name="campaign_location_id", referencedColumnName="id", nullable=true)
      *
      * @Groups({"list", "detail", "full_detail"})
      */
-    private ?CampaignLocation $campaignLocation;
+    private ?IdeaCampaignLocation $ideaCampaignLocation;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="ideas")
@@ -113,6 +113,15 @@ class Idea implements IdeaInterface
      * @Groups({"detail", "full_detail"})
      */
     private Collection $comments;
+
+    /**
+     * @ORM\OneToMany(targetEntity="IdeaCampaignLocation", mappedBy="idea")
+     *
+     * @var Collection|CampaignLocation[]
+     *
+     * @Groups({"detail", "full_detail"})
+     */
+    private Collection $ideaCampaignLocations;
 
     /**
      * @ORM\Column(name="title", type="string")
@@ -197,6 +206,7 @@ class Idea implements IdeaInterface
     {
         $this->links    = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->ideaCampaignLocations = new ArrayCollection();
         $this->medias   = new ArrayCollection();
     }
 
@@ -334,6 +344,8 @@ class Idea implements IdeaInterface
         if (! $this->comments->contains($comment)) {
             $this->comments[] = $comment;
         }
+
+        return $this;
     }
 
     public function setWorkflowState(WorkflowState $workflowState): void

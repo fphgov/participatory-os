@@ -29,20 +29,95 @@ class IdeaInputFilter extends InputFilter
     public function init()
     {
         $this->add([
+            'name'        => 'fullName',
+            'allow_empty' => false,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'A "Név" mező kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Név!: Hibás mező tipus',
+                    ],
+                ]),
+                new Validator\StringLength([
+                    'messages' => [
+                        Validator\StringLength::INVALID   => 'Név!: Hibás mező tipus. Csak szöveg fogadható el.',
+                    ],
+                ]),
+            ],
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+            ],
+        ]);
+
+        $this->add([
+            'name'        => 'birthYear',
+            'allow_empty' => false,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'A "Születési év" mező kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Születési év!: Hibás mező tipus',
+                    ],
+                ]),
+                new Validator\StringLength([
+                    'messages' => [
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Születési év" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Születési év" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Születési év!: Hibás mező tipus. Csak szám fogadható el.',
+                    ],
+                    'min'      => 4,
+                    'max'      => 4,
+                ]),
+            ],
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+            ],
+        ]);
+
+        $this->add([
+            'name'        => 'postalCode',
+            'allow_empty' => false,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'A "Irányítószám" mező kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Irányítószám: Hibás mező tipus',
+                    ],
+                ]),
+                new Validator\StringLength([
+                    'messages' => [
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia az "Irányítószám" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia az "Irányítószám" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Irányítószám: Hibás mező tipus. Csak szám fogadható el.',
+                    ],
+                    'min'      => 4,
+                    'max'      => 4,
+                ]),
+            ],
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+            ],
+        ]);
+
+
+        $this->add([
             'name'        => 'title',
             'allow_empty' => false,
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'A "Nevezd el az ötleted!" mező kitöltése kötelező',
-                        Validator\NotEmpty::INVALID  => 'Nevezd el az ötleted!: Hibás mező tipus',
+                        Validator\NotEmpty::IS_EMPTY => 'A "Ötlet címe" mező kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Ötlet címe: Hibás mező tipus',
                     ],
                 ]),
                 new Validator\StringLength([
                     'messages' => [
-                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia az "Nevezd el az ötleted!" mezőnek',
-                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia az "Nevezd el az ötleted!" mezőnek mint: %max%',
-                        Validator\StringLength::INVALID   => 'Nevezd el az ötleted!: Hibás mező tipus. Csak szöveg fogadható el.',
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia az "Ötlet címe" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia az "Ötlet címe" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Ötlet címe: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
                     'min'      => 4,
                     'max'      => 100,
@@ -86,15 +161,15 @@ class IdeaInputFilter extends InputFilter
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'A "Mit valósítson meg a főváros?" kitöltése kötelező',
-                        Validator\NotEmpty::INVALID  => 'Mit valósítson meg a főváros?: Hibás mező tipus',
+                        Validator\NotEmpty::IS_EMPTY => 'A "Ötlet leírása" kitöltése kötelező',
+                        Validator\NotEmpty::INVALID  => 'Ötlet leírása: Hibás mező tipus',
                     ],
                 ]),
                 new Validator\StringLength([
                     'messages' => [
-                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Mit valósítson meg a főváros?" mezőnek',
-                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Mit valósítson meg a főváros?" mezőnek mint: %max%',
-                        Validator\StringLength::INVALID   => 'Mit valósítson meg a főváros?: Hibás mező tipus. Csak szöveg fogadható el.',
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Ötlet leírása" mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Ötlet leírása" mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Ötlet leírása: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
                     'min'      => 100,
                     'max'      => 1000,
@@ -174,7 +249,7 @@ class IdeaInputFilter extends InputFilter
                         Validator\File\Size::TOO_SMALL => 'Az engedélyezett minimális fájlméret \'%min%\'. A feltöltött fájl mérete \'%size%\'',
                         Validator\File\Size::NOT_FOUND => 'A feltöltött fájl nem olvasható vagy nem létezik',
                     ],
-                    'max'      => 25 * 1024 * 1024,
+                    'max'      => 5 * 1024 * 1024,
                     'min'      => 1,
                 ]),
                 new Validator\File\Count([
@@ -225,7 +300,7 @@ class IdeaInputFilter extends InputFilter
         ]);
 
         $this->add([
-            'name'        => 'location_district',
+            'name'        => 'location_districts',
             'allow_empty' => true,
             'validators'  => [
                 new Validator\NotEmpty([
