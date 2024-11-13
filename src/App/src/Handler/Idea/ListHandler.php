@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Log\Logger;
 use Mezzio\Hal\HalResponseFactory;
 use Mezzio\Hal\ResourceGenerator;
 use Psr\Http\Message\ResponseInterface;
@@ -43,16 +44,21 @@ final class ListHandler implements RequestHandlerInterface
     /** @var ResourceGenerator */
     protected $resourceGenerator;
 
+    /** @var Logger */
+    private $audit;
+
     public function __construct(
         EntityManager $em,
         int $pageCount,
         HalResponseFactory $responseFactory,
-        ResourceGenerator $resourceGenerator
+        ResourceGenerator $resourceGenerator,
+        Logger $audit
     ) {
         $this->em                = $em;
         $this->pageCount         = $pageCount;
         $this->responseFactory   = $responseFactory;
         $this->resourceGenerator = $resourceGenerator;
+        $this->audit             = $audit;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -159,10 +165,18 @@ final class ListHandler implements RequestHandlerInterface
         try {
             $resource = $this->resourceGenerator->fromObject($paginator, $request);
         } catch (ResourceGenerator\Exception\OutOfBoundsException $e) {
+            $this->audit->info(
+                'ListHandler: ' . $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine()
+            );
+
             return new JsonResponse([
                 'errors' => 'Bad Request',
             ], 400);
         } catch (Exception $e) {
+            $this->audit->info(
+                'ListHandler: ' . $e->getMessage() . ' on ' . $e->getFile() . ':' . $e->getLine()
+            );
+
             return new JsonResponse([
                 'errors' => 'Bad Request',
             ], 400);

@@ -46,12 +46,12 @@ class Idea implements IdeaInterface
     private CampaignTheme $campaignTheme;
 
     /**
-     * @ORM\ManyToOne(targetEntity="IdeaCampaignLocation")
+     * @ORM\ManyToOne(targetEntity="CampaignLocation")
      * @ORM\JoinColumn(name="campaign_location_id", referencedColumnName="id", nullable=true)
      *
      * @Groups({"list", "detail", "full_detail"})
      */
-    private ?IdeaCampaignLocation $ideaCampaignLocation;
+    private ?CampaignLocation $campaignLocation;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="ideas")
