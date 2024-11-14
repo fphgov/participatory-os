@@ -17,8 +17,10 @@ use function getenv;
 
 class IdeaInputFilter extends InputFilter
 {
+    const AGE_LIMIT = 14;
+
     /** @var AdapterInterface */
-    protected $dbAdapter;
+    protected AdapterInterface $dbAdapter;
 
     public function __construct(
         AdapterInterface $dbAdapter
@@ -68,6 +70,13 @@ class IdeaInputFilter extends InputFilter
                     ],
                     'min'      => 4,
                     'max'      => 4,
+                ]),
+                new Validator\NumberComparison([
+                    'messages' => [
+                        Validator\NumberComparison::ERROR_NOT_NUMERIC => 'A "Születési év" mező csak szám lehet.',
+                        Validator\NumberComparison::ERROR_NOT_LESS_INCLUSIVE => 'A "Születési év" neméri el a kötelező korhatár. A korhatár: ' . self::AGE_LIMIT,
+                    ],
+                    'max'      => date('Y') - self::AGE_LIMIT,
                 ]),
             ],
             'filters'     => [

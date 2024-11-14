@@ -11,7 +11,7 @@ use Laminas\Validator;
 class AdminIdeaInputFilter extends IdeaInputFilter
 {
     /** @var AdapterInterface */
-    protected $dbAdapter;
+    protected AdapterInterface $dbAdapter;
 
     public function __construct(
         AdapterInterface $dbAdapter
