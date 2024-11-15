@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\InputFilter;
 
+use DateTime;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Diactoros\StreamFactory;
 use Laminas\Diactoros\UploadedFileFactory;
@@ -26,7 +27,7 @@ class IdeaInputFilter extends InputFilter
         $this->dbAdapter = $dbAdapter;
     }
 
-    public function init()
+    public function init(): void
     {
         $this->add([
             'name'        => 'fullName',
@@ -51,7 +52,7 @@ class IdeaInputFilter extends InputFilter
         ]);
 
         $this->add([
-            'name'        => 'birthyear',
+            'name'        => 'birthYear',
             'allow_empty' => false,
             'validators'  => [
                 new Validator\NotEmpty([
@@ -78,7 +79,7 @@ class IdeaInputFilter extends InputFilter
                         Validator\NumberComparison::ERROR_NOT_LESS              => 'A %max% értéknél kevesebbnek kell lennie',
                     ],
                     'min'          => 1900,
-                    'max'          => (int)(new \DateTime())->format('Y') - 14,
+                    'max'          => (int)(new DateTime())->format('Y') - 14,
                     'inclusiveMin' => true,
                     'inclusiveMax' => true,
                 ]),
