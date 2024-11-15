@@ -18,7 +18,7 @@ use function getenv;
 class IdeaInputFilter extends InputFilter
 {
     /** @var AdapterInterface */
-    protected $dbAdapter;
+    protected AdapterInterface $dbAdapter;
 
     public function __construct(
         AdapterInterface $dbAdapter
@@ -51,23 +51,36 @@ class IdeaInputFilter extends InputFilter
         ]);
 
         $this->add([
-            'name'        => 'birthYear',
+            'name'        => 'birthyear',
             'allow_empty' => false,
             'validators'  => [
                 new Validator\NotEmpty([
                     'messages' => [
-                        Validator\NotEmpty::IS_EMPTY => 'A "Születési év" mező kitöltése kötelező',
-                        Validator\NotEmpty::INVALID  => 'Születési év!: Hibás mező tipus',
+                        Validator\NotEmpty::IS_EMPTY => 'Kötelező a mező kitöltése',
+                        Validator\NotEmpty::INVALID  => 'Hibás mező tipus',
                     ],
                 ]),
                 new Validator\StringLength([
+                    'min' => 4,
+                    'max' => 4,
                     'messages' => [
-                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a "Születési év" mezőnek',
-                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Születési év" mezőnek mint: %max%',
-                        Validator\StringLength::INVALID   => 'Születési év!: Hibás mező tipus. Csak szám fogadható el.',
+                        Validator\StringLength::TOO_SHORT => 'Legalább %min% karaktert kell tartalmaznia a mezőnek',
+                        Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a mezőnek mint: %max%',
+                        Validator\StringLength::INVALID   => 'Hibás mező tipus. Csak szöveg fogadható el',
                     ],
-                    'min'      => 4,
-                    'max'      => 4,
+                ]),
+                new Validator\NumberComparison([
+                    'messages'  => [
+                        Validator\NumberComparison::ERROR_NOT_NUMERIC           => 'Csak egész számérték adható meg',
+                        Validator\NumberComparison::ERROR_NOT_GREATER_INCLUSIVE => 'Az évszám minimum %min% lehet',
+                        Validator\NumberComparison::ERROR_NOT_GREATER           => 'Az évszám minimum %min% lehet',
+                        Validator\NumberComparison::ERROR_NOT_LESS_INCLUSIVE    => 'Érvénytelen dátum, csak 14 év feletti személyek regisztrálhatnak',
+                        Validator\NumberComparison::ERROR_NOT_LESS              => 'A %max% értéknél kevesebbnek kell lennie',
+                    ],
+                    'min'          => 1900,
+                    'max'          => (int)(new \DateTime())->format('Y') - 14,
+                    'inclusiveMin' => true,
+                    'inclusiveMax' => true,
                 ]),
             ],
             'filters'     => [
