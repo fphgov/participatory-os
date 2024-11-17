@@ -426,5 +426,15 @@ class IdeaInputFilter extends InputFilter
                 new Filter\StringTrim(),
             ],
         ]);
+
+        $this->add([
+            'name'        => 'phone',
+            'allow_empty' => true,
+            'validators'  => [],
+            'filters'     => [
+                new Filter\StringTrim(),
+                new Filter\StripTags(),
+            ],
+        ]);
     }
 }
