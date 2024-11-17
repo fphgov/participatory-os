@@ -51,7 +51,11 @@ class UserPreference implements UserPreferenceInterface
      */
     private string $hearAbout;
 
-    /** @ORM\Column(name="phone", type="string", nullable=true) */
+    /**
+     * @ORM\Column(name="phone", type="string", nullable=true)
+     *
+     * @Groups({"profile"})
+     */
     private ?string $phone = null;
 
     /** @ORM\Column(name="privacy", type="boolean") */
