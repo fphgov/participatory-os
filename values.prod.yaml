@@ -46,7 +46,7 @@ env:
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
     value: budapest.hu
   - name: APP_MUNICIPALITY
-    value: "Ötlet.budapest.hu csapat"
+    value: "A Nyitott Budapest csapat"
   - name: APP_EMAIL
     value: ""
   - name: APP_FORGOT_EMAIL
