@@ -132,7 +132,7 @@ env:
   - name: NEWSLETTER_API_CID
     value: "aSQV5beZ_"
   - name: CORS_ORIGIN
-    value: "https://otlet.budapest.dev"
+    value: "https://otlet.budapest.dev,https://otlet-admin.dev.intra.fph.hu"
 
 imagePullSecrets: []
 nameOverride: ""
