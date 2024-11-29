@@ -10,8 +10,8 @@ php:
       cpu: 6000m
       memory: 16Gi
     requests:
-      cpu: 4000m
-      memory: 8Gi
+      cpu: 1000m
+      memory: 4Gi
 
 nginx:
   image:
@@ -23,8 +23,8 @@ nginx:
       cpu: 4000m
       memory: 8Gi
     requests:
-      cpu: 2000m
-      memory: 4Gi
+      cpu: 1000m
+      memory: 2Gi
 
 env:
   - name: SMTP_NAME
