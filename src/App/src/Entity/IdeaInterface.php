@@ -31,6 +31,10 @@ interface IdeaInterface extends EntityInterface
 
     public function setCampaignTheme(CampaignThemeInterface $campaignTheme): void;
 
+    public function getCampaignTopic(): CampaignTopicInterface;
+
+    public function setCampaignTopic(CampaignTopicInterface $campaignTopic): void;
+
     public function getCampaignLocation(): ?CampaignLocationInterface;
 
     public function setCampaignLocation(?CampaignLocationInterface $campaignLocation = null): void;

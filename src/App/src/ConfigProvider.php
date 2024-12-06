@@ -87,6 +87,7 @@ class ConfigProvider
                 Handler\Idea\AdminModifyHandler::class        => Handler\Idea\AdminModifyHandlerFactory::class,
                 Handler\Idea\AdminImportAnswerHandler::class  => Handler\Idea\AdminImportAnswerHandlerFactory::class,
                 Handler\Idea\AdminCampaignThemeHandler::class  => Handler\Idea\AdminCampaignThemeHandlerFactory::class,
+                Handler\Idea\AdminCampaignTopicHandler::class  => Handler\Idea\AdminCampaignTopicHandlerFactory::class,
                 Handler\Idea\AdminCampaignLocationHandler::class  => Handler\Idea\AdminCampaignLocationHandlerFactory::class,
                 Handler\Idea\ExportHandler::class             => Handler\Idea\ExportHandlerFactory::class,
                 Handler\Implementation\ListHandler::class     => Handler\Implementation\ListHandlerFactory::class,

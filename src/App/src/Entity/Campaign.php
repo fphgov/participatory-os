@@ -36,7 +36,16 @@ class Campaign implements CampaignInterface
      *
      * @Groups({"detail", "full_detail"})
      */
-    private Collection $campaignThemes;    
+    private Collection $campaignThemes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="CampaignTopic", mappedBy="campaign")
+     *
+     * @var Collection|CampaignTheme[]
+     *
+     * @Groups({"detail", "full_detail"})
+     */
+    private Collection $campaignTopics;
 
     /**
      * @ORM\OneToMany(targetEntity="CampaignLocation", mappedBy="campaign")
@@ -70,8 +79,9 @@ class Campaign implements CampaignInterface
 
     public function __construct()
     {
-        $this->ideas          = new ArrayCollection();
-        $this->campaignThemes = new ArrayCollection();
+        $this->ideas             = new ArrayCollection();
+        $this->campaignThemes    = new ArrayCollection();
+        $this->campaignTopics    = new ArrayCollection();
         $this->campaignLocations = new ArrayCollection();
     }
 
@@ -116,7 +126,35 @@ class Campaign implements CampaignInterface
     public function getCampaignThemeCollection(): Collection
     {
         return $this->campaignThemes;
-    }        
+    }
+
+    public function getCampaignTopics(): array
+    {
+        $campaignTopics = [];
+        foreach ($this->campaignTopics->getValues() as $campaignTheme) {
+            $campaignTopics[] = $campaignTheme->getId();
+        }
+
+        return $campaignTopics;
+    }
+
+    public function getCampaignTopicsOptions(): array
+    {
+        $campaignTopics = [];
+        foreach ($this->campaignTopics->getValues() as $campaignTheme) {
+            $campaignTopics[] = [
+                'id'   => $campaignTheme->getId(),
+                'name' => $campaignTheme->getName()
+            ];
+        }
+
+        return $campaignTopics;
+    }
+
+    public function getCampaignTopicsCollection(): Collection
+    {
+        return $this->campaignTopics;
+    }
 
     public function getCampaignLocations(): array
     {
