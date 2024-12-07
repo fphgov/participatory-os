@@ -6,6 +6,6 @@ namespace App\Exception;
 
 use Exception;
 
-class NoHasProjectInCurrentCampaignException extends Exception
+class NotHaveCampaignThemeException extends Exception
 {
 }

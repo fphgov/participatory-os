@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\User;
 
 use App\Exception\DifferentPhaseException;
-use App\Exception\NoHasPhaseCategoryException;
+use App\Exception\NotHavePhaseCategoryException;
 use App\Exception\NotPossibleSubmitIdeaWithAdminAccountException;
 use App\Middleware\UserMiddleware;
 use App\Service\IdeaServiceInterface;
@@ -69,7 +69,7 @@ final class IdeaHandler implements RequestHandlerInterface
                     ],
                 ],
             ], 422);
-        } catch (NoHasPhaseCategoryException $e) {
+        } catch (NotHavePhaseCategoryException $e) {
             return new JsonResponse([
                 'errors' => [
                     'theme' => [

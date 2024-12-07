@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\CampaignLocation;
 use App\Entity\CampaignTheme;
+use App\Entity\CampaignTopic;
 use App\Entity\Idea;
 use App\Entity\IdeaCampaignLocation;
 use App\Entity\IdeaInterface;
@@ -17,7 +18,9 @@ use App\Entity\WorkflowState;
 use App\Entity\WorkflowStateExtra;
 use App\Entity\WorkflowStateInterface;
 use App\Exception\IdeaNotFoundException;
-use App\Exception\NoHasPhaseCategoryException;
+use App\Exception\NotHavePhaseCategoryException;
+use App\Exception\NotHaveCampaignThemeException;
+use App\Exception\NotHaveCampaignTopicException;
 use App\Exception\NotPossibleSubmitIdeaWithAdminAccountException;
 use App\Exception\WorkflowStateExtraNotFoundException;
 use App\Exception\WorkflowStateNotFoundException;
@@ -34,6 +37,7 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 use function basename;
+use function intval;
 use function in_array;
 use function is_array;
 use function is_countable;
@@ -46,6 +50,7 @@ final class IdeaService implements IdeaServiceInterface
 {
     private EntityRepository $ideaRepository;
     private EntityRepository $campaignThemeRepository;
+    private EntityRepository $campaignTopicRepository;
     private EntityRepository $campaignLocationRepository;
     private EntityRepository $workflowStateRepository;
     private EntityRepository $workflowStateExtraRepository;
@@ -64,6 +69,7 @@ final class IdeaService implements IdeaServiceInterface
         $this->mediaService                 = $mediaService;
         $this->ideaRepository               = $this->em->getRepository(Idea::class);
         $this->campaignThemeRepository      = $this->em->getRepository(CampaignTheme::class);
+        $this->campaignTopicRepository      = $this->em->getRepository(CampaignTopic::class);
         $this->campaignLocationRepository   = $this->em->getRepository(CampaignLocation::class);
         $this->workflowStateRepository      = $this->em->getRepository(WorkflowState::class);
         $this->workflowStateExtraRepository = $this->em->getRepository(WorkflowStateExtra::class);
@@ -98,7 +104,7 @@ final class IdeaService implements IdeaServiceInterface
         }
 
         if (! $theme instanceof CampaignTheme) {
-            throw new NoHasPhaseCategoryException($filteredParams['theme']);
+            throw new NotHavePhaseCategoryException($filteredParams['theme']);
         }
 
         $idea->setSubmitter($user);
@@ -128,8 +134,14 @@ final class IdeaService implements IdeaServiceInterface
         $user->setLastname($lastname);
 
         $userPreference = $user->getUserPreference();
-        $userPreference->setBirthyear(intval($filteredParams['birthYear']));
-        $userPreference->setPostalCode($filteredParams['postalCode']);
+
+        if (isset($filteredParams['birthYear'])) {
+            $userPreference->setBirthyear(intval($filteredParams['birthYear']));
+        }
+
+        if (isset($filteredParams['postalCode'])) {
+            $userPreference->setPostalCode($filteredParams['postalCode']);
+        }
 
         if (isset($filteredParams['phone'])) {
             $userPreference->setPhone($filteredParams['phone']);
@@ -259,10 +271,23 @@ final class IdeaService implements IdeaServiceInterface
             ]);
 
             if (!$theme instanceof CampaignTheme) {
-                throw new NoHasPhaseCategoryException($filteredParams['theme']);
+                throw new NotHaveCampaignThemeException($filteredParams['theme']);
             }
 
             $idea->setCampaignTheme($theme);
+        }
+
+        if (isset($filteredParams['topic'])) {
+            $topic = $this->campaignTopicRepository->findOneBy([
+                'id'       => $filteredParams['topic'],
+                'campaign' => $idea->getCampaign(),
+            ]);
+
+            if (!$topic instanceof CampaignTopic) {
+                throw new NotHaveCampaignTopicException($filteredParams['topic']);
+            }
+
+            $idea->setCampaignTopic($topic);
         }
 
         if (isset($filteredParams['workflowState'])) {
