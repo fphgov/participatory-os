@@ -12,7 +12,7 @@ use App\Exception\MissingVoteTypeAndCampaignCategoriesException;
 use App\Exception\NoExistsAllProjectsException;
 use App\Exception\VoteUserExistsException;
 use App\Exception\VoteUserProjectExistsException;
-use App\Exception\NoHasProjectInCurrentCampaignException;
+use App\Exception\NotHaveProjectInCurrentCampaignException;
 use App\Exception\DuplicateCampaignCategoriesException;
 use App\Exception\VoteUserCategoryExistsException;
 use App\Exception\VoteUserCategoryAlreadyTotalVotesException;
@@ -70,7 +70,7 @@ final class VoteMessageService implements VoteMessageServiceInterface
             return new JsonResponse([
                 'message' => 'Idén már leadtad a szavazatodat',
             ], 422);
-        } catch (NoHasProjectInCurrentCampaignException $e) {
+        } catch (NotHaveProjectInCurrentCampaignException $e) {
             return new JsonResponse([
                 'message' => 'A kiválasztott ötlet, vagy ötletek nem tartoznak a jelenlegi kampányba',
                 'code'    => 'NO_HAS_PROJECT_IN_CURRENT_CAMPAIGN'

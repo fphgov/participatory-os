@@ -18,9 +18,9 @@ use App\Entity\WorkflowState;
 use App\Entity\WorkflowStateExtra;
 use App\Entity\WorkflowStateInterface;
 use App\Exception\IdeaNotFoundException;
-use App\Exception\NoHasPhaseCategoryException;
-use App\Exception\NoHasCampaignThemeException;
-use App\Exception\NoHasCampaignTopicException;
+use App\Exception\NotHavePhaseCategoryException;
+use App\Exception\NotHaveCampaignThemeException;
+use App\Exception\NotHaveCampaignTopicException;
 use App\Exception\NotPossibleSubmitIdeaWithAdminAccountException;
 use App\Exception\WorkflowStateExtraNotFoundException;
 use App\Exception\WorkflowStateNotFoundException;
@@ -104,7 +104,7 @@ final class IdeaService implements IdeaServiceInterface
         }
 
         if (! $theme instanceof CampaignTheme) {
-            throw new NoHasPhaseCategoryException($filteredParams['theme']);
+            throw new NotHavePhaseCategoryException($filteredParams['theme']);
         }
 
         $idea->setSubmitter($user);
@@ -271,7 +271,7 @@ final class IdeaService implements IdeaServiceInterface
             ]);
 
             if (!$theme instanceof CampaignTheme) {
-                throw new NoHasCampaignThemeException($filteredParams['theme']);
+                throw new NotHaveCampaignThemeException($filteredParams['theme']);
             }
 
             $idea->setCampaignTheme($theme);
@@ -284,7 +284,7 @@ final class IdeaService implements IdeaServiceInterface
             ]);
 
             if (!$topic instanceof CampaignTopic) {
-                throw new NoHasCampaignTopicException($filteredParams['topic']);
+                throw new NotHaveCampaignTopicException($filteredParams['topic']);
             }
 
             $idea->setCampaignTopic($topic);

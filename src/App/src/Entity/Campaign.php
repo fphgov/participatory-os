@@ -131,8 +131,8 @@ class Campaign implements CampaignInterface
     public function getCampaignTopics(): array
     {
         $campaignTopics = [];
-        foreach ($this->campaignTopics->getValues() as $campaignTheme) {
-            $campaignTopics[] = $campaignTheme->getId();
+        foreach ($this->campaignTopics->getValues() as $campaignTopic) {
+            $campaignTopics[] = $campaignTopic->getId();
         }
 
         return $campaignTopics;
@@ -141,10 +141,10 @@ class Campaign implements CampaignInterface
     public function getCampaignTopicsOptions(): array
     {
         $campaignTopics = [];
-        foreach ($this->campaignTopics->getValues() as $campaignTheme) {
+        foreach ($this->campaignTopics->getValues() as $campaignTopic) {
             $campaignTopics[] = [
-                'id'   => $campaignTheme->getId(),
-                'name' => $campaignTheme->getName()
+                'id'   => $campaignTopic->getId(),
+                'name' => $campaignTopic->getName()
             ];
         }
 

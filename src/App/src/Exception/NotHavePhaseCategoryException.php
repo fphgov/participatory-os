@@ -6,6 +6,6 @@ namespace App\Exception;
 
 use Exception;
 
-class NoHasCampaignTopicException extends Exception
+class NotHavePhaseCategoryException extends Exception
 {
 }

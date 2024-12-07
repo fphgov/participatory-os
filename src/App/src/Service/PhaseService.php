@@ -8,7 +8,7 @@ use App\Entity\Phase;
 use App\Entity\PhaseInterface;
 use App\Exception\DifferentPhaseException;
 use App\Exception\InvalidPhaseException;
-use App\Exception\NoHasPhaseException;
+use App\Exception\NotHavePhaseException;
 use App\Repository\PhaseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -33,7 +33,7 @@ class PhaseService implements PhaseServiceInterface
         $phase = $this->phaseRepository->getCurrentPhase();
 
         if (! $phase instanceof PhaseInterface) {
-            throw new NoHasPhaseException();
+            throw new NotHavePhaseException();
         }
 
         return $phase;
