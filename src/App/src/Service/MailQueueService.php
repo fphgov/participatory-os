@@ -18,26 +18,13 @@ use function usleep;
 final class MailQueueService implements MailQueueServiceInterface
 {
     /** @var array */
-    private $config;
-
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var Logger */
-    private $audit;
-
-    /** @var array */
     private $emails = [];
 
     public function __construct(
-        array $config,
-        EntityManagerInterface $em,
-        Logger $audit
-    ) {
-        $this->config = $config;
-        $this->em     = $em;
-        $this->audit  = $audit;
-    }
+        private array $config,
+        private EntityManagerInterface $em,
+        private Logger $audit
+    ) {}
 
     public function add(UserInterface $user, MailAdapterInterface $mailAdapter): void
     {

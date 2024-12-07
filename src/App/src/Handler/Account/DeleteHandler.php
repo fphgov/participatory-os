@@ -18,11 +18,7 @@ final class DeleteHandler implements RequestHandlerInterface
         private array $config,
         private EntityManagerInterface $em,
         private UserServiceInterface $userService
-    ) {
-        $this->config      = $config;
-        $this->em          = $em;
-        $this->userService = $userService;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

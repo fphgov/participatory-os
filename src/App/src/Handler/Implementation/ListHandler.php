@@ -12,14 +12,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class ListHandler implements RequestHandlerInterface
 {
-    /** @var ImplementationService */
-    private $implementationService;
-
     public function __construct(
-        ImplementationService $implementationService
-    ) {
-        $this->implementationService = $implementationService;
-    }
+        private ImplementationService $implementationService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

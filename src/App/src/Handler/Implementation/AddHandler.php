@@ -20,10 +20,7 @@ final class AddHandler implements RequestHandlerInterface
     public function __construct(
         private ImplementationService $implementationService,
         private ImplementationFilter $inputfilter
-    ) {
-        $this->implementationService = $implementationService;
-        $this->inputfilter           = $inputfilter;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

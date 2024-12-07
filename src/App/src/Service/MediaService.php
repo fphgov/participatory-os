@@ -24,11 +24,7 @@ final class MediaService implements MediaServiceInterface
         private array $config,
         private EntityManagerInterface $em,
         private MinIOServiceInterface $objectStorage
-    ) {
-        $this->config        = $config;
-        $this->em            = $em;
-        $this->objectStorage = $objectStorage;
-    }
+    ) {}
 
     public function getMedia(string $id): ?MediaInterface
     {

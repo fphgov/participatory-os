@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Project;
 
 use App\Service\ProjectServiceInterface;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mezzio\Hal\HalResponseFactory;
 use Mezzio\Hal\ResourceGenerator;
 

@@ -15,16 +15,11 @@ use Doctrine\ORM\EntityRepository;
 
 class PhaseService implements PhaseServiceInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var PhaseRepository */
-    private $phaseRepository;
+    private PhaseRepository $phaseRepository;
 
     public function __construct(
-        EntityManagerInterface $em
+        private EntityManagerInterface $em
     ) {
-        $this->em              = $em;
         $this->phaseRepository = $this->em->getRepository(Phase::class);
     }
 

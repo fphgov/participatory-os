@@ -16,14 +16,9 @@ use function str_replace;
 
 final class AdminListHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
     public function __construct(
-        EntityManagerInterface $em
-    ) {
-        $this->em = $em;
-    }
+        private EntityManagerInterface $em
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

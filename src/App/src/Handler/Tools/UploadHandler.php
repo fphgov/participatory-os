@@ -18,10 +18,7 @@ final class UploadHandler implements RequestHandlerInterface
     public function __construct(
         private AdminUploadFileFilter $inputFilter,
         private MediaServiceInterface $mediaService
-    ) {
-        $this->inputFilter  = $inputFilter;
-        $this->mediaService = $mediaService;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

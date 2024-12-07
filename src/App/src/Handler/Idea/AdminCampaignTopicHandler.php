@@ -19,11 +19,7 @@ final class AdminCampaignTopicHandler implements RequestHandlerInterface
         private EntityManagerInterface $entityManager,
         private HalResponseFactory $responseFactory,
         private ResourceGenerator $resourceGenerator
-    ) {
-        $this->entityManager     = $entityManager;
-        $this->responseFactory   = $responseFactory;
-        $this->resourceGenerator = $resourceGenerator;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

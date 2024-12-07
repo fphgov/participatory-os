@@ -13,11 +13,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class GetStatesHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
     public function __construct(
-        EntityManagerInterface $em
+        private EntityManagerInterface $em
     ) {
         $this->em = $em;
     }

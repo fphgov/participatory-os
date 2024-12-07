@@ -13,13 +13,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class AuditMiddleware implements MiddlewareInterface
 {
-    /** @var Logger */
-    private $logger;
-
-    public function __construct(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(
+        private Logger $logger
+    ) {}
 
     public function getLogger(): Logger
     {

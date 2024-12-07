@@ -28,13 +28,11 @@ use function array_unique;
 
 final class VoteValidationService implements VoteValidationServiceInterface
 {
-    /** @var EntityRepository */
-    private $voteRepository;
+    private EntityRepository $voteRepository;
 
     public function __construct(
         private EntityManagerInterface $em
     ) {
-        $this->em             = $em;
         $this->voteRepository = $this->em->getRepository(Vote::class);
     }
 

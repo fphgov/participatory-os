@@ -16,19 +16,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AdminDeleteHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var ArticleServiceInterface */
-    protected $articleService;
-
     public function __construct(
-        EntityManagerInterface $em,
-        ArticleServiceInterface $articleService
-    ) {
-        $this->em          = $em;
-        $this->articleService = $articleService;
-    }
+        private EntityManagerInterface $em,
+        private ArticleServiceInterface $articleService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

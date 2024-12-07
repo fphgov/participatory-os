@@ -20,7 +20,6 @@ final class GetPreferenceHandler implements RequestHandlerInterface
     public function __construct(
         private EntityManagerInterface $em
     ) {
-        $this->em                   = $em;
         $this->newsletterRepository = $this->em->getRepository(Newsletter::class);
     }
 

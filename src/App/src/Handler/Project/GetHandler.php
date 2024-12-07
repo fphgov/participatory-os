@@ -20,24 +20,11 @@ use function in_array;
 
 final class GetHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-
-    /** @var HalResponseFactory */
-    protected $responseFactory;
-
-    /** @var ResourceGenerator */
-    protected $resourceGenerator;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        HalResponseFactory $responseFactory,
-        ResourceGenerator $resourceGenerator
-    ) {
-        $this->entityManager     = $entityManager;
-        $this->responseFactory   = $responseFactory;
-        $this->resourceGenerator = $resourceGenerator;
-    }
+        private EntityManagerInterface $entityManager,
+        private HalResponseFactory $responseFactory,
+        private ResourceGenerator $resourceGenerator
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

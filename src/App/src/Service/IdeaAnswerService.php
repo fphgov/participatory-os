@@ -18,16 +18,13 @@ use Psr\Http\Message\StreamInterface;
 
 final class IdeaAnswerService implements IdeaAnswerServiceInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var EntityRepository */
-    private $ideaRepository;
+    private EntityRepository $ideaRepository;
+    private EntityRepository $workflowStateRepository;
+    private EntityRepository $workflowStateExtraRepository;
 
     public function __construct(
-        EntityManagerInterface $em
+        private EntityManagerInterface $em
     ) {
-        $this->em                           = $em;
         $this->ideaRepository               = $this->em->getRepository(Idea::class);
         $this->workflowStateRepository      = $this->em->getRepository(WorkflowState::class);
         $this->workflowStateExtraRepository = $this->em->getRepository(WorkflowStateExtra::class);

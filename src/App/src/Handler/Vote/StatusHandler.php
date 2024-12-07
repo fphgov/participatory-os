@@ -13,6 +13,7 @@ use App\Exception\VoteTypeNoExistsInDatabaseException;
 use App\Middleware\CampaignMiddleware;
 use App\Middleware\UserMiddleware;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,14 +21,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class StatusHandler implements RequestHandlerInterface
 {
-    private $voteRepository;
-    private $campaignRepository;
+    private EntityRepository $voteRepository;
+    private EntityRepository $campaignRepository;
 
     public function __construct(
         private EntityManagerInterface $em,
     )
     {
-        $this->em                 = $em;
         $this->voteRepository     = $this->em->getRepository(Vote::class);
         $this->campaignRepository = $this->em->getRepository(Campaign::class);
     }

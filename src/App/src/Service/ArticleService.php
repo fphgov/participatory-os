@@ -31,11 +31,9 @@ final class ArticleService implements ArticleServiceInterface
         private Logger $audit,
         private MediaServiceInterface $mediaService
     ) {
-        $this->em                     = $em;
         $this->postRepository         = $this->em->getRepository(Article::class);
         $this->postCategoryRepository = $this->em->getRepository(ArticleCategory::class);
         $this->postStatusRepository   = $this->em->getRepository(ArticleStatus::class);
-        $this->audit                  = $audit;
     }
 
     public function addArticle(

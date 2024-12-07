@@ -19,19 +19,10 @@ final class ForgotPasswordHandler implements RequestHandlerInterface
     private const RES_MESSAGE       = 'Amennyiben a rendszerünkben szerepel a fiók és ez aktív, úgy a megadott e-mailre kiküldtük a jelszó emlékeztetőt. Ha regisztrált fiókod van, mégsem kapsz jelszóemlékeztetőt, lehetséges, hogy másik e-mail címmel regisztráltál vagy régi fiókod törlődött. Kérjük, regisztrálj újra!';
     private const RES_ERROR_MESSAGE = 'Váratlan hiba történt. A problémát rögzítettük és próbáljuk a lehető legrövidebb időn belül javítani.';
 
-    /** @var UserServiceInterface **/
-    private $userService;
-
-    /** @var Logger */
-    private $audit;
-
     public function __construct(
-        UserServiceInterface $userService,
-        Logger $audit
-    ) {
-        $this->userService = $userService;
-        $this->audit       = $audit;
-    }
+        private UserServiceInterface $userService,
+        private Logger $audit
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

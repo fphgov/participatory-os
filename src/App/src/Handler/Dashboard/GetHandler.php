@@ -33,9 +33,6 @@ final class GetHandler implements RequestHandlerInterface
         private SettingServiceInterface $settingService,
         private PhaseServiceInterface $phaseService
     ) {
-        $this->em                    = $em;
-        $this->settingService        = $settingService;
-        $this->phaseService          = $phaseService;
         $this->ideaRepository        = $this->em->getRepository(Idea::class);
         $this->userRepository        = $this->em->getRepository(User::class);
         $this->voteRepository        = $this->em->getRepository(Vote::class);

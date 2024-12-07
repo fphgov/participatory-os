@@ -17,19 +17,10 @@ use function strtolower;
 
 final class RegistrationHandler implements RequestHandlerInterface
 {
-    /** @var UserServiceInterface **/
-    private $userService;
-
-    /** @var InputFilterInterface **/
-    private $userRegistrationFilter;
-
     public function __construct(
-        UserServiceInterface $userService,
-        InputFilterInterface $userRegistrationFilter
-    ) {
-        $this->userService            = $userService;
-        $this->userRegistrationFilter = $userRegistrationFilter;
-    }
+        private UserServiceInterface $userService,
+        private InputFilterInterface $userRegistrationFilter
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

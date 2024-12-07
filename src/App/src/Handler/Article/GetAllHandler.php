@@ -17,14 +17,9 @@ use function str_replace;
 
 final class GetAllHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
     public function __construct(
-        EntityManagerInterface $entityManager
-    ) {
-        $this->entityManager = $entityManager;
-    }
+        private EntityManagerInterface $entityManager
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

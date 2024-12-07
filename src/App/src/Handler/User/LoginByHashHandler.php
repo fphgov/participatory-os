@@ -15,8 +15,7 @@ final class LoginByHashHandler implements RequestHandlerInterface
 {
     public function __construct(
         private readonly UserServiceInterface $userService
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

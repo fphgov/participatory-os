@@ -29,11 +29,9 @@ use function strtolower;
 
 final class VoteService implements VoteServiceInterface
 {
-    /** @var EntityRepository */
-    private $voteRepository;
+    private EntityRepository $voteRepository;
 
-    /** @var EntityRepository */
-    private $projectRepository;
+    private EntityRepository $projectRepository;
 
     public function __construct(
         private array $config,
@@ -43,14 +41,8 @@ final class VoteService implements VoteServiceInterface
         private VoteValidationService $voteValidationService,
         private ResourceGenerator $resourceGenerator
     ) {
-        $this->config                = $config;
-        $this->em                    = $em;
-        $this->phaseService          = $phaseService;
-        $this->mailService           = $mailService;
-        $this->voteValidationService = $voteValidationService;
-        $this->resourceGenerator     = $resourceGenerator;
-        $this->projectRepository     = $this->em->getRepository(Project::class);
-        $this->voteRepository        = $this->em->getRepository(Vote::class);
+        $this->projectRepository = $this->em->getRepository(Project::class);
+        $this->voteRepository    = $this->em->getRepository(Vote::class);
     }
 
     public function addOfflineVote(
@@ -167,7 +159,7 @@ final class VoteService implements VoteServiceInterface
     }
 
     /**
-     * @param array[]|VoteInterface $votes
+     * @param array[]|VoteInterface[] $votes
      **/
     private function successVote(UserInterface $user, array $votes): void
     {

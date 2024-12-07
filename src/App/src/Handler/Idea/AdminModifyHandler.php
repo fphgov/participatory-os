@@ -22,11 +22,7 @@ final class AdminModifyHandler implements RequestHandlerInterface
         private InputFilterInterface $inputFilter,
         private EntityManagerInterface $em,
         private IdeaServiceInterface $ideaService
-    ) {
-        $this->inputFilter = $inputFilter;
-        $this->em          = $em;
-        $this->ideaService = $ideaService;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
