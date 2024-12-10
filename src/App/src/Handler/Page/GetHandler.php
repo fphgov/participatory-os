@@ -13,14 +13,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class GetHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
     public function __construct(
-        EntityManagerInterface $entityManager
-    ) {
-        $this->entityManager = $entityManager;
-    }
+        private EntityManagerInterface $entityManager
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

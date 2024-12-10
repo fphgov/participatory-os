@@ -16,6 +16,10 @@ interface ProjectInterface extends EntityInterface
 
     public const DISABLE_DEFAULT_SET = [];
 
+    public function getProjectType(): ?ProjectType;
+
+    public function setProjectType(?ProjectType $projectType = null): void;
+
     public function getCampaign(): CampaignInterface;
 
     public function setCampaign(CampaignInterface $campaign): void;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Model;
 
 use App\Service\IdeaServiceInterface;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 final class IdeaExportModelFactory

@@ -41,11 +41,6 @@ final class UserService implements UserServiceInterface
         private MailServiceInterface $mailService,
         private TokenServiceInterface $tokenService
     ) {
-        $this->config                     = $config;
-        $this->em                         = $em;
-        $this->audit                      = $audit;
-        $this->mailService                = $mailService;
-        $this->tokenService               = $tokenService;
         $this->userRepository             = $this->em->getRepository(User::class);
         $this->userLoginAttemptRepository = $this->em->getRepository(UserLoginAttempt::class);
         $this->newsletterRepository       = $this->em->getRepository(Newsletter::class);

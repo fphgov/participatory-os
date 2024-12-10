@@ -32,34 +32,13 @@ use function strtoupper;
 
 final class ListHandler implements RequestHandlerInterface
 {
-    /** @var EntityManager */
-    protected $em;
-
-    /** @var int */
-    protected $pageCount;
-
-    /** @var HalResponseFactory */
-    protected $responseFactory;
-
-    /** @var ResourceGenerator */
-    protected $resourceGenerator;
-
-    /** @var Logger */
-    private $audit;
-
     public function __construct(
-        EntityManager $em,
-        int $pageCount,
-        HalResponseFactory $responseFactory,
-        ResourceGenerator $resourceGenerator,
-        Logger $audit
-    ) {
-        $this->em                = $em;
-        $this->pageCount         = $pageCount;
-        $this->responseFactory   = $responseFactory;
-        $this->resourceGenerator = $resourceGenerator;
-        $this->audit             = $audit;
-    }
+        private EntityManager $em,
+        private int $pageCount,
+        private HalResponseFactory $responseFactory,
+        private ResourceGenerator $resourceGenerator,
+        private Logger $audit
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

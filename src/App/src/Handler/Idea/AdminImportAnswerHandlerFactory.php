@@ -6,7 +6,7 @@ namespace App\Handler\Idea;
 
 use App\Middleware\AuditMiddleware;
 use App\Service\IdeaAnswerServiceInterface;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 final class AdminImportAnswerHandlerFactory
 {

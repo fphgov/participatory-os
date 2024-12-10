@@ -20,5 +20,10 @@ interface ArticleServiceInterface
         array $filteredParams
     ): void;
 
+    public function deleteArticle(
+        UserInterface $submitter,
+        ArticleInterface $post
+    ): void;
+
     public function getRepository(): EntityRepository;
 }

@@ -23,8 +23,7 @@ use function file_get_contents;
 
 class MailService implements MailServiceInterface
 {
-    /** @var MailRepository */
-    private $mailRepository;
+    private MailRepository $mailRepository;
 
     public function __construct(
         private EntityManagerInterface $em,
@@ -34,13 +33,7 @@ class MailService implements MailServiceInterface
         private MailContentRawHelper $mailContentRawHelper,
         private MailQueueServiceInterface $mailQueueService
     ) {
-        $this->em                   = $em;
-        $this->audit                = $audit;
-        $this->mailAdapter          = $mailAdapter;
-        $this->mailContentHelper    = $mailContentHelper;
-        $this->mailContentRawHelper = $mailContentRawHelper;
-        $this->mailQueueService     = $mailQueueService;
-        $this->mailRepository       = $this->em->getRepository(Mail::class);
+        $this->mailRepository = $this->em->getRepository(Mail::class);
     }
 
     public function getRepository(): MailRepository

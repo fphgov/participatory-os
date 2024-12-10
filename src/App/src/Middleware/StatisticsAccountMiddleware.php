@@ -16,8 +16,7 @@ class StatisticsAccountMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private array $config,
-    ) {
-    }
+    ) {}
 
     public function process(
         ServerRequestInterface $request,

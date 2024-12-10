@@ -62,11 +62,6 @@ final class IdeaService implements IdeaServiceInterface
         private MailServiceInterface $mailService,
         private MediaServiceInterface $mediaService
     ) {
-        $this->config                       = $config;
-        $this->em                           = $em;
-        $this->phaseService                 = $phaseService;
-        $this->mailService                  = $mailService;
-        $this->mediaService                 = $mediaService;
         $this->ideaRepository               = $this->em->getRepository(Idea::class);
         $this->campaignThemeRepository      = $this->em->getRepository(CampaignTheme::class);
         $this->campaignTopicRepository      = $this->em->getRepository(CampaignTopic::class);

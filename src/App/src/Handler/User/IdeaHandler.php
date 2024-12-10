@@ -21,24 +21,11 @@ use function array_merge_recursive;
 
 final class IdeaHandler implements RequestHandlerInterface
 {
-    /** @var IdeaServiceInterface **/
-    private $ideaService;
-
-    /** @var InputFilterInterface **/
-    private $ideaInputFilter;
-
-    /** @var Logger */
-    private $audit;
-
     public function __construct(
-        IdeaServiceInterface $ideaService,
-        InputFilterInterface $ideaInputFilter,
-        Logger $audit
-    ) {
-        $this->ideaService     = $ideaService;
-        $this->ideaInputFilter = $ideaInputFilter;
-        $this->audit           = $audit;
-    }
+        private IdeaServiceInterface $ideaService,
+        private InputFilterInterface $ideaInputFilter,
+        private Logger $audit
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

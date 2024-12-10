@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Service\UserServiceInterface;
-use Jwt\Handler\JwtAuthMiddleware;
 use Mezzio\Authentication\DefaultUser;
 use Mezzio\Authentication\UserInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -22,9 +21,7 @@ class OptionalUserMiddleware implements MiddlewareInterface
     public function __construct(
         private UserServiceInterface $userService,
         private array $options
-    ) {
-        $this->userService = $userService;
-    }
+    ) {}
 
     public function process(
         ServerRequestInterface $request,

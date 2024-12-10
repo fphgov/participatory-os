@@ -15,13 +15,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class UserMiddleware implements MiddlewareInterface
 {
-    /** @var UserServiceInterface */
-    private $userService;
-
-    public function __construct(UserServiceInterface $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserServiceInterface $userService
+    ) {}
 
     public function process(
         ServerRequestInterface $request,

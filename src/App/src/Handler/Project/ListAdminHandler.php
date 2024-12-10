@@ -15,14 +15,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class ListAdminHandler implements RequestHandlerInterface
 {
-    /** @var EntityManager */
-    private $em;
-
     public function __construct(
-        EntityManager $em
-    ) {
-        $this->em = $em;
-    }
+        private EntityManager $em
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -38,19 +38,11 @@ final class IdeaExportModel implements ExportModelInterface
         'E',
     ];
 
-    private array $config;
-    private Spreadsheet $spreadsheet;
-    private IdeaServiceInterface $ideaService;
-
     public function __construct(
-        array $config,
-        Spreadsheet $spreadsheet,
-        IdeaServiceInterface $ideaService
-    ) {
-        $this->config      = $config;
-        $this->spreadsheet = $spreadsheet;
-        $this->ideaService = $ideaService;
-    }
+        private array $config,
+        private Spreadsheet $spreadsheet,
+        private IdeaServiceInterface $ideaService
+    ) {}
 
     public function getWriter(): IWriter
     {

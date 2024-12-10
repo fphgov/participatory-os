@@ -37,8 +37,6 @@ final class ProjectService implements ProjectServiceInterface
         private EntityManagerInterface $em,
         private MediaServiceInterface $mediaService
     ) {
-        $this->em                         = $em;
-        $this->mediaService               = $mediaService;
         $this->campaignThemeRepository    = $this->em->getRepository(CampaignTheme::class);
         $this->projectRepository          = $this->em->getRepository(Project::class);
         $this->workflowStateRepository    = $this->em->getRepository(WorkflowState::class);

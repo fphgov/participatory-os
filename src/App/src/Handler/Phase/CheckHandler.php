@@ -14,13 +14,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class CheckHandler implements RequestHandlerInterface
 {
-    /** @var PhaseServiceInterface */
-    private $phaseService;
-
-    public function __construct(PhaseServiceInterface $phaseService)
-    {
-        $this->phaseService = $phaseService;
-    }
+    public function __construct(
+        private PhaseServiceInterface $phaseService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

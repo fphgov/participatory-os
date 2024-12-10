@@ -28,11 +28,7 @@ final class VoteMessageService implements VoteMessageServiceInterface
         private EntityManagerInterface $em,
         private VoteServiceInterface $voteService,
         private InputFilterInterface $voteFilter
-    ) {
-        $this->em          = $em;
-        $this->voteService = $voteService;
-        $this->voteFilter  = $voteFilter;
-    }
+    ) {}
 
     public function votingWithJsonMessage(
         UserInterface $user,

@@ -24,19 +24,10 @@ use function usort;
 
 final class StatisticsHandler implements RequestHandlerInterface
 {
-    /** @var EntityManager */
-    protected $em;
-
-    /** @var PhaseServiceInterface */
-    protected $phaseService;
-
     public function __construct(
-        EntityManager $em,
-        PhaseServiceInterface $phaseService
-    ) {
-        $this->em           = $em;
-        $this->phaseService = $phaseService;
-    }
+        private EntityManager $em,
+        private PhaseServiceInterface $phaseService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

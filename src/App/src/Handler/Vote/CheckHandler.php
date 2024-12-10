@@ -28,12 +28,7 @@ final class CheckHandler implements RequestHandlerInterface
         private EntityManagerInterface $em,
         private VoteValidationServiceInterface $voteValidationService,
         private PhaseServiceInterface $phaseService
-    )
-    {
-        $this->em                    = $em;
-        $this->voteValidationService = $voteValidationService;
-        $this->phaseService          = $phaseService;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

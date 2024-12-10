@@ -29,10 +29,8 @@ final class ImplementationService implements ImplementationServiceInterface
         private Logger $audit,
         private MediaServiceInterface $mediaService
     ) {
-        $this->em                       = $em;
         $this->implementationRepository = $this->em->getRepository(Implementation::class);
         $this->projectRepository        = $this->em->getRepository(Project::class);
-        $this->audit                    = $audit;
     }
 
     public function addImplementation(

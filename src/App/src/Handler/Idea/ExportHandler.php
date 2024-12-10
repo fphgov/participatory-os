@@ -20,13 +20,9 @@ use function rewind;
 
 final class ExportHandler implements RequestHandlerInterface
 {
-    private IdeaExportModel $ideaExportModel;
-
     public function __construct(
-        IdeaExportModel $ideaExportModel
-    ) {
-        $this->ideaExportModel = $ideaExportModel;
-    }
+        private IdeaExportModel $ideaExportModel
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

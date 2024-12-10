@@ -13,13 +13,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class ActivateHandler implements RequestHandlerInterface
 {
-    /** @var UserServiceInterface **/
-    private $userService;
-
-    public function __construct(UserServiceInterface $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserServiceInterface $userService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
