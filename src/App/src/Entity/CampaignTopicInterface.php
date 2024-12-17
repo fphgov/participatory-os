@@ -9,6 +9,8 @@ use App\Interfaces\EntityInterface;
 
 interface CampaignTopicInterface extends EntityInterface, EntityActiveInterface
 {
+    public const TOPIC_NONE = 'NONE';
+
     public const DISABLE_SHOW_DEFAULT = [
         'id',
         'updatedAt',

@@ -116,6 +116,17 @@ final class IdeaService implements IdeaServiceInterface
             $this->em->getReference(WorkflowState::class, WorkflowStateInterface::STATUS_RECEIVED)
         );
 
+        $topic = $this->campaignTopicRepository->findOneBy([
+            'campaign' => $phase->getCampaign(),
+            'code'     => CampaignTopic::TOPIC_NONE,
+        ]);
+
+        if (!$topic instanceof CampaignTopic) {
+            throw new NotHaveCampaignTopicException(CampaignTopic::TOPIC_NONE);
+        }
+
+        $idea->setCampaignTopic($topic);
+
         if (isset($filteredParams['cost_condition'])) {
             $idea->setCostCondition((bool)$filteredParams['cost_condition']);
         }
