@@ -476,6 +476,82 @@ final class IdeaService implements IdeaServiceInterface
         $this->mailService->send('workflow-idea-published-mod', $tplData, $idea->getSubmitter());
     }
 
+    public function sendIdeaWorkflowWaitForPublicSupport(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-wait-for-public-support', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowUnderEvaluation(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-under-evaluation', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowNoPublicSupport(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-no-public-support', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowNoEnoughSupport(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-no-enough-support', $tplData, $idea->getSubmitter());
+    }
+
     public function sendIdeaWorkflowTrashed(IdeaInterface $idea): void
     {
         $tplData = [

@@ -31,6 +31,14 @@ interface IdeaServiceInterface
 
     public function sendIdeaWorkflowPublishedWithMod(IdeaInterface $idea): void;
 
+    public function sendIdeaWorkflowWaitForPublicSupport(IdeaInterface $idea): void;
+
+    public function sendIdeaWorkflowUnderEvaluation(IdeaInterface $idea): void;
+
+    public function sendIdeaWorkflowNoPublicSupport(IdeaInterface $idea): void;
+
+    public function sendIdeaWorkflowNoEnoughSupport(IdeaInterface $idea): void;
+
     public function sendIdeaWorkflowTrashed(IdeaInterface $idea): void;
 
     public function sendIdeaWorkflowProfessionalTrashed(IdeaInterface $idea): void;
