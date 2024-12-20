@@ -425,6 +425,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
@@ -443,11 +444,10 @@ final class IdeaService implements IdeaServiceInterface
             'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
-            'idea'             => [
-                'title'       => $idea->getTitle(),
-                'solution'    => $idea->getSolution(),
-                'description' => $idea->getDescription(),
-            ],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
         $this->mailService->send('idea-confirmation', $tplData, $idea->getSubmitter());
@@ -462,6 +462,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
@@ -479,6 +480,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
             'ideaModText'      => $extra,
             'ideaModFullText'  => wordwrap($extra, 78, "\n"),
@@ -498,6 +500,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
             'ideaModText'      => $extra,
             'ideaModFullText'  => wordwrap($extra, 78, "\n"),
@@ -517,6 +520,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
             'ideaModText'      => $extra,
             'ideaModFullText'  => wordwrap($extra, 78, "\n"),
@@ -536,6 +540,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
             'ideaModText'      => $extra,
             'ideaModFullText'  => wordwrap($extra, 78, "\n"),
@@ -555,6 +560,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
             'ideaModText'      => $extra,
             'ideaModFullText'  => wordwrap($extra, 78, "\n"),
@@ -571,6 +577,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
         ];
 
         $this->mailService->send('workflow-idea-rejected', $tplData, $idea->getSubmitter());
@@ -584,6 +591,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
@@ -601,6 +609,7 @@ final class IdeaService implements IdeaServiceInterface
                 'infoMunicipality' => $this->config['app']['municipality'],
                 'infoEmail'        => $this->config['app']['email'],
                 'ideaTitle'        => $idea->getTitle(),
+                'ideaDescription'  => $idea->getDescription(),
                 'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
                 'projectTitle'     => $project->getTitle(),
                 'projectLink'      => $this->config['app']['url'] . '/projektek/' . $project->getId(),
@@ -621,6 +630,7 @@ final class IdeaService implements IdeaServiceInterface
                 'infoMunicipality' => $this->config['app']['municipality'],
                 'infoEmail'        => $this->config['app']['email'],
                 'ideaTitle'        => $idea->getTitle(),
+                'ideaDescription'  => $idea->getDescription(),
                 'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
                 'projectTitle'     => $project->getTitle(),
                 'projectLink'      => $this->config['app']['url'] . '/projektek/' . $project->getId(),
