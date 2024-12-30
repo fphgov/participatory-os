@@ -6,7 +6,9 @@ namespace App\Service;
 
 use App\Entity\CampaignLocation;
 use App\Entity\CampaignTheme;
+use App\Entity\CampaignTopic;
 use App\Entity\Idea;
+use App\Entity\IdeaCampaignLocation;
 use App\Entity\IdeaInterface;
 use App\Entity\Link;
 use App\Entity\Media;
@@ -16,7 +18,9 @@ use App\Entity\WorkflowState;
 use App\Entity\WorkflowStateExtra;
 use App\Entity\WorkflowStateInterface;
 use App\Exception\IdeaNotFoundException;
-use App\Exception\NoHasPhaseCategoryException;
+use App\Exception\NotHavePhaseCategoryException;
+use App\Exception\NotHaveCampaignThemeException;
+use App\Exception\NotHaveCampaignTopicException;
 use App\Exception\NotPossibleSubmitIdeaWithAdminAccountException;
 use App\Exception\WorkflowStateExtraNotFoundException;
 use App\Exception\WorkflowStateNotFoundException;
@@ -33,6 +37,7 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 use function basename;
+use function intval;
 use function in_array;
 use function is_array;
 use function is_countable;
@@ -45,6 +50,7 @@ final class IdeaService implements IdeaServiceInterface
 {
     private EntityRepository $ideaRepository;
     private EntityRepository $campaignThemeRepository;
+    private EntityRepository $campaignTopicRepository;
     private EntityRepository $campaignLocationRepository;
     private EntityRepository $workflowStateRepository;
     private EntityRepository $workflowStateExtraRepository;
@@ -56,13 +62,9 @@ final class IdeaService implements IdeaServiceInterface
         private MailServiceInterface $mailService,
         private MediaServiceInterface $mediaService
     ) {
-        $this->config                       = $config;
-        $this->em                           = $em;
-        $this->phaseService                 = $phaseService;
-        $this->mailService                  = $mailService;
-        $this->mediaService                 = $mediaService;
         $this->ideaRepository               = $this->em->getRepository(Idea::class);
         $this->campaignThemeRepository      = $this->em->getRepository(CampaignTheme::class);
+        $this->campaignTopicRepository      = $this->em->getRepository(CampaignTopic::class);
         $this->campaignLocationRepository   = $this->em->getRepository(CampaignLocation::class);
         $this->workflowStateRepository      = $this->em->getRepository(WorkflowState::class);
         $this->workflowStateExtraRepository = $this->em->getRepository(WorkflowStateExtra::class);
@@ -97,7 +99,7 @@ final class IdeaService implements IdeaServiceInterface
         }
 
         if (! $theme instanceof CampaignTheme) {
-            throw new NoHasPhaseCategoryException($filteredParams['theme']);
+            throw new NotHavePhaseCategoryException($filteredParams['theme']);
         }
 
         $idea->setSubmitter($user);
@@ -114,12 +116,41 @@ final class IdeaService implements IdeaServiceInterface
             $this->em->getReference(WorkflowState::class, WorkflowStateInterface::STATUS_RECEIVED)
         );
 
+        $topic = $this->campaignTopicRepository->findOneBy([
+            'campaign' => $phase->getCampaign(),
+            'code'     => CampaignTopic::TOPIC_NONE,
+        ]);
+
+        if (!$topic instanceof CampaignTopic) {
+            throw new NotHaveCampaignTopicException(CampaignTopic::TOPIC_NONE);
+        }
+
+        $idea->setCampaignTopic($topic);
+
         if (isset($filteredParams['cost_condition'])) {
             $idea->setCostCondition((bool)$filteredParams['cost_condition']);
         }
 
+        $fullName = explode(' ', $filteredParams['fullName']);
+        $firstname = array_shift($fullName);
+        $lastname = implode(' ', $fullName);
+
+        $user = $idea->getSubmitter();
+        $user->setFirstname($firstname);
+        $user->setLastname($lastname);
+
+        $userPreference = $user->getUserPreference();
+
+        if (isset($filteredParams['birthYear'])) {
+            $userPreference->setBirthyear(intval($filteredParams['birthYear']));
+        }
+
+        if (isset($filteredParams['postalCode'])) {
+            $userPreference->setPostalCode($filteredParams['postalCode']);
+        }
+
         if (isset($filteredParams['phone'])) {
-            $idea->getSubmitter()->getUserPreference()->setPhone($filteredParams['phone']);
+            $userPreference->setPhone($filteredParams['phone']);
         }
 
         if (isset($filteredParams['location']) && ! empty($filteredParams['location'])) {
@@ -146,14 +177,22 @@ final class IdeaService implements IdeaServiceInterface
             }
         }
 
-        if (isset($filteredParams['location_district']) && !empty($filteredParams['location_district'])) {
-            $location = $this->campaignLocationRepository->findOneBy([
-                'code'     => $filteredParams['location_district'],
-                'campaign' => $phase->getCampaign(),
-            ]);
+        if (!empty($filteredParams['location_districts'])) {
+            $locationDistricts = explode(',', $filteredParams['location_districts']);
+            foreach ($locationDistricts as $locationDistrict) {
+                $location = $this->campaignLocationRepository->findOneBy([
+                    'code'     => $locationDistrict,
+                    'campaign' => $phase->getCampaign(),
+                ]);
 
-            if ($location instanceof CampaignLocation) {
-                $idea->setCampaignLocation($location);
+                if ($location instanceof CampaignLocation) {
+                    $IdeaCampaignLocation = new IdeaCampaignLocation();
+                    $IdeaCampaignLocation->setIdea($idea);
+                    $IdeaCampaignLocation->setCampaignLocation($location);
+                    $IdeaCampaignLocation->setCreatedAt($date);
+                    $IdeaCampaignLocation->setUpdatedAt($date);
+                    $this->em->persist($IdeaCampaignLocation);
+                }
             }
         }
 
@@ -238,10 +277,23 @@ final class IdeaService implements IdeaServiceInterface
             ]);
 
             if (!$theme instanceof CampaignTheme) {
-                throw new NoHasPhaseCategoryException($filteredParams['theme']);
+                throw new NotHaveCampaignThemeException($filteredParams['theme']);
             }
 
             $idea->setCampaignTheme($theme);
+        }
+
+        if (isset($filteredParams['topic'])) {
+            $topic = $this->campaignTopicRepository->findOneBy([
+                'id'       => $filteredParams['topic'],
+                'campaign' => $idea->getCampaign(),
+            ]);
+
+            if (!$topic instanceof CampaignTopic) {
+                throw new NotHaveCampaignTopicException($filteredParams['topic']);
+            }
+
+            $idea->setCampaignTopic($topic);
         }
 
         if (isset($filteredParams['workflowState'])) {
@@ -373,6 +425,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
@@ -391,11 +444,10 @@ final class IdeaService implements IdeaServiceInterface
             'lastname'         => $idea->getSubmitter()->getLastname(),
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
-            'idea'             => [
-                'title'       => $idea->getTitle(),
-                'solution'    => $idea->getSolution(),
-                'description' => $idea->getDescription(),
-            ],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
         $this->mailService->send('idea-confirmation', $tplData, $idea->getSubmitter());
@@ -410,6 +462,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
@@ -427,12 +480,93 @@ final class IdeaService implements IdeaServiceInterface
             'infoEmail'        => $this->config['app']['email'],
             'ideaId'           => $idea->getId(),
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
             'ideaModText'      => $extra,
             'ideaModFullText'  => wordwrap($extra, 78, "\n"),
         ];
 
         $this->mailService->send('workflow-idea-published-mod', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowWaitForPublicSupport(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-wait-for-public-support', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowUnderEvaluation(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-under-evaluation', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowNoPublicSupport(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-no-public-support', $tplData, $idea->getSubmitter());
+    }
+
+    public function sendIdeaWorkflowNoEnoughSupport(IdeaInterface $idea): void
+    {
+        $extra = $idea->getWorkflowStateExtra() ? $idea->getWorkflowStateExtra()->getEmailText() : '';
+
+        $tplData = [
+            'firstname'        => $idea->getSubmitter()->getFirstname(),
+            'lastname'         => $idea->getSubmitter()->getLastname(),
+            'infoMunicipality' => $this->config['app']['municipality'],
+            'infoEmail'        => $this->config['app']['email'],
+            'ideaId'           => $idea->getId(),
+            'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
+            'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
+            'ideaModText'      => $extra,
+            'ideaModFullText'  => wordwrap($extra, 78, "\n"),
+        ];
+
+        $this->mailService->send('workflow-idea-no-enough-support', $tplData, $idea->getSubmitter());
     }
 
     public function sendIdeaWorkflowTrashed(IdeaInterface $idea): void
@@ -443,6 +577,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
         ];
 
         $this->mailService->send('workflow-idea-rejected', $tplData, $idea->getSubmitter());
@@ -456,6 +591,7 @@ final class IdeaService implements IdeaServiceInterface
             'infoMunicipality' => $this->config['app']['municipality'],
             'infoEmail'        => $this->config['app']['email'],
             'ideaTitle'        => $idea->getTitle(),
+            'ideaDescription'  => $idea->getDescription(),
             'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
         ];
 
@@ -473,6 +609,7 @@ final class IdeaService implements IdeaServiceInterface
                 'infoMunicipality' => $this->config['app']['municipality'],
                 'infoEmail'        => $this->config['app']['email'],
                 'ideaTitle'        => $idea->getTitle(),
+                'ideaDescription'  => $idea->getDescription(),
                 'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
                 'projectTitle'     => $project->getTitle(),
                 'projectLink'      => $this->config['app']['url'] . '/projektek/' . $project->getId(),
@@ -493,6 +630,7 @@ final class IdeaService implements IdeaServiceInterface
                 'infoMunicipality' => $this->config['app']['municipality'],
                 'infoEmail'        => $this->config['app']['email'],
                 'ideaTitle'        => $idea->getTitle(),
+                'ideaDescription'  => $idea->getDescription(),
                 'ideaLink'         => $this->config['app']['url'] . '/otletek/' . $idea->getId(),
                 'projectTitle'     => $project->getTitle(),
                 'projectLink'      => $this->config['app']['url'] . '/projektek/' . $project->getId(),

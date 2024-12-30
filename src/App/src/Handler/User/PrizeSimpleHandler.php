@@ -16,9 +16,7 @@ final class PrizeSimpleHandler implements RequestHandlerInterface
 {
     public function __construct(
         private UserServiceInterface $userService
-    ) {
-        $this->userService = $userService;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -46,7 +46,6 @@ docker/config/cert/*
 
 public/**/*
 !public/index.php
-!public/static.php
 !public/.htaccess
 !public/files
 !public/files/.gitkeep

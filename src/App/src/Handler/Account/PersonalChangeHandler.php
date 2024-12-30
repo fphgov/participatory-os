@@ -17,10 +17,7 @@ final class PersonalChangeHandler implements RequestHandlerInterface
     public function __construct(
         private UserServiceInterface $userService,
         private InputFilterInterface $personalFilter
-    ) {
-        $this->userService    = $userService;
-        $this->personalFilter = $personalFilter;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

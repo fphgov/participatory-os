@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler\Vote;
 
 use App\Entity\OfflineVote;
-use App\Entity\VoteTypeInterface;
 use App\Middleware\UserMiddleware;
 use App\Service\VoteServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,24 +19,11 @@ use function intval;
 
 final class AddHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var InputFilterInterface */
-    private $inputFilter;
-
-    /** @var VoteServiceInterface */
-    private $voteService;
-
     public function __construct(
-        EntityManagerInterface $em,
-        InputFilterInterface $inputFilter,
-        VoteServiceInterface $voteService
-    ) {
-        $this->em          = $em;
-        $this->inputFilter = $inputFilter;
-        $this->voteService = $voteService;
-    }
+        private EntityManagerInterface $em,
+        private InputFilterInterface $inputFilter,
+        private VoteServiceInterface $voteService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

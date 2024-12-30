@@ -13,7 +13,7 @@ use App\Entity\ProjectInterface;
 use App\Entity\UserInterface;
 use App\Entity\WorkflowState;
 use App\Entity\WorkflowStateInterface;
-use App\Exception\NoHasPhaseCategoryException;
+use App\Exception\NotHavePhaseCategoryException;
 use App\Service\MediaServiceInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,8 +37,6 @@ final class ProjectService implements ProjectServiceInterface
         private EntityManagerInterface $em,
         private MediaServiceInterface $mediaService
     ) {
-        $this->em                         = $em;
-        $this->mediaService               = $mediaService;
         $this->campaignThemeRepository    = $this->em->getRepository(CampaignTheme::class);
         $this->projectRepository          = $this->em->getRepository(Project::class);
         $this->workflowStateRepository    = $this->em->getRepository(WorkflowState::class);
@@ -58,7 +56,7 @@ final class ProjectService implements ProjectServiceInterface
         ]);
 
         if (! $theme instanceof CampaignTheme) {
-            throw new NoHasPhaseCategoryException($filteredParams['theme']);
+            throw new NotHavePhaseCategoryException($filteredParams['theme']);
         }
 
         $project->setTitle($filteredParams['title']);

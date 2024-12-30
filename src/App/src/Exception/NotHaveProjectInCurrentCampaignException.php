@@ -6,6 +6,6 @@ namespace App\Exception;
 
 use Exception;
 
-class NoHasPhaseException extends Exception
+class NotHaveProjectInCurrentCampaignException extends Exception
 {
 }

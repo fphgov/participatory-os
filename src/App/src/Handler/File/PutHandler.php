@@ -17,19 +17,10 @@ use function array_merge_recursive;
 
 final class PutHandler implements RequestHandlerInterface
 {
-    /** @var MediaServiceInterface */
-    private $mediaService;
-
-    /** @var Logger */
-    private $audit;
-
     public function __construct(
-        MediaServiceInterface $mediaService,
-        Logger $audit
-    ) {
-        $this->mediaService = $mediaService;
-        $this->audit        = $audit;
-    }
+        private MediaServiceInterface $mediaService,
+        private Logger $audit
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -13,13 +13,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class ChangeHandler implements RequestHandlerInterface
 {
-    /** @var SettingServiceInterface **/
-    private $settingService;
-
-    public function __construct(SettingServiceInterface $settingService)
-    {
-        $this->settingService = $settingService;
-    }
+    public function __construct(
+        private SettingServiceInterface $settingService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Idea;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Laminas\Log\Logger;
 use Mezzio\Hal\HalResponseFactory;
 use Mezzio\Hal\ResourceGenerator;
 use Psr\Container\ContainerInterface;
@@ -20,6 +21,7 @@ final class ListHandlerFactory
             isset($config['app']['pagination']['maxPageSize']) ? (int) $config['app']['pagination']['maxPageSize'] : 25,
             $container->get(HalResponseFactory::class),
             $container->get(ResourceGenerator::class),
+            $container->get(Logger::class),
         );
     }
 }

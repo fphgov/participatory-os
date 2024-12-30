@@ -20,17 +20,10 @@ use function array_merge_recursive;
 
 final class AdminImportAnswerHandler implements RequestHandlerInterface
 {
-    private Logger $audit;
-
-    private IdeaAnswerServiceInterface $ideaAnswerService;
-
     public function __construct(
-        Logger $audit,
-        IdeaAnswerServiceInterface $ideaAnswerService
-    ) {
-        $this->audit             = $audit;
-        $this->ideaAnswerService = $ideaAnswerService;
-    }
+        private Logger $audit,
+        private IdeaAnswerServiceInterface $ideaAnswerService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

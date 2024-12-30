@@ -134,11 +134,7 @@ jobs:
             --set env[10].value=${{ secrets.APP_EMAIL }}
             --set env[12].value="${{ secrets.APP_PHONE }}"
             --set env[14].value=${{ secrets.RECAPTCHA_SECRET }}
-            --set env[15].value=${{ secrets.ARCGIS_GATEWAY_HOST }}
-            --set env[16].value="${{ secrets.ARCGIS_GATEWAY_PORT }}"
-            --set env[17].value=${{ secrets.ARCGIS_USERNAME }}
-            --set env[18].value=${{ secrets.ARCGIS_PASSWORD }}
-            --set env[19].value=${{ secrets.JWT_JTI }}
-            --set env[20].value=${{ secrets.JWT_SECRET }}
-            --set env[26].value=${{ secrets.PROD_MINIO_ROOT_PASSWORD }}
-            --set env[52].value=${{ secrets.APP_STAT_TOKEN }}
+            --set env[15].value=${{ secrets.JWT_JTI }}
+            --set env[16].value=${{ secrets.JWT_SECRET }}
+            --set env[22].value=${{ secrets.PROD_MINIO_ROOT_PASSWORD }}
+            --set env[48].value=${{ secrets.APP_STAT_TOKEN }}

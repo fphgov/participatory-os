@@ -46,6 +46,14 @@ class Idea implements IdeaInterface
     private CampaignTheme $campaignTheme;
 
     /**
+     * @ORM\ManyToOne(targetEntity="CampaignTopic")
+     * @ORM\JoinColumn(name="campaign_topic_id", referencedColumnName="id", nullable=false)
+     *
+     * @Groups({"list", "detail", "full_detail"})
+     */
+    private CampaignTopic $campaignTopic;
+
+    /**
      * @ORM\ManyToOne(targetEntity="CampaignLocation")
      * @ORM\JoinColumn(name="campaign_location_id", referencedColumnName="id", nullable=true)
      *
@@ -113,6 +121,15 @@ class Idea implements IdeaInterface
      * @Groups({"detail", "full_detail"})
      */
     private Collection $comments;
+
+    /**
+     * @ORM\OneToMany(targetEntity="IdeaCampaignLocation", mappedBy="idea")
+     *
+     * @var Collection|CampaignLocation[]
+     *
+     * @Groups({"detail", "full_detail"})
+     */
+    private Collection $ideaCampaignLocations;
 
     /**
      * @ORM\Column(name="title", type="string")
@@ -195,9 +212,10 @@ class Idea implements IdeaInterface
 
     public function __construct()
     {
-        $this->links    = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->medias   = new ArrayCollection();
+        $this->links                 = new ArrayCollection();
+        $this->comments              = new ArrayCollection();
+        $this->ideaCampaignLocations = new ArrayCollection();
+        $this->medias                = new ArrayCollection();
     }
 
     public function getSubmitter(): UserInterface
@@ -228,6 +246,16 @@ class Idea implements IdeaInterface
     public function setCampaignTheme(CampaignThemeInterface $campaignTheme): void
     {
         $this->campaignTheme = $campaignTheme;
+    }
+
+    public function getCampaignTopic(): CampaignTopicInterface
+    {
+        return $this->campaignTopic;
+    }
+
+    public function setCampaignTopic(CampaignTopicInterface $campaignTopic): void
+    {
+        $this->campaignTopic = $campaignTopic;
     }
 
     public function getCampaignLocation(): ?CampaignLocationInterface
@@ -334,6 +362,8 @@ class Idea implements IdeaInterface
         if (! $this->comments->contains($comment)) {
             $this->comments[] = $comment;
         }
+
+        return $this;
     }
 
     public function setWorkflowState(WorkflowState $workflowState): void

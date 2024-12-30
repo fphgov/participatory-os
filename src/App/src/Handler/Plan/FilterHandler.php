@@ -28,14 +28,9 @@ class FilterHandler implements RequestHandlerInterface
         'not_voted',
     ];
 
-    /** @var EntityManagerInterface */
-    protected $em;
-
     public function __construct(
-        EntityManagerInterface $em
-    ) {
-        $this->em = $em;
-    }
+        private EntityManagerInterface $em
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

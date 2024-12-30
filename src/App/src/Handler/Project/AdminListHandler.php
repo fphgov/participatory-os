@@ -25,29 +25,12 @@ use function strtoupper;
 
 final class AdminListHandler implements RequestHandlerInterface
 {
-    /** @var ProjectServiceInterface */
-    private $projectService;
-
-    /** @var int */
-    protected $pageCount;
-
-    /** @var HalResponseFactory */
-    protected $responseFactory;
-
-    /** @var ResourceGenerator */
-    protected $resourceGenerator;
-
     public function __construct(
-        ProjectServiceInterface $projectService,
-        int $pageCount,
-        HalResponseFactory $responseFactory,
-        ResourceGenerator $resourceGenerator
-    ) {
-        $this->projectService    = $projectService;
-        $this->pageCount         = $pageCount;
-        $this->responseFactory   = $responseFactory;
-        $this->resourceGenerator = $resourceGenerator;
-    }
+        private ProjectServiceInterface $projectService,
+        private int $pageCount,
+        private HalResponseFactory $responseFactory,
+        private ResourceGenerator $resourceGenerator
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

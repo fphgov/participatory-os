@@ -19,24 +19,11 @@ use function array_merge_recursive;
 
 final class AdminModifyHandler implements RequestHandlerInterface
 {
-    /** @var InputFilterInterface */
-    private $inputFilter;
-
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    /** @var ArticleServiceInterface */
-    protected $articleService;
-
     public function __construct(
-        InputFilterInterface $inputFilter,
-        EntityManagerInterface $em,
-        ArticleServiceInterface $articleService
-    ) {
-        $this->inputFilter    = $inputFilter;
-        $this->em             = $em;
-        $this->articleService = $articleService;
-    }
+        private InputFilterInterface $inputFilter,
+        private EntityManagerInterface $em,
+        private ArticleServiceInterface $articleService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

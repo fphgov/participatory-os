@@ -7,7 +7,6 @@ namespace App\Middleware;
 use App\Service\UserServiceInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
-use Tuupola\Middleware\JwtAuthentication;
 
 class OptionalUserMiddlewareFactory
 {

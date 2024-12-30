@@ -41,11 +41,6 @@ final class UserService implements UserServiceInterface
         private MailServiceInterface $mailService,
         private TokenServiceInterface $tokenService
     ) {
-        $this->config                     = $config;
-        $this->em                         = $em;
-        $this->audit                      = $audit;
-        $this->mailService                = $mailService;
-        $this->tokenService               = $tokenService;
         $this->userRepository             = $this->em->getRepository(User::class);
         $this->userLoginAttemptRepository = $this->em->getRepository(UserLoginAttempt::class);
         $this->newsletterRepository       = $this->em->getRepository(Newsletter::class);
@@ -53,22 +48,26 @@ final class UserService implements UserServiceInterface
         $this->mailLogRepository          = $this->em->getRepository(MailLog::class);
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function activate(string $hash): void
     {
         $user = $this->userRepository->getUserByHash($hash);
 
-        $user->setHash(null);
         $user->setActive(true);
         $user->setUpdatedAt(new DateTime());
 
         $this->em->flush();
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function loginWithHash(string $hash): string
     {
         $user = $this->userRepository->getUserByHash($hash);
 
-        $user->setHash(null);
         $user->setUpdatedAt(new DateTime());
 
         $this->em->flush();

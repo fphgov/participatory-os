@@ -13,7 +13,7 @@ use App\Entity\Vote;
 use App\Entity\VoteTypeInterface;
 use App\Exception\MissingVoteTypeAndCampaignCategoriesException;
 use App\Exception\DuplicateCampaignCategoriesException;
-use App\Exception\NoHasProjectInCurrentCampaignException;
+use App\Exception\NotHaveProjectInCurrentCampaignException;
 use App\Exception\VoteUserExistsException;
 use App\Exception\VoteUserProjectExistsException;
 use App\Exception\VoteUserCategoryExistsException;
@@ -28,13 +28,11 @@ use function array_unique;
 
 final class VoteValidationService implements VoteValidationServiceInterface
 {
-    /** @var EntityRepository */
-    private $voteRepository;
+    private EntityRepository $voteRepository;
 
     public function __construct(
         private EntityManagerInterface $em
     ) {
-        $this->em             = $em;
         $this->voteRepository = $this->em->getRepository(Vote::class);
     }
 
@@ -214,7 +212,7 @@ final class VoteValidationService implements VoteValidationServiceInterface
         $types = [];
         foreach ($projects as $project) {
             if ($project->getCampaign()->getId() !== $campaign->getId()) {
-                throw new NoHasProjectInCurrentCampaignException('The idea is not part of the current campaign');
+                throw new NotHaveProjectInCurrentCampaignException('The idea is not part of the current campaign');
             }
 
             $types[] = $project->getCampaignTheme()->getId() . '-' . $project->getProjectType()->getId();

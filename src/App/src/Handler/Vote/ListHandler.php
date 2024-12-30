@@ -26,13 +26,7 @@ final class ListHandler implements RequestHandlerInterface
         private int $pageCount,
         private HalResponseFactory $responseFactory,
         private ResourceGenerator $resourceGenerator
-    )
-    {
-        $this->voteService       = $voteService;
-        $this->pageCount         = $pageCount;
-        $this->responseFactory   = $responseFactory;
-        $this->resourceGenerator = $resourceGenerator;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

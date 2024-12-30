@@ -22,10 +22,6 @@ final class SubscriptionQueueService implements SubscriptionQueueServiceInterfac
         private EntityManagerInterface $em,
         private Logger $audit
     ) {
-        $this->config = $config;
-        $this->em     = $em;
-        $this->audit  = $audit;
-
         $this->apiUrl     = $this->config['url'];
         $this->cid        = $this->config['cid'];
         $this->httpClient = new Client([

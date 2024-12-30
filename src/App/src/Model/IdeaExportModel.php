@@ -25,6 +25,7 @@ final class IdeaExportModel implements ExportModelInterface
         'Helyszín megnevezése',
         'Kerület',
         'Kategória',
+        'Témakör',
         'Becsült költség',
         'Részvétel (I/N)',
         'Részvétel milyen módon',
@@ -38,19 +39,11 @@ final class IdeaExportModel implements ExportModelInterface
         'E',
     ];
 
-    private array $config;
-    private Spreadsheet $spreadsheet;
-    private IdeaServiceInterface $ideaService;
-
     public function __construct(
-        array $config,
-        Spreadsheet $spreadsheet,
-        IdeaServiceInterface $ideaService
-    ) {
-        $this->config      = $config;
-        $this->spreadsheet = $spreadsheet;
-        $this->ideaService = $ideaService;
-    }
+        private array $config,
+        private Spreadsheet $spreadsheet,
+        private IdeaServiceInterface $ideaService
+    ) {}
 
     public function getWriter(): IWriter
     {
@@ -76,6 +69,7 @@ final class IdeaExportModel implements ExportModelInterface
                 $idea->getLocationDescription(),
                 $idea->getCampaignLocation() ? $idea->getCampaignLocation()->getName() : '',
                 $idea->getCampaignTheme()->getName(),
+                $idea->getCampaignTopic()->getName(),
                 $idea->getCost(),
                 $idea->getParticipate() ? 'Igen' : 'Nem',
                 $idea->getParticipateComment(),

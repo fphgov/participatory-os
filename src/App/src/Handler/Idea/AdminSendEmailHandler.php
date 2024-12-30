@@ -20,17 +20,10 @@ use function array_merge_recursive;
 
 final class AdminSendEmailHandler implements RequestHandlerInterface
 {
-    private Logger $audit;
-
-    private IdeaServiceInterface $ideaService;
-
     public function __construct(
-        Logger $audit,
-        IdeaServiceInterface $ideaService
-    ) {
-        $this->audit       = $audit;
-        $this->ideaService = $ideaService;
-    }
+        private Logger $audit,
+        private IdeaServiceInterface $ideaService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

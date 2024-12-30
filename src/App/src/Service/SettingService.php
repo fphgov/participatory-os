@@ -11,15 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class SettingService implements SettingServiceInterface
 {
-    /** @var EntityManagerInterface */
-    protected $em;
+    private SettingRepositoryInterface $settingRepository;
 
-    /** @var SettingRepositoryInterface */
-    protected $settingRepository;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(
+        private EntityManagerInterface $em
+    )
     {
-        $this->em                = $em;
         $this->settingRepository = $this->em->getRepository(Setting::class);
     }
 
@@ -45,7 +42,7 @@ final class SettingService implements SettingServiceInterface
         $close = isset($body['close']) ? $body['close'] === true || $body['close'] === 'true' : false;
 
         $setting->setKey('close');
-        $setting->setValue((bool) $close);
+        $setting->setValue((string) $close);
 
         if (! $hasSettings) {
             $this->em->persist($setting);

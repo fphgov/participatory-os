@@ -6,6 +6,7 @@ namespace App\Middleware;
 
 use App\Entity\Campaign;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -13,12 +14,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CampaignMiddleware implements MiddlewareInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityRepository $campaignRepository;
 
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em                 = $em;
+    public function __construct(
+        private EntityManagerInterface $em
+    ) {
         $this->campaignRepository = $this->em->getRepository(Campaign::class);
     }
 

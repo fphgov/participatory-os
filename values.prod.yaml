@@ -46,7 +46,7 @@ env:
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
     value: budapest.hu
   - name: APP_MUNICIPALITY
-    value: "Ötlet.budapest.hu csapat"
+    value: "A Nyitott Budapest csapat"
   - name: APP_EMAIL
     value: ""
   - name: APP_FORGOT_EMAIL
@@ -57,14 +57,6 @@ env:
     value: https://otlet.budapest.hu
   - name: RECAPTCHA_SECRET
     value: _from_google_
-  - name: ARCGIS_GATEWAY_HOST
-    value: ""
-  - name: ARCGIS_GATEWAY_PORT
-    value: ""
-  - name: ARCGIS_USERNAME
-    value: ""
-  - name: ARCGIS_PASSWORD
-    value: ""
   - name: JWT_JTI
     value: ""
   - name: JWT_SECRET
@@ -76,17 +68,13 @@ env:
   - name: JWT_NBF
     value: "0"
   - name: JWT_EXP
-    value: "1"
+    value: "24"
   - name: MINIO_ROOT_USER
     value: "participatory"
   - name: MINIO_ROOT_PASSWORD
     value: ""
   - name: MINIO_ENDPOINT
     value: "http://participatory-minio:9000"
-  - name: ARCGIS_URL_GEN_TOKEN
-    value: "https://kapu.budapestkozut.hu/arcgis/tokens/generateToken"
-  - name: ARCGIS_URL_FIND_ADDRESS
-    value: "https://kapu.budapestkozut.hu/arcgis/rest/services/mernokimodul_v4/01_alapadatok/MapServer/2/query"
   - name: SMTP_CONNECTION_CONFIG_SSL
     value: ""
   - name: DB_PASSWORD
@@ -143,6 +131,8 @@ env:
     value: "https://hirlevel.budapest.hu/api"
   - name: NEWSLETTER_API_CID
     value: "aSQV5beZ_"
+  - name: CORS_ORIGIN
+    value: "https://otlet.budapest.hu,https://otlet-admin.prod.intra.fph.hu"
 
 imagePullSecrets: []
 nameOverride: ""

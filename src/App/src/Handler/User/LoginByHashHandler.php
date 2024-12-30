@@ -14,18 +14,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class LoginByHashHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private UserServiceInterface $userService
-    ) {
-        $this->userService = $userService;
-    }
+        private readonly UserServiceInterface $userService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $token = null;
-
         try {
             $token = $this->userService->loginWithHash($request->getAttribute('hash'));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return new JsonResponse([
                 'message' => 'Sikertelen belépés',
                 'token'   => null

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\User;
 
 use App\Exception\DifferentPhaseException;
-use App\Exception\NoHasPhaseCategoryException;
+use App\Exception\NotHavePhaseCategoryException;
 use App\Exception\NotPossibleSubmitIdeaWithAdminAccountException;
 use App\Middleware\UserMiddleware;
 use App\Service\IdeaServiceInterface;
@@ -21,24 +21,11 @@ use function array_merge_recursive;
 
 final class IdeaHandler implements RequestHandlerInterface
 {
-    /** @var IdeaServiceInterface **/
-    private $ideaService;
-
-    /** @var InputFilterInterface **/
-    private $ideaInputFilter;
-
-    /** @var Logger */
-    private $audit;
-
     public function __construct(
-        IdeaServiceInterface $ideaService,
-        InputFilterInterface $ideaInputFilter,
-        Logger $audit
-    ) {
-        $this->ideaService     = $ideaService;
-        $this->ideaInputFilter = $ideaInputFilter;
-        $this->audit           = $audit;
-    }
+        private IdeaServiceInterface $ideaService,
+        private InputFilterInterface $ideaInputFilter,
+        private Logger $audit
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -69,7 +56,7 @@ final class IdeaHandler implements RequestHandlerInterface
                     ],
                 ],
             ], 422);
-        } catch (NoHasPhaseCategoryException $e) {
+        } catch (NotHavePhaseCategoryException $e) {
             return new JsonResponse([
                 'errors' => [
                     'theme' => [

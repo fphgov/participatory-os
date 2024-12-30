@@ -17,6 +17,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         Jwt\Handler\TokenHandler::class,
     ], 'app.api.login');
 
+    $app->post('/app/api/logout', [
+        Jwt\Handler\TokenHandler::class,
+    ], 'app.api.logout');
+
     if (getenv('NODE_ENV') === 'development') {
         $app->post('/app/api/user/registration', [
             App\Handler\User\RegistrationHandler::class
@@ -218,10 +222,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         App\Handler\Article\GetHandler::class
     ], 'app.api.article.show');
 
-    $app->post('/app/api/geocoding', [
-        App\Handler\Tools\GetAddressHandler::class
-    ], 'app.api.geocoding');
-
     $app->get('/app/api/phase/check', [
         App\Handler\Phase\CheckHandler::class
     ], 'app.api.phase.check');
@@ -404,6 +404,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         \Mezzio\Authorization\AuthorizationMiddleware::class,
         App\Handler\Idea\AdminCampaignThemeHandler::class
     ], 'admin.api.idea.campaigntheme.get');
+
+    $app->get('/admin/api/ideas/campaigntopics/{id:\d+}', [
+        Jwt\Handler\JwtAuthMiddleware::class,
+        App\Middleware\UserMiddleware::class,
+        \Mezzio\Authorization\AuthorizationMiddleware::class,
+        App\Handler\Idea\AdminCampaignTopicHandler::class
+    ], 'admin.api.idea.campaigntopic.get');
 
     $app->get('/admin/api/ideas/campaignlocations/{id:\d+}', [
         Jwt\Handler\JwtAuthMiddleware::class,

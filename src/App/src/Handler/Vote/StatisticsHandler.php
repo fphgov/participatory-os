@@ -26,11 +26,7 @@ final class StatisticsHandler implements RequestHandlerInterface
         private EntityManager $em,
         private PhaseServiceInterface $phaseService,
         private VoteExportModel $voteExportModel,
-    ) {
-        $this->em              = $em;
-        $this->phaseService    = $phaseService;
-        $this->voteExportModel = $voteExportModel;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

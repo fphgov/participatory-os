@@ -16,10 +16,7 @@ final class VoteHandler implements RequestHandlerInterface
     public function __construct(
         private EntityManagerInterface $em,
         private VoteMessageServiceInterface $voteMessageService,
-    ) {
-        $this->em                 = $em;
-        $this->voteMessageService = $voteMessageService;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

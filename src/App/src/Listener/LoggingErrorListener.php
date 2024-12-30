@@ -16,13 +16,9 @@ class LoggingErrorListener implements LoggingErrorListenerInterface
      */
     public const LOG_STRING = '{status} [{method}] {uri}: {error} in {file} on line {line}';
 
-    /** @var LoggerInterface */
-    private $logger;
-
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(
+        private LoggerInterface $logger
+    ) {}
 
     public function __invoke(
         Throwable $error,

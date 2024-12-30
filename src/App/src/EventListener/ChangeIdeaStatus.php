@@ -49,12 +49,28 @@ class ChangeIdeaStatus implements EventSubscriber
                     $ideaService->sendIdeaWorkflowPublishedWithMod($idea);
                 }
 
+                if ($workflowState->getId() === WorkflowStateInterface::STATUS_WAIT_FOR_PUBLIC_SUPPORT) {
+                    $ideaService->sendIdeaWorkflowWaitForPublicSupport($idea);
+                }
+
+                if ($workflowState->getId() === WorkflowStateInterface::STATUS_UNDER_EVALUATION) {
+                    $ideaService->sendIdeaWorkflowUnderEvaluation($idea);
+                }
+
                 if ($workflowState->getId() === WorkflowStateInterface::STATUS_TRASH) {
                     $ideaService->sendIdeaWorkflowTrashed($idea);
                 }
 
                 if ($workflowState->getId() === WorkflowStateInterface::STATUS_STATUS_REJECTED) {
                     $ideaService->sendIdeaWorkflowProfessionalTrashed($idea);
+                }
+
+                if ($workflowState->getId() === WorkflowStateInterface::STATUS_NO_PUBLIC_SUPPORT) {
+                    $ideaService->sendIdeaWorkflowNoPublicSupport($idea);
+                }
+
+                if ($workflowState->getId() === WorkflowStateInterface::STATUS_NO_ENOUGH_SUPPORT) {
+                    $ideaService->sendIdeaWorkflowNoEnoughSupport($idea);
                 }
 
                 if ($workflowState->getId() === WorkflowStateInterface::STATUS_VOTING_LIST) {

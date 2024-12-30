@@ -15,19 +15,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AddHandler implements RequestHandlerInterface
 {
-    /** @var InputFilterInterface */
-    private $inputFilter;
-
-    /** @var ProjectServiceInterface */
-    private $projectService;
-
     public function __construct(
-        InputFilterInterface $inputFilter,
-        ProjectServiceInterface $projectService
-    ) {
-        $this->inputFilter    = $inputFilter;
-        $this->projectService = $projectService;
-    }
+        private InputFilterInterface $inputFilter,
+        private ProjectServiceInterface $projectService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

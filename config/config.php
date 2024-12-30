@@ -29,7 +29,6 @@ $aggregator = new ConfigAggregator([
     \Laminas\Mail\ConfigProvider::class,
     \Laminas\HttpHandlerRunner\ConfigProvider::class,
     \Mezzio\Router\FastRouteRouter\ConfigProvider::class,
-    \FphGov\Arcgis\ConfigProvider::class,
     // Include cache configuration
     new ArrayProvider($cacheConfig),
     \Mezzio\Helper\ConfigProvider::class,

@@ -15,16 +15,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AdminModifyHandler implements RequestHandlerInterface
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
     public function __construct(
-        EntityManagerInterface $em,
-        MailServiceInterface $mailService
-    ) {
-        $this->em          = $em;
-        $this->mailService = $mailService;
-    }
+        private EntityManagerInterface $em,
+        private MailServiceInterface $mailService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

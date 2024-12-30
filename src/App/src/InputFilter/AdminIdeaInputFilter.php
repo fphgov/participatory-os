@@ -11,7 +11,7 @@ use Laminas\Validator;
 class AdminIdeaInputFilter extends IdeaInputFilter
 {
     /** @var AdapterInterface */
-    protected $dbAdapter;
+    protected AdapterInterface $dbAdapter;
 
     public function __construct(
         AdapterInterface $dbAdapter
@@ -21,7 +21,7 @@ class AdminIdeaInputFilter extends IdeaInputFilter
         $this->dbAdapter = $dbAdapter;
     }
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -46,6 +46,21 @@ class AdminIdeaInputFilter extends IdeaInputFilter
         ]);
 
         $this->add([
+            'name'        => 'birthYear',
+            'allow_empty' => true,
+        ]);
+
+        $this->add([
+            'name'        => 'fullName',
+            'allow_empty' => true,
+        ]);
+
+        $this->add([
+            'name'        => 'postalCode',
+            'allow_empty' => true,
+        ]);
+
+        $this->add([
             'name'        => 'theme',
             'allow_empty' => true,
             'validators'  => [
@@ -57,6 +72,28 @@ class AdminIdeaInputFilter extends IdeaInputFilter
                 ]),
                 new Validator\Db\RecordExists([
                     'table'    => 'campaign_themes',
+                    'field'    => 'id',
+                    'adapter'  => $this->dbAdapter,
+                    'messages' => [
+                        Validator\Db\RecordExists::ERROR_NO_RECORD_FOUND => 'Nem választható kategória',
+                        Validator\Db\RecordExists::ERROR_RECORD_FOUND    => '',
+                    ],
+                ]),
+            ],
+        ]);
+
+        $this->add([
+            'name'        => 'topic',
+            'allow_empty' => true,
+            'validators'  => [
+                new Validator\NotEmpty([
+                    'messages' => [
+                        Validator\NotEmpty::IS_EMPTY => 'Kötelező a "Kategória" mező kitöltése',
+                        Validator\NotEmpty::INVALID  => 'Hibás "Kategória" mező tipusa',
+                    ],
+                ]),
+                new Validator\Db\RecordExists([
+                    'table'    => 'campaign_topics',
                     'field'    => 'id',
                     'adapter'  => $this->dbAdapter,
                     'messages' => [
@@ -134,7 +171,7 @@ class AdminIdeaInputFilter extends IdeaInputFilter
                         Validator\StringLength::TOO_LONG  => 'Kevesebb karaktert kell tartalmaznia a "Leírás" mezőnek mint: %max%',
                         Validator\StringLength::INVALID   => 'Leírás: Hibás mező tipus. Csak szöveg fogadható el.',
                     ],
-                    'min'      => 100,
+                    'min'      => 80,
                     'max'      => 4000,
                 ]),
             ],

@@ -14,14 +14,9 @@ use Exception;
 
 final class DownloadHandler implements RequestHandlerInterface
 {
-    /** @var MediaServiceInterface */
-    private $mediaService;
-
     public function __construct(
-        MediaServiceInterface $mediaService
-    ) {
-        $this->mediaService = $mediaService;
-    }
+        private MediaServiceInterface $mediaService
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

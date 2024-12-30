@@ -17,10 +17,7 @@ final class AboutChangeHandler implements RequestHandlerInterface
     public function __construct(
         private UserServiceInterface $userService,
         private InputFilterInterface $aboutFilter
-    ) {
-        $this->userService = $userService;
-        $this->aboutFilter = $aboutFilter;
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -16,25 +16,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class ConfirmationHandler implements RequestHandlerInterface
 {
-    /** @var UserServiceInterface **/
-    private $userService;
-
-    /** @var InputFilterInterface **/
-    private $voteFilter;
-
-    /** @var UserRepository */
-    private $userRepository;
-
     public function __construct(
-        UserServiceInterface $userService,
-        InputFilterInterface $voteFilter,
-        UserRepository $userRepository
+        private UserServiceInterface $userService,
+        private InputFilterInterface $voteFilter,
+        private UserRepository $userRepository
     )
-    {
-        $this->userService    = $userService;
-        $this->voteFilter     = $voteFilter;
-        $this->userRepository = $userRepository;
-    }
+    {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
