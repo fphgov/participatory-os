@@ -63,6 +63,8 @@ interface IdeaInterface extends EntityInterface
 
     public function addComment(CommentInterface $comment): self;
 
+    public function getIdeaCampaignLocationsCollection(): Collection;
+
     public function setWorkflowState(WorkflowState $workflowState): void;
 
     public function getWorkflowState(): WorkflowState;

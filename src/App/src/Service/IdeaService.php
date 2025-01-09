@@ -153,10 +153,10 @@ final class IdeaService implements IdeaServiceInterface
             $userPreference->setPhone($filteredParams['phone']);
         }
 
-        if (isset($filteredParams['location']) && ! empty($filteredParams['location'])) {
+        if (! empty($filteredParams['location'])) {
             parse_str($filteredParams['location'], $suggestion);
 
-            if (isset($suggestion['geometry']) && ! empty($suggestion['geometry'])) {
+            if (! empty($suggestion['geometry'])) {
                 parse_str($suggestion['geometry'], $geometry);
 
                 if (isset($suggestion['nfn'])) {
@@ -229,8 +229,6 @@ final class IdeaService implements IdeaServiceInterface
     ): void {
         $date = new DateTime();
 
-        $phase = $this->phaseService->getCurrentPhase();
-
         if (isset($filteredParams['title'])) {
             $idea->setTitle($filteredParams['title']);
         }
@@ -255,14 +253,30 @@ final class IdeaService implements IdeaServiceInterface
             $idea->setLocationDescription($filteredParams['location_description'] ? $filteredParams['location_description'] : '');
         }
 
-        if (isset($filteredParams['campaignLocation']) && !empty($filteredParams['campaignLocation'])) {
-            $location = $this->campaignLocationRepository->findOneBy([
-                'code'     => $filteredParams['campaignLocation'],
-                'campaign' => $idea->getCampaign(),
-            ]);
+        $this->em
+            ->createQueryBuilder()
+            ->delete(IdeaCampaignLocation::class, 'icl')
+            ->where('icl.idea = :idea')
+            ->setParameter('idea', $idea->getId())
+            ->getQuery()
+            ->execute();
 
-            if ($location instanceof CampaignLocation) {
-                $idea->setCampaignLocation($location);
+        if (!empty($filteredParams['campaignLocation'])) {
+            $campaignLocations = explode(',', $filteredParams['campaignLocation']);
+            foreach ($campaignLocations as $campaignLocation) {
+                $location = $this->campaignLocationRepository->findOneBy([
+                    'code'     => $campaignLocation,
+                    'campaign' => $idea->getCampaign(),
+                ]);
+
+                if ($location instanceof CampaignLocation) {
+                    $IdeaCampaignLocation = new IdeaCampaignLocation();
+                    $IdeaCampaignLocation->setIdea($idea);
+                    $IdeaCampaignLocation->setCampaignLocation($location);
+                    $IdeaCampaignLocation->setCreatedAt($date);
+                    $IdeaCampaignLocation->setUpdatedAt($date);
+                    $this->em->persist($IdeaCampaignLocation);
+                }
             }
         }
 
@@ -302,6 +316,7 @@ final class IdeaService implements IdeaServiceInterface
             ]);
 
             if ($workflowState) {
+                $idea->setWorkflowState($workflowState);
                 $idea->setWorkflowState($workflowState);
             }
         }
