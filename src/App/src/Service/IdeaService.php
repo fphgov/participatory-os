@@ -153,10 +153,10 @@ final class IdeaService implements IdeaServiceInterface
             $userPreference->setPhone($filteredParams['phone']);
         }
 
-        if (! empty($filteredParams['location'])) {
+        if (isset($filteredParams['location']) && ! empty($filteredParams['location'])) {
             parse_str($filteredParams['location'], $suggestion);
 
-            if (! empty($suggestion['geometry'])) {
+            if (isset($suggestion['geometry']) && ! empty($suggestion['geometry'])) {
                 parse_str($suggestion['geometry'], $geometry);
 
                 if (isset($suggestion['nfn'])) {
@@ -186,12 +186,12 @@ final class IdeaService implements IdeaServiceInterface
                 ]);
 
                 if ($location instanceof CampaignLocation) {
-                    $IdeaCampaignLocation = new IdeaCampaignLocation();
-                    $IdeaCampaignLocation->setIdea($idea);
-                    $IdeaCampaignLocation->setCampaignLocation($location);
-                    $IdeaCampaignLocation->setCreatedAt($date);
-                    $IdeaCampaignLocation->setUpdatedAt($date);
-                    $this->em->persist($IdeaCampaignLocation);
+                    $ideaCampaignLocation = new IdeaCampaignLocation();
+                    $ideaCampaignLocation->setIdea($idea);
+                    $ideaCampaignLocation->setCampaignLocation($location);
+                    $ideaCampaignLocation->setCreatedAt($date);
+                    $ideaCampaignLocation->setUpdatedAt($date);
+                    $this->em->persist($ideaCampaignLocation);
                 }
             }
         }
@@ -253,13 +253,7 @@ final class IdeaService implements IdeaServiceInterface
             $idea->setLocationDescription($filteredParams['location_description'] ? $filteredParams['location_description'] : '');
         }
 
-        $this->em
-            ->createQueryBuilder()
-            ->delete(IdeaCampaignLocation::class, 'icl')
-            ->where('icl.idea = :idea')
-            ->setParameter('idea', $idea->getId())
-            ->getQuery()
-            ->execute();
+        $this->removeIdeaCampaignLocation($idea->getId());
 
         if (!empty($filteredParams['campaignLocation'])) {
             $campaignLocations = explode(',', $filteredParams['campaignLocation']);
@@ -270,12 +264,12 @@ final class IdeaService implements IdeaServiceInterface
                 ]);
 
                 if ($location instanceof CampaignLocation) {
-                    $IdeaCampaignLocation = new IdeaCampaignLocation();
-                    $IdeaCampaignLocation->setIdea($idea);
-                    $IdeaCampaignLocation->setCampaignLocation($location);
-                    $IdeaCampaignLocation->setCreatedAt($date);
-                    $IdeaCampaignLocation->setUpdatedAt($date);
-                    $this->em->persist($IdeaCampaignLocation);
+                    $ideaCampaignLocation = new IdeaCampaignLocation();
+                    $ideaCampaignLocation->setIdea($idea);
+                    $ideaCampaignLocation->setCampaignLocation($location);
+                    $ideaCampaignLocation->setCreatedAt($date);
+                    $ideaCampaignLocation->setUpdatedAt($date);
+                    $this->em->persist($ideaCampaignLocation);
                 }
             }
         }
@@ -317,7 +311,6 @@ final class IdeaService implements IdeaServiceInterface
 
             if ($workflowState) {
                 $idea->setWorkflowState($workflowState);
-                $idea->setWorkflowState($workflowState);
             }
         }
 
@@ -340,6 +333,17 @@ final class IdeaService implements IdeaServiceInterface
         $idea->setUpdatedAt($date);
 
         $this->em->flush();
+    }
+
+    public function removeIdeaCampaignLocation(int $ideaId): void
+    {
+        $this->em
+            ->createQueryBuilder()
+            ->delete(IdeaCampaignLocation::class, 'icl')
+            ->where('icl.idea = :idea')
+            ->setParameter('idea', $ideaId)
+            ->getQuery()
+            ->execute();
     }
 
     public function getRepository(): EntityRepository

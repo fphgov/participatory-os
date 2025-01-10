@@ -22,7 +22,7 @@ class IdeaCampaignLocation implements IdeaCampaignLocationInterface
      * @ORM\ManyToOne(targetEntity="CampaignLocation")
      * @ORM\JoinColumn(name="campaign_location_id", referencedColumnName="id", nullable=false)
      *
-     * @Groups({"list", "detail", "full_detail"})
+     * @Groups({"detail", "full_detail"})
      */
     private CampaignLocation $campaignLocation;
 
@@ -30,7 +30,7 @@ class IdeaCampaignLocation implements IdeaCampaignLocationInterface
      * @ORM\ManyToOne(targetEntity="Idea")
      * @ORM\JoinColumn(name="idea_id", referencedColumnName="id", nullable=false)
      *
-     * @Groups({"list", "detail", "full_detail"})
+     * @Groups({"detail", "full_detail"})
      */
     private Idea $idea;
 

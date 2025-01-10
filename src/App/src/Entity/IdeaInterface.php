@@ -65,6 +65,10 @@ interface IdeaInterface extends EntityInterface
 
     public function getIdeaCampaignLocationsCollection(): Collection;
 
+    public function getIdeaCampaignLocations(): array;
+
+    public function addIdeaCampaignLocation(IdeaCampaignLocationInterface $ideaCampaignLocation): self;
+
     public function setWorkflowState(WorkflowState $workflowState): void;
 
     public function getWorkflowState(): WorkflowState;
