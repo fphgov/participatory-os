@@ -177,8 +177,9 @@ final class IdeaService implements IdeaServiceInterface
             }
         }
 
-        if (!empty($filteredParams['location_districts'])) {
+        if (isset($filteredParams['location_districts']) && !empty($filteredParams['location_districts'])) {
             $locationDistricts = explode(',', $filteredParams['location_districts']);
+
             foreach ($locationDistricts as $locationDistrict) {
                 $location = $this->campaignLocationRepository->findOneBy([
                     'code'     => $locationDistrict,
@@ -186,12 +187,7 @@ final class IdeaService implements IdeaServiceInterface
                 ]);
 
                 if ($location instanceof CampaignLocation) {
-                    $ideaCampaignLocation = new IdeaCampaignLocation();
-                    $ideaCampaignLocation->setIdea($idea);
-                    $ideaCampaignLocation->setCampaignLocation($location);
-                    $ideaCampaignLocation->setCreatedAt($date);
-                    $ideaCampaignLocation->setUpdatedAt($date);
-                    $this->em->persist($ideaCampaignLocation);
+                    $this->createIdeaCampaignLocation($location, $idea, $date);
                 }
             }
         }
@@ -255,7 +251,7 @@ final class IdeaService implements IdeaServiceInterface
 
         $this->removeIdeaCampaignLocation($idea->getId());
 
-        if (!empty($filteredParams['campaignLocation'])) {
+        if (isset($filteredParams['campaignLocation']) && !empty($filteredParams['campaignLocation'])) {
             $campaignLocations = explode(',', $filteredParams['campaignLocation']);
             foreach ($campaignLocations as $campaignLocation) {
                 $location = $this->campaignLocationRepository->findOneBy([
@@ -264,12 +260,7 @@ final class IdeaService implements IdeaServiceInterface
                 ]);
 
                 if ($location instanceof CampaignLocation) {
-                    $ideaCampaignLocation = new IdeaCampaignLocation();
-                    $ideaCampaignLocation->setIdea($idea);
-                    $ideaCampaignLocation->setCampaignLocation($location);
-                    $ideaCampaignLocation->setCreatedAt($date);
-                    $ideaCampaignLocation->setUpdatedAt($date);
-                    $this->em->persist($ideaCampaignLocation);
+                    $this->createIdeaCampaignLocation($location, $idea, $date);
                 }
             }
         }
@@ -344,6 +335,20 @@ final class IdeaService implements IdeaServiceInterface
             ->setParameter('idea', $ideaId)
             ->getQuery()
             ->execute();
+    }
+
+    private function createIdeaCampaignLocation(
+        CampaignLocation $location,
+        Idea $idea,
+        DateTime $date
+    ) {
+        $ideaCampaignLocation = new IdeaCampaignLocation();
+        $ideaCampaignLocation->setIdea($idea);
+        $ideaCampaignLocation->setCampaignLocation($location);
+        $ideaCampaignLocation->setCreatedAt($date);
+        $ideaCampaignLocation->setUpdatedAt($date);
+
+        $this->em->persist($ideaCampaignLocation);
     }
 
     public function getRepository(): EntityRepository
