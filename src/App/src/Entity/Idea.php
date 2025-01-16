@@ -125,7 +125,7 @@ class Idea implements IdeaInterface
     /**
      * @ORM\OneToMany(targetEntity="IdeaCampaignLocation", mappedBy="idea")
      *
-     * @var Collection|CampaignLocation[]
+     * @var Collection|IdeaCampaignLocation[]
      *
      * @Groups({"detail", "full_detail"})
      */
@@ -361,6 +361,30 @@ class Idea implements IdeaInterface
     {
         if (! $this->comments->contains($comment)) {
             $this->comments[] = $comment;
+        }
+
+        return $this;
+    }
+
+    public function getIdeaCampaignLocationsCollection(): Collection
+    {
+        return $this->ideaCampaignLocations;
+    }
+
+    public function getIdeaCampaignLocations(): array
+    {
+        $ideaCampaignLocations = [];
+        foreach ($this->ideaCampaignLocations->getValues() as $ideaCampaignLocation) {
+            $ideaCampaignLocations[] = $ideaCampaignLocation;
+        }
+
+        return $ideaCampaignLocations;
+    }
+
+    public function addIdeaCampaignLocation(IdeaCampaignLocationInterface $ideaCampaignLocation): self
+    {
+        if (! $this->ideaCampaignLocations->contains($ideaCampaignLocation)) {
+            $this->ideaCampaignLocations[] = $ideaCampaignLocation;
         }
 
         return $this;

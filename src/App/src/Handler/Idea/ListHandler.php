@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Handler\Idea;
 
 use App\Entity\Campaign;
+use App\Entity\CampaignLocation;
 use App\Entity\CampaignTheme;
 use App\Entity\Idea;
+use App\Entity\IdeaCampaignLocation;
 use App\Entity\IdeaCollection;
 use App\Entity\User;
 use App\Entity\WorkflowState;
@@ -61,8 +63,9 @@ final class ListHandler implements RequestHandlerInterface
             ->join(CampaignTheme::class, 'ct', Join::WITH, 'ct.id = p.campaignTheme')
             ->join(Campaign::class, 'c', Join::WITH, 'c.id = p.campaign')
             ->join(WorkflowState::class, 'w', Join::WITH, 'w.id = p.workflowState')
+            ->join(IdeaCampaignLocation::class, 'icl', Join::WITH, 'p.id = icl.idea')
+            ->join(CampaignLocation::class, 'cl', Join::WITH, 'cl.id = icl.campaignLocation')
             ->innerJoin(User::class, 'u', Join::WITH, 'u.id = p.submitter')
-            ->leftJoin('p.campaignLocation', 'cl')
             ->groupBy('p.id');
 
         if ($rand === '' && is_string($sort) && in_array(strtoupper($sort), ['ASC', 'DESC'], true)) {
