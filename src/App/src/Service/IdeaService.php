@@ -249,22 +249,6 @@ final class IdeaService implements IdeaServiceInterface
             $idea->setLocationDescription($filteredParams['location_description'] ? $filteredParams['location_description'] : '');
         }
 
-        $this->removeIdeaCampaignLocation($idea->getId());
-
-        if (isset($filteredParams['campaignLocation']) && !empty($filteredParams['campaignLocation'])) {
-            $campaignLocations = explode(',', $filteredParams['campaignLocation']);
-            foreach ($campaignLocations as $campaignLocation) {
-                $location = $this->campaignLocationRepository->findOneBy([
-                    'code'     => $campaignLocation,
-                    'campaign' => $idea->getCampaign(),
-                ]);
-
-                if ($location instanceof CampaignLocation) {
-                    $this->createIdeaCampaignLocation($location, $idea, $date);
-                }
-            }
-        }
-
         if (isset($filteredParams['answer'])) {
             $idea->setAnswer($filteredParams['answer']);
         }
@@ -322,6 +306,22 @@ final class IdeaService implements IdeaServiceInterface
         }
 
         $idea->setUpdatedAt($date);
+
+        $this->removeIdeaCampaignLocation($idea->getId());
+
+        if (isset($filteredParams['campaignLocation']) && !empty($filteredParams['campaignLocation'])) {
+            $campaignLocations = explode(',', $filteredParams['campaignLocation']);
+            foreach ($campaignLocations as $campaignLocation) {
+                $location = $this->campaignLocationRepository->findOneBy([
+                    'code'     => $campaignLocation,
+                    'campaign' => $idea->getCampaign(),
+                ]);
+
+                if ($location instanceof CampaignLocation) {
+                    $this->createIdeaCampaignLocation($location, $idea, $date);
+                }
+            }
+        }
 
         $this->em->flush();
     }
