@@ -63,8 +63,8 @@ final class ListHandler implements RequestHandlerInterface
             ->join(CampaignTheme::class, 'ct', Join::WITH, 'ct.id = p.campaignTheme')
             ->join(Campaign::class, 'c', Join::WITH, 'c.id = p.campaign')
             ->join(WorkflowState::class, 'w', Join::WITH, 'w.id = p.workflowState')
-            ->join(IdeaCampaignLocation::class, 'icl', Join::WITH, 'p.id = icl.idea')
-            ->join(CampaignLocation::class, 'cl', Join::WITH, 'cl.id = icl.campaignLocation')
+            ->leftJoin(IdeaCampaignLocation::class, 'icl', Join::WITH, 'p.id = icl.idea')
+            ->leftJoin(CampaignLocation::class, 'cl', Join::WITH, 'cl.id = icl.campaignLocation')
             ->innerJoin(User::class, 'u', Join::WITH, 'u.id = p.submitter')
             ->groupBy('p.id');
 
