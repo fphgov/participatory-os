@@ -24,6 +24,9 @@ final class FilterHandler implements RequestHandlerInterface
     public const ENABLED_STATUSES = [
         'published',
         'published_whith_mod',
+        'wait_for_public_support',
+        'under_evaluation',
+        'prof_done',
         'pre_council',
         'voting_list',
         'under_construction',
@@ -31,6 +34,7 @@ final class FilterHandler implements RequestHandlerInterface
         'not_voted',
         'council_rejected',
         'status_rejected',
+        'no_public_support',
     ];
 
     public function __construct(
