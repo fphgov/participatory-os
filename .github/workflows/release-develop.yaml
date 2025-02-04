@@ -98,20 +98,20 @@ jobs:
           tag_with_latest: true
           tag: ${{ needs.create-image-tag.outputs.imageTag }}
 
-  sonarqube-scan:
-    name: Sonarqube Scan
-    runs-on: ["fph-dev-cluster"]
+  # sonarqube-scan:
+  #   name: Sonarqube Scan
+  #   runs-on: ["fph-dev-cluster"]
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@master
 
-      - name: Sonarqube scan
-        uses: sonarsource/sonarqube-scan-action@v2.3.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_ROOT_CERT: ${{ secrets.SONAR_ROOT_CERT }}
+  #     - name: Sonarqube scan
+  #       uses: sonarsource/sonarqube-scan-action@v2.3.0
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #         SONAR_ROOT_CERT: ${{ secrets.SONAR_ROOT_CERT }}
 
   deploy:
     name: Deploy
