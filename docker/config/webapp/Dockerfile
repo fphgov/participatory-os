@@ -73,6 +73,8 @@ HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost/ || exit 1
 
 COPY bash/crontab /etc/crontabs/docker-crontab
 
+RUN tr -d "\r" < /etc/crontabs/docker-crontab
+
 RUN chmod 0600 /etc/crontabs/docker-crontab
 
 RUN /usr/bin/crontab /etc/crontabs/docker-crontab
@@ -95,6 +97,8 @@ EXPOSE 9004
 COPY supervisord.conf /etc/supervisord.conf
 
 COPY docker/config/webapp/setup.sh /var/www/html/docker/config/webapp/setup.sh
+
+RUN tr -d "\r" < /var/www/html/docker/config/webapp/setup.sh
 
 RUN chmod +x /var/www/html/docker/config/webapp/setup.sh
 
