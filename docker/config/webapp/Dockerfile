@@ -102,4 +102,6 @@ RUN tr -d "\r" < /var/www/html/docker/config/webapp/setup.sh
 
 RUN chmod +x /var/www/html/docker/config/webapp/setup.sh
 
+RUN chmod 777 /var/www/html/public/files
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
