@@ -154,8 +154,8 @@ jobs:
             --set env[10].value=${{ vars.SMTP_CONNECTION_CONFIG_DISABLE_CHECK_CERT }}
             --set env[12].value=${{ secrets.APP_EMAIL }}
             --set env[14].value="${{ secrets.APP_PHONE }}"
-            --set env[15].value=${{ secrets.RECAPTCHA_SECRET }}
-            --set env[16].value=${{ secrets.JWT_JTI }}
-            --set env[17].value=${{ secrets.JWT_SECRET }}
-            --set env[24].value=${{ secrets.DEV_MINIO_ROOT_PASSWORD }}
-            --set env[48].value=${{ secrets.APP_STAT_TOKEN }}
+            --set env[16].value=${{ secrets.RECAPTCHA_SECRET }}
+            --set env[17].value=${{ secrets.JWT_JTI }}
+            --set env[18].value=${{ secrets.JWT_SECRET }}
+            --set env[23].value=${{ secrets.DEV_MINIO_ROOT_PASSWORD }}
+            --set env[46].value=${{ secrets.APP_STAT_TOKEN }}
