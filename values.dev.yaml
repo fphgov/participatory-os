@@ -36,7 +36,7 @@ env:
   - name: SMTP_CONNECTION_CLASS
     value: ""
   - name: SMTP_CONNECTION_CONFIG_USERNAME
-    value: "INFORMATIKA\\hirlevel"
+    value: ""
   - name: SMTP_CONNECTION_CONFIG_PASSWORD
     value: ""
   - name: SMTP_DEFAULTS_ADD_FROM
