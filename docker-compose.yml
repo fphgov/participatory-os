@@ -59,7 +59,7 @@ services:
       - 8025:8025 # web ui
 
   minio:
-    image: bitnami/minio:2022-debian-11
+    image: bitnami/minio:2025.2.18-debian-12-r2
     ports:
       - 9000:9000
       - 9001:9001
