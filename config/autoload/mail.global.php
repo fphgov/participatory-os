@@ -12,9 +12,10 @@ return [
             'port'              => (int)str_replace(['"', "'"], "", getenv('SMTP_PORT')),
             'connection_class'  => getenv('SMTP_CONNECTION_CLASS'),
             'connection_config' => [
-                'username' => getenv('SMTP_CONNECTION_CONFIG_USERNAME'),
-                'password' => getenv('SMTP_CONNECTION_CONFIG_PASSWORD'),
-                'ssl'      => getenv('SMTP_CONNECTION_CONFIG_SSL'),
+                'username'       => getenv('SMTP_CONNECTION_CONFIG_USERNAME'),
+                'password'       => getenv('SMTP_CONNECTION_CONFIG_PASSWORD'),
+                'ssl'            => getenv('SMTP_CONNECTION_CONFIG_SSL'),
+                'novalidatecert' => (bool)str_replace(['"', "'"], "", getenv('SMTP_CONNECTION_CONFIG_DISABLE_CHECK_CERT')),
             ],
         ],
         'defaults' => [

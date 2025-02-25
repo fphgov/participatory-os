@@ -45,6 +45,10 @@ env:
     value: "otlet.budapest.hu"
   - name: SMTP_HEADERS_MESSAGE_ID_DOMAIN
     value: budapest.hu
+  - name: SMTP_CONNECTION_CONFIG_SSL
+    value: ""
+  - name: SMTP_CONNECTION_CONFIG_DISABLE_CHECK_CERT
+    value: false
   - name: APP_MUNICIPALITY
     value: "A Nyitott Budapest csapat"
   - name: APP_EMAIL
@@ -75,8 +79,6 @@ env:
     value: ""
   - name: MINIO_ENDPOINT
     value: "http://participatory-minio:9000"
-  - name: SMTP_CONNECTION_CONFIG_SSL
-    value: ""
   - name: DB_PASSWORD
     valueFrom:
       secretKeyRef:
