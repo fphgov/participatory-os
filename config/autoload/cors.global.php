@@ -12,7 +12,7 @@ const ALLOWED_HEADERS = [
     'Authorization'
 ];
 
-$corsOrigins = explode(',', getenv('CORS_ORIGIN') ?: '');
+$corsOrigins = explode(',', configParser(getenv('CORS_ORIGIN')) ?: '');
 
 return [
     ConfigurationInterface::CONFIGURATION_IDENTIFIER => [
