@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'newsletter' => [
-        'url' => str_replace('"', '', getenv('NEWSLETTER_API_URL')),
-        'cid' => str_replace('"', '', getenv('NEWSLETTER_API_CID')),
+        'url' => configParser(getenv('NEWSLETTER_API_URL')),
+        'cid' => configParser(getenv('NEWSLETTER_API_CID')),
     ],
 ];

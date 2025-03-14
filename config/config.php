@@ -12,6 +12,11 @@ $cacheConfig = [
     'config_cache_path' => 'data/cache/config-cache.php',
 ];
 
+function configParser($param)
+{
+    return trim($param, "\"'");
+}
+
 $aggregator = new ConfigAggregator([
     \Laminas\Hydrator\ConfigProvider::class,
     \Mezzio\Hal\ConfigProvider::class,

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 return [
     'app' => [
-        'municipality'        => str_replace('"', '', getenv('APP_MUNICIPALITY')),
-        'phone'               => str_replace('"', '', getenv('APP_PHONE')),
-        'url'                 => str_replace('"', '', getenv('APP_URL')),
-        'email'               => str_replace('"', '', getenv('APP_EMAIL')),
+        'municipality'        => configParser(getenv('APP_MUNICIPALITY')),
+        'phone'               => configParser(getenv('APP_PHONE')),
+        'url'                 => configParser(getenv('APP_URL')),
+        'email'               => configParser(getenv('APP_EMAIL')),
         'account'             => [
-            'clearTimeHour' => (int)str_replace(['"', "'"], "", getenv('APP_ACCOUNT_CLEAR_TIME_HOUR')),
+            'clearTimeHour' => (int)configParser(getenv('APP_ACCOUNT_CLEAR_TIME_HOUR')),
         ],
         'notification'        => [
-            'frequency' => (int)str_replace(['"', "'"], "", getenv('APP_NOTIFICATION_FREQUENCY')),
+            'frequency' => (int)configParser(getenv('APP_NOTIFICATION_FREQUENCY')),
             'mail'      => [
                 'testTo'   => getenv('APP_NOTIFICATION_MAIL_TESTTO'),
                 'subject'  => getenv('APP_NOTIFICATION_MAIL_SUBJECT'),
@@ -21,17 +21,17 @@ return [
             'force' => (string)getenv('APP_NOTIFICATION_FORCE') === "true",
         ],
         'pagination'          => [
-            'maxPageSize'        => (int)str_replace(['"', "'"], "", getenv('APP_PAGINATION_MAX_PAGE_SIZE')),
-            'maxPageSizeForVote' => (int)str_replace(['"', "'"], "", getenv('APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE')),
+            'maxPageSize'        => (int)configParser(getenv('APP_PAGINATION_MAX_PAGE_SIZE')),
+            'maxPageSizeForVote' => (int)configParser(getenv('APP_PAGINATION_MAX_PAGE_SIZE_FOR_VOTE')),
         ],
         'paths'               => [
-            'files' => getenv('APP_UPLOAD'),
+            'files' => configParser(getenv('APP_UPLOAD')),
         ],
         'service'             => [
-            'file' => getenv('APP_SERVICE_FILE'),
+            'file' => configParser(getenv('APP_SERVICE_FILE')),
         ],
         'stat'                => [
-            'token' => getenv('APP_STAT_TOKEN')
+            'token' => configParser(getenv('APP_STAT_TOKEN')),
         ],
     ],
 ];
