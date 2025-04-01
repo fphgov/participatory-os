@@ -20,6 +20,10 @@ interface UserInterface extends EntityInterface, EntityActiveInterface
 
     public const DISABLE_DEFAULT_SET = [];
 
+    public function setUserLoginAttempt(?UserLoginAttempt $userLoginAttempt = null): void;
+
+    public function getUserLoginAttempt(): ?UserLoginAttempt;
+
     public function setUserPreference(?UserPreference $userPreference = null): void;
 
     public function getUserPreference(): ?UserPreference;
