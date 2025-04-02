@@ -423,7 +423,7 @@ final class UserService implements UserServiceInterface
         $userPreference = $user->getUserPreference();
         $userVotes      = $user->getVoteCollection();
         $ideas          = $user->getIdeaCollection();
-        $loginAttempts  = $user->getUserLoginAttempt();
+        $loginAttempt   = $user->getUserLoginAttempt();
 
         $anonymusUser = $this->em->getReference(User::class, 1);
 
@@ -435,7 +435,7 @@ final class UserService implements UserServiceInterface
             $userVote->setUser($anonymusUser);
         }
 
-        foreach ($loginAttempts as $loginAttempt) {
+        if ($loginAttempt !== null) {
             $this->em->remove($loginAttempt);
         }
 
